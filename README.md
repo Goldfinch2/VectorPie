@@ -190,7 +190,7 @@ Two-player games that use twin sticks use both `p1_` and `p2_` actions for movem
 Wi-Fi is configured directly from the menu — no keyboard or SSH session required.
 
 1. Press the **Settings** button to open the settings menu
-2. Navigate to **NETWORK** and press Select
+2. Navigate to **NETWORK** and press Select — the Wi-Fi configuration page may take up to 15 seconds to appear the first time
 3. Use Left/Right on **WIFI NETWORK** to select your network from the scan results
 4. Navigate to **PASSWORD** and enter your password (Left/Right cycles characters, Up/Down moves the cursor)
 5. Navigate to **CONNECT** and press Select
@@ -226,7 +226,7 @@ Open with the **Tab** key (shown as a hint at the bottom of the menu). Navigate 
 | SOUND VOLUME | Navigation/select effects volume |
 | MUSIC VOLUME | Background music volume |
 | ZERO DEADZONE | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
-| NETWORK | Open the Wi-Fi configuration page |
+| NETWORK | Open the Wi-Fi configuration page — may take up to 15 seconds to appear the first time |
 
 Changes are saved automatically when closing the settings menu.
 
