@@ -30,7 +30,7 @@ VectorPi is compatible with the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 1. Download the VectorPi image (approximately 2 GB): [VectorPi Image](https://drive.google.com/file/d/1qHHgpAqcnTfQw9J6qdnhx8mMDGMR9i97/view?usp=sharing)
 2. Write the image to a 32 GB or larger micro SD card using **balenaEtcher** ([download](https://etcher.balena.io/)):
-   - Open balenaEtcher and click **Flash from file**, then select the downloaded `.img` file
+   - Open balenaEtcher and click **Flash from file**, then select the downloaded `.img.gz` file
    - Click **Select target** and choose your micro SD card
    - Click **Flash!** and wait for the write and verification to complete
 3. Insert the micro SD card into the Raspberry Pi and power it on — VectorPi boots directly into the game menu
