@@ -181,7 +181,7 @@ VectorPi games use several types of analog and digital controls. AdvanceMAME aut
 
 Two-player games that use twin sticks use both `p1_` and `p2_` actions for movement and aiming independently.
 
-> **Note:** A mouse and an analog joystick cannot be used simultaneously in AdvanceMAME — see the Troubleshooting section for details.
+> **Note:** A mouse and an analog joystick can be used simultaneously. For games that use an analog stick (Star Wars, Empire Strikes Back, Lunar Lander, Tail Gunner, Red Baron), the **ADSTICK DEVICE** setting in the Settings menu selects which device drives the control — JOYSTICK or MOUSE. Spinners and trackballs are not affected by this setting.
 
 ---
 
@@ -226,6 +226,7 @@ Open with the **Tab** key (shown as a hint at the bottom of the menu). Navigate 
 | SOUND VOLUME | Navigation/select effects volume |
 | MUSIC VOLUME | Background music volume |
 | ZERO DEADZONE | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
+| ADSTICK DEVICE | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
 | NETWORK | Open the Wi-Fi configuration page — may take up to 15 seconds to appear the first time |
 
 Changes are saved automatically when closing the settings menu.
@@ -350,8 +351,6 @@ These options are unavailable because the USB-DVG board is not being detected. C
 
 ---
 
-**Mouse stops working when an analog joystick is also connected (AdvanceMAME)**
+**Using a mouse yoke with an analog joystick also connected (Star Wars, ESB, Lunar Lander)**
 
-AdvanceMAME automatically maps both the mouse and the analog joystick to the same controls. Once the joystick stick is touched, its absolute position permanently overrides the mouse input and the mouse stops responding. This is a fundamental limitation of how AdvanceMAME combines analog inputs — there is no configuration workaround. Digital joysticks (zero delay encoders) are not affected.
-
-**Solution:** Use either a mouse or an analog joystick, not both at the same time. In a typical arcade setup a mouse is rarely needed — connecting only the analog joystick is the recommended approach.
+Games that use an analog stick control (Star Wars yoke, Lunar Lander thruster) default to using the analog joystick. To use a mouse or yoke controller instead, change **ADSTICK DEVICE** to **MOUSE** in the Settings menu. This makes the mouse exclusively drive those controls and the analog joystick will have no effect on them. Spinners, trackballs, and all other controls are unaffected by this setting.
