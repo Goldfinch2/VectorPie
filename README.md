@@ -163,6 +163,26 @@ The menu reads the following AdvanceMAME input actions:
 
 The calibration mode key (`5`) is fixed and cannot be remapped.
 
+### Game Controls
+
+VectorPi games use several types of analog and digital controls. AdvanceMAME automatically maps connected hardware to the appropriate control type for each game.
+
+| Control Type | AdvanceMAME Action | Typical Input |
+|---|---|---|
+| Directional movement | `p1_up/down/left/right` | Joystick, keyboard arrows |
+| Analog stick | `p1_stickx`, `p1_sticky` | Analog joystick |
+| Rotary spinner | `p1_dialx` | Spinner, mouse X axis |
+| Trackball | `p1_trackballx`, `p1_trackbally` | Trackball, mouse |
+| Mouse pointer | `p1_mousex`, `p1_mousey` | Mouse |
+| Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button |
+| Player 1 start | `start1` | 1 key |
+| Player 2 start | `start2` | 2 key |
+| Insert coin | `coin1` | 5 key |
+
+Two-player games that use twin sticks use both `p1_` and `p2_` actions for movement and aiming independently.
+
+> **Note:** A mouse and an analog joystick cannot be used simultaneously in AdvanceMAME — see the Troubleshooting section for details.
+
 ---
 
 ## Wi-Fi Configuration
