@@ -354,4 +354,4 @@ These options are unavailable because the USB-DVG board is not being detected. C
 
 AdvanceMAME automatically maps both the mouse and the analog joystick to the same controls. Once the joystick stick is touched, its absolute position permanently overrides the mouse input and the mouse stops responding. This is a fundamental limitation of how AdvanceMAME combines analog inputs — there is no configuration workaround. Digital joysticks (zero delay encoders) are not affected.
 
-**Solution:** Disconnect whichever device you are not using before launching the game. For mouse-controlled games (Star Wars, etc.) disconnect the analog joystick. For joystick-controlled games disconnect the mouse.
+**Solution:** Use either a mouse or an analog joystick, not both at the same time. In a typical arcade setup a mouse is rarely needed — connecting only the analog joystick is the recommended approach.
