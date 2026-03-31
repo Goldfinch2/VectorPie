@@ -37,11 +37,26 @@ VectorPi is compatible with the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ### USB-DVG Firmware
 
+There are two USB-DVG firmware variants:
+
+- **Standalone** — standard firmware for use with any cabinet or custom control setup
+- **Arcade Control** — includes support for an adapter card that connects directly to the original wiring harness of an Asteroids, Asteroids Deluxe, Space Duel, Tempest, or Black Widow cabinet, allowing the cab's original buttons, CRT, and coin inputs to be used natively
+
+**Which firmware should I use?**
+
+| USB-DVG Version | Use |
+|---|---|
+| v1 / v2 | Standalone only |
+| v3 or later (standalone) | Standalone |
+| v3 or later (mounted on adapter card) | Arcade Control |
+
+Flash the firmware that matches your hardware using **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
+
 > **Note:** Skip this section if your USB-DVG board already has firmware version 1.14R0 or later installed.
 
-The USB-DVG firmware is flashed using **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
-
-1. Download the USB-DVG firmware `.hex` file: [USB-DVG Firmware 1.14R0](https://drive.google.com/file/d/15YH7NC440qQY1Z7pVe-FYglx1p4vFH32/view?usp=sharing)
+1. Download the appropriate USB-DVG firmware `.hex` file:
+   - [Standalone Firmware 1.14R0](https://drive.google.com/file/d/15YH7NC440qQY1Z7pVe-FYglx1p4vFH32/view?usp=sharing)
+   - [Arcade Control Firmware 1.14R0](https://drive.google.com/file/d/15YH7NC440qQY1Z7pVe-FYglx1p4vFH32/view?usp=sharing)
 2. Open **Teensy Loader** and load the `.hex` file via **File → Open HEX File**
 3. Press the reset button on the Teensy board — Teensy Loader will detect the board and automatically flash the firmware
 4. Once flashing is complete the board resets and is ready to use
@@ -138,10 +153,10 @@ The menu reads the following AdvanceMAME input actions:
 
 | AdvanceMAME Action | Menu Function | Default Key |
 |---|---|---|
-| `p1_up` | Navigate up | Up Arrow |
-| `p1_down` | Navigate down | Down Arrow |
-| `p1_left` | Navigate left / previous manufacturer | Left Arrow |
-| `p1_right` | Navigate right / next manufacturer | Right Arrow |
+| `ui_up` | Navigate up | Up Arrow |
+| `ui_down` | Navigate down | Down Arrow |
+| `ui_left` | Navigate left / previous manufacturer | Left Arrow |
+| `ui_right` | Navigate right / next manufacturer | Right Arrow |
 | `ui_select` | Launch selected game | 1, Enter, or Left Ctrl |
 | `ui_configure` | Open settings menu | Tab |
 | `ui_cancel` | Quit / exit | Escape |
@@ -312,3 +327,11 @@ Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces
 **ENABLE DVG, COLOR OVERLAY, and AUTO START GAME are grayed out in Settings**
 
 These options are unavailable because the USB-DVG board is not being detected. Check that the USB-DVG is securely connected to a USB port on the Pi and try again. Once detected, the options will become active.
+
+---
+
+**Mouse stops working when an analog joystick is also connected (AdvanceMAME)**
+
+AdvanceMAME automatically maps both the mouse and the analog joystick to the same controls. Once the joystick stick is touched, its absolute position permanently overrides the mouse input and the mouse stops responding. This is a fundamental limitation of how AdvanceMAME combines analog inputs — there is no configuration workaround. Digital joysticks (zero delay encoders) are not affected.
+
+**Solution:** Disconnect whichever device you are not using before launching the game. For mouse-controlled games (Star Wars, etc.) disconnect the analog joystick. For joystick-controlled games disconnect the mouse.
