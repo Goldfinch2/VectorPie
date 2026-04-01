@@ -143,7 +143,7 @@ The artwork scaling mode (Fit, Stretch, or Zoom) can be changed in the Settings 
 
 ## HDMI Overlay Display
 
-VectorPie supports a transparent LCD panel mounted in front of the vector display. The LCD is driven by the Pi's second HDMI output and displays a game-specific overlay image — replicating the original plastic color overlays that were placed on the monitor glass in the arcade. The vector image shows through the transparent areas of the LCD, combining the real vector beam with the overlay artwork.
+VectorPie supports a second display configured to show overlay artwork alongside the vector CRT, so both are visible to the player simultaneously. The overlay image is driven by the Pi's second HDMI output and displays game-specific artwork that complements the vector display — replicating the color overlays used in the original arcade cabinets.
 
 When a game is launched, VectorPie automatically loads the matching overlay image onto the second display. The image remains static for the duration of the session. When the game exits the overlay window is closed.
 
