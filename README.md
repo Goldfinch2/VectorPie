@@ -141,6 +141,22 @@ The artwork scaling mode (Fit, Stretch, or Zoom) can be changed in the Settings 
 
 ---
 
+## HDMI Overlay Display
+
+VectorPie supports a transparent LCD panel mounted in front of the vector display. The LCD is driven by the Pi's second HDMI output and displays a game-specific overlay image — replicating the original plastic color overlays that were placed on the monitor glass in the arcade. The vector image shows through the transparent areas of the LCD, combining the real vector beam with the overlay artwork.
+
+When a game is launched, VectorPie automatically loads the matching overlay image onto the second display. The image remains static for the duration of the session. When the game exits the overlay window is closed.
+
+Overlay lookup follows this order:
+
+1. The clone ROM name is tried first (e.g. `asteroid.png` for the `asteroid` ROM)
+2. If not found, the parent ROM name is tried
+3. If neither is found, no overlay is shown and the second display is left blank
+
+The image is scaled to fit the display's resolution while preserving aspect ratio (letterboxed or pillarboxed as needed).
+
+---
+
 ## Input Mapping
 
 Control mappings are configured **once inside AdvanceMAME** and apply automatically everywhere:
@@ -337,11 +353,12 @@ Games sharing the same parent ROM are grouped as variants and cycled with Left/R
 |---|---|
 | ROMs | `/usr/local/share/advance/rom` |
 | Samples | `/usr/local/share/advance/sample` |
-| Marquee artwork | `/usr/local/share/advance/artwork` |
+| Marquee artwork | `/usr/local/share/advance/artwork/marquees` |
+| Overlay artwork | `/usr/local/share/advance/artwork/overlays` |
 
-Artwork images are PNGs. The filename must match the clone ROM name (e.g. `asteroid.png`). If no match is found, the parent ROM name is tried, then `default.png`.
+Artwork images are PNGs. The filename must match the clone ROM name (e.g. `asteroid.png`). If no match is found, the parent ROM name is tried. For marquees, `default.png` is used as a final fallback if neither is found.
 
-Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces as underscores), e.g. `mfg_atari.png`.
+Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces as underscores), e.g. `mfg_atari.png`. These are stored in the `artwork/marquees` directory.
 
 ---
 
