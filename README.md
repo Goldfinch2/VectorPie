@@ -1,8 +1,10 @@
-# VectorPi User Manual
+# VectorPie User Manual
+
+![VectorPie Logo](vector_pie_logo.png)
 
 ## Overview
 
-VectorPi is a pre-configured Raspberry Pi image designed to be used with the USB-DVG vector generator board. It can also be used without USB-DVG, displaying on a standard HDMI monitor instead. It boots directly into the game menu and all navigation is done entirely through your arcade controls — no keyboard, mouse, or desktop environment required.
+VectorPie is a pre-configured Raspberry Pi image designed to be used with the USB-DVG vector generator board. It can also be used without USB-DVG, displaying on a standard HDMI monitor instead. It boots directly into the game menu and all navigation is done entirely through your arcade controls — no keyboard, mouse, or desktop environment required.
 
 Key features:
 
@@ -13,7 +15,7 @@ Key features:
 - **Wi-Fi configuration** — connect to a wireless network directly from the menu
 - **Remote access** — built-in SSH server and Windows network share for easy file management from a PC
 
-VectorPi is compatible with the **Raspberry Pi 4** and **Raspberry Pi 5**.
+VectorPie is compatible with the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ---
 
@@ -26,14 +28,14 @@ VectorPi is compatible with the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ## Download & Installation
 
-### VectorPi Image
+### VectorPie Image
 
-1. Download the VectorPi image (approximately 2 GB): [VectorPi Image](https://drive.google.com/file/d/1qHHgpAqcnTfQw9J6qdnhx8mMDGMR9i97/view?usp=sharing)
+1. Download the VectorPie image (approximately 2 GB): [VectorPie Image](https://drive.google.com/file/d/1qHHgpAqcnTfQw9J6qdnhx8mMDGMR9i97/view?usp=sharing)
 2. Write the image to a 32 GB or larger micro SD card using **balenaEtcher** ([download](https://etcher.balena.io/)):
    - Open balenaEtcher and click **Flash from file**, then select the downloaded `.img.gz` file
    - Click **Select target** and choose your micro SD card
    - Click **Flash!** and wait for the write and verification to complete
-3. Insert the micro SD card into the Raspberry Pi and power it on — VectorPi boots directly into the game menu
+3. Insert the micro SD card into the Raspberry Pi and power it on — VectorPie boots directly into the game menu
 
 ### USB-DVG Firmware
 
@@ -65,7 +67,7 @@ Flash the firmware that matches your hardware using **Teensy Loader** ([download
 
 ## Accessing the Pi from a Windows PC
 
-VectorPi includes a pre-configured SSH server and Samba network share, so you can manage files and settings from any Windows PC on the same network without needing a keyboard or monitor connected to the Pi.
+VectorPie includes a pre-configured SSH server and Samba network share, so you can manage files and settings from any Windows PC on the same network without needing a keyboard or monitor connected to the Pi.
 
 To find the Pi's IP address, press **Tab** from the main menu to open Settings and navigate to **NETWORK** — the current IP address is displayed there.
 
@@ -93,7 +95,7 @@ You can also map it as a persistent network drive:
 
 SSH lets you open a terminal on the Pi from your Windows PC. Windows 10 and 11 include a built-in SSH client.
 
-1. Find the Pi's IP address on the VectorPi **Settings → Network** page
+1. Find the Pi's IP address on the VectorPie **Settings → Network** page
 2. Open **Command Prompt** or **PowerShell** on your PC
 3. Type: `ssh pi@<pi-ip-address>` and press Enter
 4. Enter the password `raspberry` when prompted
@@ -143,7 +145,7 @@ The artwork scaling mode (Fit, Stretch, or Zoom) can be changed in the Settings 
 
 Control mappings are configured **once inside AdvanceMAME** and apply automatically everywhere:
 
-- The VectorPi menu navigation controls
+- The VectorPie menu navigation controls
 - All AdvanceMAME games
 - Games compiled natively for the Pi — these use SDL and read their input mappings directly from the same AdvanceMAME configuration file
 
@@ -165,7 +167,7 @@ The calibration mode key (`5`) is fixed and cannot be remapped.
 
 ### Game Controls
 
-VectorPi games use several types of analog and digital controls. AdvanceMAME automatically maps connected hardware to the appropriate control type for each game.
+VectorPie games use several types of analog and digital controls. AdvanceMAME automatically maps connected hardware to the appropriate control type for each game.
 
 | Control Type | AdvanceMAME Action | Typical Input |
 |---|---|---|
@@ -235,7 +237,7 @@ Changes are saved automatically when closing the settings menu.
 
 ## USB-DVG Support
 
-VectorPi can drive a USB-DVG vector generator board to render the menu on a real vector monitor alongside the LCD display.
+VectorPie can drive a USB-DVG vector generator board to render the menu on a real vector monitor alongside the LCD display.
 
 The USB-DVG renders the full game menu as vector text, shows manufacturer logos, and runs a drifting asteroids screensaver when idle. It can also query the hardware for a default game to auto-launch on startup.
 
@@ -253,7 +255,7 @@ Joysticks, keyboards, mice, and zero delay encoders should be connected to the r
 
 ### Color Overlays
 
-Many classic black & white vector arcade games originally shipped with a physical plastic color overlay placed directly on the monitor glass to give the illusion of color. VectorPi simulates these overlays digitally by tinting the vectors sent to the USB-DVG, so the games appear on screen with colors faithful to the original arcade experience.
+Many classic black & white vector arcade games originally shipped with a physical plastic color overlay placed directly on the monitor glass to give the illusion of color. VectorPie simulates these overlays digitally by tinting the vectors sent to the USB-DVG, so the games appear on screen with colors faithful to the original arcade experience.
 
 Color overlays are supported for the following games:
 
@@ -281,7 +283,7 @@ Color overlays can be enabled or disabled from **Settings → COLOR OVERLAY**. W
 
 ### Calibration Mode
 
-Vector monitors may require geometric adjustment to correctly display the image. VectorPi includes a built-in calibration mode that outputs test patterns via the USB-DVG to help align and tune the monitor.
+Vector monitors may require geometric adjustment to correctly display the image. VectorPie includes a built-in calibration mode that outputs test patterns via the USB-DVG to help align and tune the monitor.
 
 To enter calibration mode, press the Calibration button while the USB-DVG is enabled. Use Left/Right to cycle through the available patterns and press Quit to exit.
 
