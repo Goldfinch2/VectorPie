@@ -137,7 +137,7 @@ find "$HOME_DIR" -mindepth 1 -maxdepth 1 -type d -not -name '.*' -exec rm -rf {}
 echo "      Done."
 
 echo "[12/13] Writing VectorPie version to /etc/vectorpie_version..."
-VP_VERSION=$(cd "$HOME_DIR/vectorpie" && git describe --tags --always 2>/dev/null || echo "unknown")
+VP_VERSION=$(sudo -u pi git -C "$HOME_DIR/vectorpie" describe --tags --always 2>/dev/null || echo "unknown")
 echo "$VP_VERSION" > /etc/vectorpie_version
 echo "      Version: $VP_VERSION"
 echo "      Done."
@@ -167,5 +167,5 @@ echo "  Cleanup complete!"
 echo ""
 echo "  Recommended next steps:"
 echo "  1. Shut down:   sudo shutdown -h now"
-echo "  2. On your PC:  sudo pishrink.sh -a -z pi.img vectorpie-$(cat /etc/vectorpie_version)-rpi4.img.gz"
+echo "  2. On your PC:  sudo pishrink.sh -a -z pi.img vectorpie-$(cat /etc/vectorpie_version).img.gz"
 echo "=============================="
