@@ -136,7 +136,13 @@ echo "[11/12] Removing non-hidden subfolders under /home/pi..."
 find "$HOME_DIR" -mindepth 1 -maxdepth 1 -type d -not -name '.*' -exec rm -rf {} +
 echo "      Done."
 
-echo "[12/12] Regenerate SSH host keys on first boot..."
+echo "[12/13] Writing VectorPie version to /etc/vectorpie_version..."
+VP_VERSION=$(cd "$HOME_DIR/vectorpie" && git describe --tags --always 2>/dev/null || echo "unknown")
+echo "$VP_VERSION" > /etc/vectorpie_version
+echo "      Version: $VP_VERSION"
+echo "      Done."
+
+echo "[13/13] Regenerate SSH host keys on first boot..."
 # Remove host keys and create a one-shot service to regenerate them on first boot
 rm -f /etc/ssh/ssh_host_*
 cat > /etc/systemd/system/regenerate-ssh-keys.service <<'UNIT'
@@ -161,5 +167,5 @@ echo "  Cleanup complete!"
 echo ""
 echo "  Recommended next steps:"
 echo "  1. Shut down:   sudo shutdown -h now"
-echo "  2. On your PC:  sudo pishrink.sh -a -z pi.img pi_clean.img.gz"
+echo "  2. On your PC:  sudo pishrink.sh -a -z pi.img vectorpie-$(cat /etc/vectorpie_version)-rpi4.img.gz"
 echo "=============================="
