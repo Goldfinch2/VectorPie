@@ -373,3 +373,25 @@ These options are unavailable because the USB-DVG board is not being detected. C
 **Using a mouse yoke with an analog joystick also connected (Star Wars, ESB, Lunar Lander)**
 
 Games that use an analog stick control (Star Wars yoke, Lunar Lander thruster) default to using the analog joystick. To use a mouse or yoke controller instead, change **ADSTICK DEVICE** to **MOUSE** in the Settings menu. This makes the mouse exclusively drive those controls and the analog joystick will have no effect on them. Spinners, trackballs, and all other controls are unaffected by this setting.
+
+---
+
+**Raspberry Pi intermittently shows Network Install screen instead of booting**
+
+On Raspberry Pi OS Trixie Lite, the Pi 4 or Pi 5 may intermittently display the red/white Network Install recovery screen at power-on instead of booting from the SD card or USB device. This happens even when a valid boot device is present.
+
+The fix is to disable the Network Install feature in the EEPROM configuration:
+
+```
+sudo rpi-eeprom-config --edit
+```
+
+Add or set:
+
+```
+NET_INSTALL_ENABLED=0
+```
+
+Save and reboot. The Pi will now boot directly from the local device every time.
+
+> **Note:** `NET_BOOT=0` does **not** fix this — `NET_BOOT` controls network boot (PXE/TFTP), while `NET_INSTALL_ENABLED` controls the Network Install recovery screen. They are separate settings.
