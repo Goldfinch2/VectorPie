@@ -57,8 +57,8 @@ Flash the firmware that matches your hardware using **Teensy Loader** ([download
 > **Note:** Skip this section if your USB-DVG board already has firmware version 1.14R0 or later installed.
 
 1. Download the appropriate USB-DVG firmware `.hex` file:
-   - [Standalone Firmware 1.14R0](https://drive.google.com/file/d/15YH7NC440qQY1Z7pVe-FYglx1p4vFH32/view?usp=sharing)
-   - [Arcade Control Firmware 1.14R0](https://drive.google.com/file/d/15YH7NC440qQY1Z7pVe-FYglx1p4vFH32/view?usp=sharing)
+   - [Standalone Firmware 1.14R0](https://drive.google.com/file/d/1IO9XF388TRg90m8kquqngAY8srt2M2BB/view?usp=sharing)
+   - [Arcade Control Firmware 1.14R0](https://drive.google.com/file/d/1j4ugqPxryaka84zsrSmOzZL85EJ35Jrd/view?usp=sharing)
 2. Open **Teensy Loader** and load the `.hex` file via **File → Open HEX File**
 3. Press the reset button on the Teensy board — Teensy Loader will detect the board and automatically flash the firmware
 4. Once flashing is complete the board resets and is ready to use
