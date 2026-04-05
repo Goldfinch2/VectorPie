@@ -116,7 +116,7 @@ All navigation can be done with either a keyboard or arcade controls. Mappings a
 | Left / Right (on manufacturer header) | Switch to the previous or next manufacturer |
 | Left / Right (on a game) | Cycle through ROM variants (revisions, regions, prototypes) |
 | Select / Start | Launch the selected game |
-| Settings (Tab) | Open the settings menu |
+| Settings (Tab) | Cycle through settings and network pages |
 | Quit / Coin button | Exit the menu (press twice to confirm) |
 | Calibration button | Enter USB-DVG calibration mode (USB-DVG only) |
 
@@ -207,11 +207,10 @@ Two-player games that use twin sticks use both `p1_` and `p2_` actions for movem
 
 Wi-Fi is configured directly from the menu — no keyboard or SSH session required.
 
-1. Press the **Settings** button to open the settings menu
-2. Navigate to **NETWORK** and press Select — the Wi-Fi configuration page may take up to 15 seconds to appear the first time
-3. Use Left/Right on **WIFI NETWORK** to select your network from the scan results
-4. Navigate to **PASSWORD** and enter your password (Left/Right cycles characters, Up/Down moves the cursor)
-5. Navigate to **CONNECT** and press Select
+1. Press **Tab** twice to reach the network page (game menu → settings → network) — the Wi-Fi scan may take up to 15 seconds to complete the first time
+2. Use Left/Right on **WIFI NETWORK** to select your network from the scan results
+3. Navigate to **PASSWORD** and enter your password (Left/Right cycles characters, Up/Down moves the cursor)
+4. Navigate to **CONNECT** and press Select
 
 The current connection status and IP address are shown at the top of the network page.
 
@@ -225,19 +224,19 @@ The current connection status and IP address are shown at the top of the network
 | 8 seconds idle | Text at minimum brightness |
 | 30 seconds idle | Screensaver activates |
 
-On the LCD display the screensaver shows the current marquee artwork at low brightness. On a USB-DVG display it shows a drifting asteroids animation. Any control input returns to the menu.
+On the LCD display the screensaver shows the current marquee artwork at low brightness. On a USB-DVG display it shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
 
 ---
 
 ## Settings Menu
 
-Open with the **Tab** key (shown as a hint at the bottom of the menu). Navigate with Up/Down; adjust values with Left/Right; press Select to toggle or activate.
+Press **Tab** to cycle through the settings and network pages (game menu → settings → network → game menu). Press **Escape** from any page to return directly to the game menu. Navigate with Up/Down; adjust values with Left/Right; press Select to toggle or activate.
 
 | Setting | Description |
 |---|---|
 | MARQUEE DISPLAY | Artwork scaling mode: FIT / STRETCH / ZOOM |
 | ENABLE DVG | Enable/disable USB-DVG output |
-| COLOR OVERLAY | Simulate color overlays on supported games (see below) |
+| OVERLAY | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
 | AUTO START GAME | Auto-launch the USB-DVG default game on startup |
 | MASTER VOLUME | System-wide volume (0–100%) |
 | SOUND ENABLED | Enable/disable all menu audio |
@@ -245,7 +244,6 @@ Open with the **Tab** key (shown as a hint at the bottom of the menu). Navigate 
 | MUSIC VOLUME | Background music volume |
 | ZERO DEADZONE | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
 | ADSTICK DEVICE | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
-| NETWORK | Open the Wi-Fi configuration page — may take up to 15 seconds to appear the first time |
 
 Changes are saved automatically when closing the settings menu.
 
@@ -295,7 +293,7 @@ Color overlays are supported for the following games:
 
 Games that natively output color vectors (Tempest, Major Havoc, Star Wars, Gravitar, Black Widow, Space Duel, Quantum, and all Sega and Cinematronics color titles) are rendered in their original colors and do not use overlays.
 
-Color overlays can be enabled or disabled from **Settings → COLOR OVERLAY**. When disabled, all games render in white.
+Overlays are controlled from **Settings → OVERLAY** with four options: DISABLED (all games render in white), COLORING (color tinting only), ARTWORK (line artwork only), or BOTH (default — full overlay with coloring and line artwork).
 
 ### Calibration Mode
 
@@ -364,7 +362,7 @@ Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces
 
 ## Troubleshooting
 
-**ENABLE DVG, COLOR OVERLAY, and AUTO START GAME are grayed out in Settings**
+**ENABLE DVG, OVERLAY, and AUTO START GAME are grayed out in Settings**
 
 These options are unavailable because the USB-DVG board is not being detected. Check that the USB-DVG is securely connected to a USB port on the Pi and try again. Once detected, the options will become active.
 
