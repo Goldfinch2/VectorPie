@@ -9,7 +9,7 @@ VectorPie is a pre-configured Raspberry Pi image designed to be used with the US
 Key features:
 
 - **Headless operation** — runs at boot with no monitor or desktop required on the Pi
-- **LCD marquee display** — a connected LCD panel automatically shows the marquee artwork for the game currently highlighted in the menu
+- **HDMI-0 marquee display** — the primary HDMI output automatically shows the marquee artwork for the game currently highlighted in the menu
 - **USB-DVG support** — drive a real vector monitor via the USB-DVG vector generator board; HDMI output is also supported for use without USB-DVG
 - **Unified input mapping** — controls are configured once in AdvanceMAME and apply to the menu and every game, including non-emulated titles
 - **Wi-Fi configuration** — connect to a wireless network directly from the menu
@@ -133,17 +133,17 @@ The menu shows a vertically scrolling list of games grouped by manufacturer:
 
 ---
 
-## LCD Marquee Display
+## HDMI-0 Marquee Display
 
-When an LCD panel is connected, it automatically updates to show the marquee artwork for the currently highlighted game. Browsing at the manufacturer level shows the manufacturer's logo. If no artwork exists for a specific game a default image is shown.
+The primary HDMI output (HDMI-0) automatically updates to show the marquee artwork for the currently highlighted game. Browsing at the manufacturer level shows the manufacturer's logo. If no artwork exists for a specific game a default image is shown.
 
 The artwork scaling mode (Fit, Stretch, or Zoom) can be changed in the Settings menu.
 
 ---
 
-## HDMI Overlay Display
+## HDMI-1 Overlay Display
 
-VectorPie supports a second display configured to show overlay artwork alongside the vector CRT, so both are visible to the player simultaneously. The overlay image is driven by the Pi's second HDMI output and displays game-specific artwork that complements the vector display — replicating the color overlays used in the original arcade cabinets.
+VectorPie supports a second display on HDMI-1 configured to show overlay artwork alongside the vector CRT, so both are visible to the player simultaneously. The overlay image is driven by the Pi's second HDMI output and displays game-specific artwork that complements the vector display — replicating the color overlays used in the original arcade cabinets.
 
 When a game is launched, VectorPie automatically loads the matching overlay image onto the second display. The image remains static for the duration of the session. When the game exits the overlay window is closed.
 
@@ -224,7 +224,7 @@ The current connection status and IP address are shown at the top of the network
 | 8 seconds idle | Text at minimum brightness |
 | 30 seconds idle | Screensaver activates |
 
-On the LCD display the screensaver shows the current marquee artwork at low brightness. On a USB-DVG display it shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
+On the HDMI-0 marquee display the screensaver shows the current marquee artwork at low brightness. On a USB-DVG display it shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
 
 ---
 
@@ -251,7 +251,7 @@ Changes are saved automatically when closing the settings menu.
 
 ## USB-DVG Support
 
-VectorPie can drive a USB-DVG vector generator board to render the menu on a real vector monitor alongside the LCD display.
+VectorPie can drive a USB-DVG vector generator board to render the menu on a real vector monitor alongside the HDMI-0 marquee display.
 
 The USB-DVG renders the full game menu as vector text, shows manufacturer logos, and runs a drifting asteroids screensaver when idle. It can also query the hardware for a default game to auto-launch on startup.
 
@@ -308,7 +308,7 @@ To enter calibration mode, press the Calibration button while the USB-DVG is ena
 | GRID | Evenly spaced horizontal and vertical lines — useful for checking overall linearity and convergence |
 | COLOR INTENSITY BARS | Graduated brightness bars in each color channel — useful for checking beam intensity and color balance |
 
-The current pattern name is shown on the LCD display during calibration.
+The current pattern name is shown on the HDMI-0 marquee display during calibration.
 
 ---
 
