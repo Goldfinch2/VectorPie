@@ -238,6 +238,7 @@ Press **Tab** to cycle through the settings and network pages (game menu → set
 | ENABLE DVG | Enable/disable USB-DVG output |
 | OVERLAY | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
 | AUTO START GAME | Auto-launch the USB-DVG default game on startup |
+| AUDIO OUTPUT | Read-only display of the audio output device currently selected by the system |
 | MASTER VOLUME | System-wide volume (0–100%) |
 | SOUND ENABLED | Enable/disable all menu audio |
 | SOUND VOLUME | Navigation/select effects volume |
