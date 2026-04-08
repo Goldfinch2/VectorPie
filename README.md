@@ -221,10 +221,10 @@ The current connection status and IP address are shown at the top of the network
 | Timeout | Behavior |
 |---|---|
 | 5 seconds idle | Menu text fades; marquee image brightens |
-| 8 seconds idle | Text at minimum brightness |
-| 30 seconds idle | Screensaver activates |
+| 10 seconds idle | Text fully invisible; marquee fully visible |
+| 30 seconds idle | Screensaver activates; VectorPie logo displayed as marquee |
 
-On the HDMI-0 marquee display the screensaver shows the current marquee artwork at low brightness. On a USB-DVG display it shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
+On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
 
 ---
 
