@@ -12,6 +12,7 @@ Key features:
 - **HDMI-0 marquee display** — the primary HDMI output automatically shows the marquee artwork for the game currently highlighted in the menu
 - **USB-DVG support** — drive a real vector monitor via the USB-DVG vector generator board; HDMI output is also supported for use without USB-DVG
 - **Unified input mapping** — controls are configured once in AdvanceMAME and apply to the menu and every game, including non-emulated titles
+- **High scores** — scrolling hint bar displays high scores parsed directly from MAME save files for the selected game
 - **Wi-Fi configuration** — connect to a wireless network directly from the menu
 - **Remote access** — built-in SSH server and Windows network share for easy file management from a PC
 
@@ -54,11 +55,11 @@ There are two USB-DVG firmware variants:
 
 Flash the firmware that matches your hardware using **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
 
-> **Note:** Skip this section if your USB-DVG board already has firmware version 1.14R0 or later installed.
+> **Note:** Skip this section if your USB-DVG board already has firmware version 1.14R1 or later installed.
 
 1. Download the appropriate USB-DVG firmware `.hex` file:
-   - [Standalone Firmware 1.14R0](https://drive.google.com/file/d/1IO9XF388TRg90m8kquqngAY8srt2M2BB/view?usp=sharing)
-   - [Arcade Control Firmware 1.14R0](https://drive.google.com/file/d/1j4ugqPxryaka84zsrSmOzZL85EJ35Jrd/view?usp=sharing)
+   - [Standalone Firmware 1.14R1](https://drive.google.com/file/d/1goWkwykACHfnLVW0sk0REXXBPuLQ8ldB/view?usp=drive_link)
+   - [Arcade Control Firmware 1.14R1](https://drive.google.com/file/d/1tx1JvYTLceOkbxAkWTCNXsJ22BJQq2xp/view?usp=drive_link)
 2. Open **Teensy Loader** and load the `.hex` file via **File → Open HEX File**
 3. Press the reset button on the Teensy board — Teensy Loader will detect the board and automatically flash the firmware
 4. Once flashing is complete the board resets and is ready to use
@@ -106,7 +107,7 @@ Alternatively, use a free SSH client such as **PuTTY** if you prefer a dedicated
 
 ## Menu Navigation
 
-All navigation can be done with either a keyboard or arcade controls. Mappings are read from the AdvanceMAME configuration. Available controls are shown as hints along the bottom of the menu screen at all times.
+All navigation can be done with either a keyboard or arcade controls. Mappings are read from the AdvanceMAME configuration. A scrolling hint bar along the bottom of the screen shows available controls and high scores for the selected game.
 
 > **Note:** A keyboard may be needed initially to configure the button mappings for your arcade controls inside AdvanceMAME. Once mapped, the keyboard is no longer required.
 
@@ -117,7 +118,7 @@ All navigation can be done with either a keyboard or arcade controls. Mappings a
 | Left / Right (on a game) | Cycle through ROM variants (revisions, regions, prototypes) |
 | Select / Start | Launch the selected game |
 | Settings (Tab) | Cycle through settings and network pages |
-| Quit / Coin button | Exit the menu (press twice to confirm) |
+| Quit / Coin button | Reboot (press twice to confirm) |
 | Calibration button | Enter USB-DVG calibration mode (USB-DVG only) |
 
 ---
@@ -207,7 +208,7 @@ Two-player games that use twin sticks use both `p1_` and `p2_` actions for movem
 
 Wi-Fi is configured directly from the menu — no keyboard or SSH session required.
 
-1. Press **Tab** twice to reach the network page (game menu → settings → network) — the Wi-Fi scan may take up to 15 seconds to complete the first time
+1. Press **Tab** twice to reach the network page (game menu → settings → network) — the Wi-Fi network list scans in the background and updates automatically
 2. Use Left/Right on **WIFI NETWORK** to select your network from the scan results
 3. Navigate to **PASSWORD** and enter your password (Left/Right cycles characters, Up/Down moves the cursor)
 4. Navigate to **CONNECT** and press Select
@@ -220,9 +221,8 @@ The current connection status and IP address are shown at the top of the network
 
 | Timeout | Behavior |
 |---|---|
-| 5 seconds idle | Menu text fades; marquee image brightens |
-| 10 seconds idle | Text fully invisible; marquee fully visible |
-| 30 seconds idle | Screensaver activates; VectorPie logo displayed as marquee |
+| 65 seconds idle | Menu text begins to fade; marquee image brightens |
+| 90 seconds idle | Screensaver activates; VectorPie logo displayed as marquee |
 
 On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
 
@@ -238,6 +238,8 @@ Press **Tab** to cycle through the settings and network pages (game menu → set
 | ENABLE DVG | Enable/disable USB-DVG output |
 | OVERLAY | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
 | AUTO START GAME | Auto-launch the USB-DVG default game on startup |
+| SHOW BUTTON HINTS | Show control hints in the scrolling hint bar |
+| SHOW HIGH SCORES | Show high scores for the selected game in the scrolling hint bar |
 | AUDIO OUTPUT | Read-only display of the audio output device currently selected by the system |
 | MASTER VOLUME | System-wide volume (0–100%) |
 | SOUND ENABLED | Enable/disable all menu audio |
@@ -245,8 +247,42 @@ Press **Tab** to cycle through the settings and network pages (game menu → set
 | MUSIC VOLUME | Background music volume |
 | ZERO DEADZONE | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
 | ADSTICK DEVICE | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
+| EXPORT SETTINGS TO USB | Saves essential settings to a USB drive (see below) |
+| IMPORT SETTINGS FROM USB | Restores settings from a USB drive backup (see below) |
+| EXIT TO SHELL | Exits the menu to a Linux command prompt (for advanced users) |
 
 Changes are saved automatically when closing the settings menu.
+
+---
+
+## Export / Import Settings
+
+When reflashing the SD card with a new VectorPie image, all personalized settings are lost. The export/import feature lets you back up your settings to a USB drive before reflashing, then restore them on the new image.
+
+### What is backed up
+
+- **advmame.rc** — all input mappings, DVG settings, and audio configuration
+- **vector_pie_menu.cfg** — menu preferences (volumes, display toggles, etc.)
+- **gamelist.ini** — your customized game list
+- **High scores** — all `.hi` and NVRAM files, plus Battle Zone II and Geometry Wars save files
+- **Wi-Fi connections** — saved network credentials
+
+### How to use
+
+**Exporting (before reflashing):**
+
+1. Plug a USB drive into the Pi
+2. Open Settings and select **EXPORT SETTINGS TO USB**
+3. A `vectorpie_backup.tar.gz` file is created on the USB drive
+4. Remove the USB drive and reflash the SD card
+
+**Importing (after reflashing):**
+
+1. Boot the new VectorPie image and plug in the USB drive
+2. Open Settings and select **IMPORT SETTINGS FROM USB**
+3. Your settings are restored from the backup
+
+The USB drive is auto-detected — any mounted USB drive will work. A status message confirms success or indicates if no USB drive or backup file was found.
 
 ---
 
@@ -310,6 +346,18 @@ To enter calibration mode, press the Calibration button while the USB-DVG is ena
 | COLOR INTENSITY BARS | Graduated brightness bars in each color channel — useful for checking beam intensity and color balance |
 
 The current pattern name is shown on the HDMI-0 marquee display during calibration.
+
+---
+
+## High Scores
+
+The scrolling hint bar at the bottom of the screen displays high scores for the currently selected game. Scores are parsed directly from MAME high score (`.hi`) and NVRAM (`.nv`) save files using hi2txt XML definitions.
+
+High scores are color-coded for readability: the "HIGH SCORES:" label appears in gold, rank and score values in cyan, and player names in white. Button hints are shown in gray and alternate with the high scores in the scrolling ticker.
+
+Both the high score display and button hints can be individually toggled on or off from the Settings menu.
+
+> **Note:** High scores are only available for games that have a corresponding hi2txt XML definition and an existing save file. A `hiscore.dat` plugin must be installed in AdvanceMAME for it to create `.hi` files — see the [mame-hiscore](https://github.com/mamehiscore/mame-hiscore) project. Some games (Star Wars, Asteroids Deluxe, Red Baron) store scores in NVRAM files instead.
 
 ---
 
