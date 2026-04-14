@@ -1,3 +1,22 @@
+
+vectorpie-1.0-15-gdd32520.img.gz:
+
+● Release Notes
+
+  - High scores displayed in scrolling hint bar with color-coded entries
+  - Export/import settings, high scores, and Wi-Fi credentials to USB drive
+  - Settings menu opens instantly (Wi-Fi scans in background)
+  - ESC double-press now reboots instead of exiting
+  - EXIT TO SHELL option in settings menu for developer access
+  - F1 shortcut to exit to shell from reboot prompt
+  - Button hints and high scores individually toggleable
+  - Native game high scores supported (Battle Zone II, Geometry Wars)
+  - Geometry Wars high score entry screen re-enabled with improved layout
+  - USB-DVG firmware updated to 1.14R1
+
+
+Older versions:
+
 # Pi 5 "mame" — Custom Changes vs Stock Raspberry Pi OS Trixie Lite
 
 **Date:** April 4, 2026  
