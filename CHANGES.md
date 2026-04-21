@@ -1,6 +1,5 @@
 
-<!-- TODO: update filename -->
-vectorpie-<VERSION>.img.gz:
+### vectorpie-1.0-17-g3daddef.img.gz:
 
 ● Release Notes
 
@@ -22,7 +21,7 @@ vectorpie-<VERSION>.img.gz:
   - Optimized rendering of long high-score hint bars — scrolling is now smooth even with many entries
 
 
-vectorpie-1.0-15-gdd32520.img.gz:
+### vectorpie-1.0-15-gdd32520.img.gz:
 
 ● Release Notes
 
