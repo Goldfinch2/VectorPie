@@ -117,9 +117,9 @@ All navigation can be done with either a keyboard or arcade controls. Mappings a
 | Left / Right (on manufacturer header) | Switch to the previous or next manufacturer |
 | Left / Right (on a game) | Cycle through ROM variants (revisions, regions, prototypes) |
 | Select / Start | Launch the selected game |
-| Settings (Tab) | Cycle through settings and network pages |
-| Quit / Coin button | Reboot (press twice to confirm) |
-| Calibration button | Enter USB-DVG calibration mode (USB-DVG only) |
+| Settings | Cycle through settings and network pages |
+| Quit | Request reboot (then press Select to confirm) |
+| Coin button | Enter USB-DVG calibration mode (USB-DVG only) |
 
 ---
 
@@ -210,7 +210,7 @@ Wi-Fi is configured directly from the menu — no keyboard or SSH session requir
 
 1. Press **Tab** twice to reach the network page (game menu → settings → network) — the Wi-Fi network list scans in the background and updates automatically
 2. Use Left/Right on **WIFI NETWORK** to select your network from the scan results
-3. Navigate to **PASSWORD** and enter your password (Left/Right cycles characters, Up/Down moves the cursor)
+3. Navigate to **PASSWORD** and press Select to enter edit mode, then enter your password (Up/Down cycles characters, Left/Right moves the cursor; pressing Right at the end of the string appends a new character). Press Select again to commit, or the settings button to cancel.
 4. Navigate to **CONNECT** and press Select
 
 The current connection status and IP address are shown at the top of the network page.
@@ -242,13 +242,16 @@ Press **Tab** to cycle through the settings and network pages (game menu → set
 | SHOW HIGH SCORES | Show high scores for the selected game in the scrolling hint bar |
 | AUDIO OUTPUT | Read-only display of the audio output device currently selected by the system |
 | MASTER VOLUME | System-wide volume (0–100%) |
-| SOUND ENABLED | Enable/disable all menu audio |
-| SOUND VOLUME | Navigation/select effects volume |
+| MUSIC | Enable/disable background theme music |
 | MUSIC VOLUME | Background music volume |
+| THEME MUSIC | Select the background music track — choices are populated from `.mp3` and `.ogg` files found in the sounds directory. Selection previews live as you cycle. |
+| EFFECTS | Enable/disable menu navigation and select sound effects |
+| EFFECTS VOLUME | Navigation/select effects volume |
 | ZERO DEADZONE | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
 | ADSTICK DEVICE | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
 | EXPORT SETTINGS TO USB | Saves essential settings to a USB drive (see below) |
 | IMPORT SETTINGS FROM USB | Restores settings from a USB drive backup (see below) |
+| NETWORK | Connection status, IP address, and Wi-Fi configuration — see [Wi-Fi Configuration](#wi-fi-configuration) |
 | EXIT TO SHELL | Exits the menu to a Linux command prompt (for advanced users) |
 
 Changes are saved automatically when closing the settings menu.
@@ -262,10 +265,13 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 ### What is backed up
 
 - **advmame.rc** — all input mappings, DVG settings, and audio configuration
-- **vector_pie_menu.cfg** — menu preferences (volumes, display toggles, etc.)
+- **vector_pie_menu.cfg** — menu preferences (volumes, display toggles, selected theme music, etc.)
 - **gamelist.ini** — your customized game list
+- **Artwork** — marquee and overlay PNGs (including any you've customized or added)
+- **Theme music files** — any `.mp3` / `.ogg` tracks you've added to the sounds directory
 - **High scores** — all `.hi` and NVRAM files, plus Battle Zone II and Geometry Wars save files
 - **Wi-Fi connections** — saved network credentials
+- **`/boot/firmware/user-config.txt`** — your personal Pi boot overrides (this file is included from `config.txt` so you can edit it freely without conflicting with image updates)
 
 ### How to use
 
@@ -351,13 +357,11 @@ The current pattern name is shown on the HDMI-0 marquee display during calibrati
 
 ## High Scores
 
-The scrolling hint bar at the bottom of the screen displays high scores for the currently selected game. Scores are parsed directly from MAME high score (`.hi`) and NVRAM (`.nv`) save files using hi2txt XML definitions.
+The scrolling hint bar at the bottom of the screen displays high scores for the currently selected game. Scores are parsed directly from MAME high score (`.hi`) and NVRAM (`.nv`) save files.
 
 High scores are color-coded for readability: the "HIGH SCORES:" label appears in gold, rank and score values in cyan, and player names in white. Button hints are shown in gray and alternate with the high scores in the scrolling ticker.
 
 Both the high score display and button hints can be individually toggled on or off from the Settings menu.
-
-> **Note:** High scores are only available for games that have a corresponding hi2txt XML definition and an existing save file. A `hiscore.dat` plugin must be installed in AdvanceMAME for it to create `.hi` files — see the [mame-hiscore](https://github.com/mamehiscore/mame-hiscore) project. Some games (Star Wars, Asteroids Deluxe, Red Baron) store scores in NVRAM files instead.
 
 ---
 
@@ -403,9 +407,13 @@ Games sharing the same parent ROM are grouped as variants and cycled with Left/R
 | Marquee artwork | `/usr/local/share/advance/artwork/marquees` |
 | Overlay artwork | `/usr/local/share/advance/artwork/overlays` |
 
-Artwork images are PNGs. The filename must match the clone ROM name (e.g. `asteroid.png`). If no match is found, the parent ROM name is tried. For marquees, `default.png` is used as a final fallback if neither is found.
+Artwork images are PNGs. The filename must match the clone ROM name (e.g. `asteroid.png`), with case-insensitive matching so `Asteroid.PNG` also works. If no match is found, the parent ROM name is tried. For marquees, `default.png` is used as a final fallback if neither is found.
 
 Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces as underscores), e.g. `mfg_atari.png`. These are stored in the `artwork/marquees` directory.
+
+### Vectrex per-cart marquees
+
+Vectrex games run in MESS with the cartridge image loaded from the **fourth field** of `gamelist.ini` (the clone ROM field). For these titles the marquee filename is that field verbatim plus `.png`. For example, a row with clone ROM `lunar.bin` looks up `lunar.bin.png`. Matching is case-insensitive, so `Lunar.BIN.png` also works. If no per-cart marquee is found, `default.png` is used.
 
 ---
 
@@ -440,5 +448,3 @@ NET_INSTALL_ENABLED=0
 ```
 
 Save and reboot. The Pi will now boot directly from the local device every time.
-
-> **Note:** `NET_BOOT=0` does **not** fix this — `NET_BOOT` controls network boot (PXE/TFTP), while `NET_INSTALL_ENABLED` controls the Network Install recovery screen. They are separate settings.
