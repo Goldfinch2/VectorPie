@@ -168,39 +168,34 @@ Control mappings are configured **once inside AdvanceMAME** and apply automatica
 
 To remap controls, launch any AdvanceMAME game and use its input configuration menu. The new mappings take effect in the menu and all games immediately on the next launch.
 
-The menu reads the following AdvanceMAME input actions:
+The menu and the natively-compiled Pi games read the following AdvanceMAME input actions. The **Read by** column shows which programs honor each action — the VectorPie menu, Battle Zone II (`bzone2`), and Geometry Wars (`opengw`):
 
-| AdvanceMAME Action | Menu Function | Default Key |
-|---|---|---|
-| `ui_up` | Navigate up | Up Arrow |
-| `ui_down` | Navigate down | Down Arrow |
-| `ui_left` | Navigate left / previous manufacturer | Left Arrow |
-| `ui_right` | Navigate right / next manufacturer | Right Arrow |
-| `ui_select` | Launch selected game | 1, Enter, or Left Ctrl |
-| `ui_configure` | Open settings menu | Tab |
-| `ui_cancel` | Quit / exit | Escape |
-
-The calibration mode key (`5`) is fixed and cannot be remapped.
+| AdvanceMAME Action | Menu Function | Default Key | Read by |
+|---|---|---|---|
+| `ui_up` | Navigate up | Up Arrow | menu |
+| `ui_down` | Navigate down | Down Arrow | menu |
+| `ui_left` | Navigate left / previous manufacturer | Left Arrow | menu |
+| `ui_right` | Navigate right / next manufacturer | Right Arrow | menu |
+| `ui_select` | Launch selected game | 1, Enter, or Left Ctrl | menu |
+| `ui_configure` | Open settings menu | Tab | menu |
+| `ui_pause` | (not used by menu) | P | opengw (pause) |
+| `ui_cancel` | Quit / exit | Escape | menu, bzone2, opengw |
 
 ### Game Controls
 
-VectorPie games use several types of analog and digital controls. AdvanceMAME automatically maps connected hardware to the appropriate control type for each game.
+VectorPie games use several types of analog and digital controls. AdvanceMAME automatically maps connected hardware to the appropriate control type for each game. The **Read by** column shows which natively-compiled Pi games honor each action — AdvanceMAME-driven games read all of these regardless.
 
-| Control Type | AdvanceMAME Action | Typical Input |
-|---|---|---|
-| Directional movement | `p1_up/down/left/right` | Joystick, keyboard arrows |
-| Analog stick | `p1_stickx`, `p1_sticky` | Analog joystick |
-| Rotary spinner | `p1_dialx` | Spinner, mouse X axis |
-| Trackball | `p1_trackballx`, `p1_trackbally` | Trackball, mouse |
-| Mouse pointer | `p1_mousex`, `p1_mousey` | Mouse |
-| Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button |
-| Player 1 start | `start1` | 1 key |
-| Player 2 start | `start2` | 2 key |
-| Insert coin | `coin1` | 5 key |
+| Control Type | AdvanceMAME Action | Typical Input | Read by |
+|---|---|---|---|
+| Directional movement | `p1_up/down/left/right` | Joystick, keyboard arrows | bzone2, opengw (move) |
+| Twin-stick aim | `p2_up/down/left/right` | Second joystick, keyboard | opengw (aim) |
+| Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button | bzone2, opengw |
+| Player 1 start | `start1` | 1 key | bzone2, opengw |
+| Insert coin | `coin1` | 5 key | menu, bzone2, opengw |
 
 Two-player games that use twin sticks use both `p1_` and `p2_` actions for movement and aiming independently.
 
-> **Note:** A mouse and an analog joystick can be used simultaneously. For games that use an analog stick (Star Wars, Empire Strikes Back, Lunar Lander, Tail Gunner, Red Baron), the **ADSTICK DEVICE** setting in the Settings menu selects which device drives the control — JOYSTICK or MOUSE. Spinners and trackballs are not affected by this setting.
+> **Note:** A mouse and an analog joystick can be used simultaneously. For games that use an analog stick (Star Wars, Empire Strikes Back, Lunar Lander, Tail Gunner, Red Baron), the **CONTROLS → ADSTICK** setting in the Settings menu selects which device drives the control — JOYSTICK or MOUSE. Spinners and trackballs are not affected by this setting.
 
 ---
 
@@ -209,7 +204,7 @@ Two-player games that use twin sticks use both `p1_` and `p2_` actions for movem
 Wi-Fi is configured directly from the menu — no keyboard or SSH session required.
 
 1. Press **Tab** twice to reach the network page (game menu → settings → network) — the Wi-Fi network list scans in the background and updates automatically
-2. Use Left/Right on **WIFI NETWORK** to select your network from the scan results
+2. Use Left/Right on **WIFI** to select your network from the scan results
 3. Navigate to **PASSWORD** and press Select to enter edit mode, then enter your password (Up/Down cycles characters, Left/Right moves the cursor; pressing Right at the end of the string appends a new character). Press Select again to commit, or the settings button to cancel.
 4. Navigate to **CONNECT** and press Select
 
@@ -217,14 +212,41 @@ The current connection status and IP address are shown at the top of the network
 
 ---
 
+## Background Music
+
+VectorPie can play background music in the menu in either of two modes, selected from **Settings → MUSIC → TYPE**:
+
+- **THEME** — a single looping track chosen from `.mp3` / `.ogg` files placed in the themes directory. The track is selected from **MUSIC → THEME** in the Settings menu and previews live as you cycle through the choices.
+- **PLAYLIST** — every `.mp3` / `.ogg` file found in the playlist directory is added to a playlist that plays in alphabetical order, or in random order when **MUSIC → PLAYLIST SHUFFLE** is enabled. The next track starts automatically when the current one ends — including while the Settings menu is open.
+
+When a game is launched, the current playlist position is preserved. After the game exits the same track resumes from where it left off. The current and next playlist titles are shown beneath the logo on the screensaver.
+
+You can also bulk-load tracks from a USB drive using **Settings → MUSIC → IMPORT ⏏**. A single import handles both the playlist (from the drive's `playlist/` folder) and theme tracks (from the drive's `themes/` folder); whichever folder is missing is simply skipped. Left/Right toggles between **ADD** (merge with the existing tracks) and **REPLACE** (wipe each destination whose source folder is present). REPLACE asks for a second press to confirm.
+
+**Preparing the USB drive:**
+
+1. Format the drive as FAT32, exFAT, or NTFS on your PC/Mac (any common removable-drive format works)
+2. Create a `playlist/` folder at the root for playlist tracks, and/or a `themes/` folder at the root for theme tracks
+3. Copy your `.mp3` and `.ogg` files into the matching folder — files elsewhere on the drive are ignored
+4. Plug the drive into the Pi and run **Settings → MUSIC → IMPORT ⏏**
+
+The same drive can carry a `vectorpie_backup.tar.gz`, a `playlist/` folder, and a `themes/` folder at the same time. A status message on the row reports the result as `ADDED` or `REPLACED` followed by two numbers — *playlist / themes*, e.g. `ADDED 23/4`. If neither folder is present on the drive you get `NO playlist/ OR themes/`; if the folders are present but empty you get `NO TRACKS ON USB`.
+
+| File type | Location |
+|---|---|
+| Theme music tracks | `/usr/local/share/advance/themes` |
+| Playlist tracks | `/usr/local/share/advance/playlist` |
+
+---
+
 ## Idle Dimming & Screensaver
 
 | Timeout | Behavior |
 |---|---|
-| 65 seconds idle | Menu text begins to fade; marquee image brightens |
-| 90 seconds idle | Screensaver activates; VectorPie logo displayed as marquee |
+| 15 seconds idle | Menu text fades out over the next 15 seconds; marquee image brightens. Button hints remain visible. |
+| 60 seconds idle | Screensaver activates; VectorPie logo displayed as marquee |
 
-On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
+On the HDMI display the screensaver shows a bouncing VectorPie logo. When the music playlist is active, the current and next track titles are displayed beneath the logo. On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
 
 ---
 
@@ -232,27 +254,31 @@ On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie
 
 Press **Tab** to cycle through the settings and network pages (game menu → settings → network → game menu). Press **Escape** from any page to return directly to the game menu. Navigate with Up/Down; adjust values with Left/Right; press Select to toggle or activate.
 
-| Setting | Description |
-|---|---|
-| MARQUEE DISPLAY | Artwork scaling mode: FIT / STRETCH / ZOOM |
-| ENABLE DVG | Enable/disable USB-DVG output |
-| OVERLAY | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
-| AUTO START GAME | Auto-launch the USB-DVG default game on startup |
-| SHOW BUTTON HINTS | Show control hints in the scrolling hint bar |
-| SHOW HIGH SCORES | Show high scores for the selected game in the scrolling hint bar |
-| AUDIO OUTPUT | Read-only display of the audio output device currently selected by the system |
-| MASTER VOLUME | System-wide volume (0–100%) |
-| MUSIC | Enable/disable background theme music |
-| MUSIC VOLUME | Background music volume |
-| THEME MUSIC | Select the background music track — choices are populated from `.mp3` and `.ogg` files found in the sounds directory. Selection previews live as you cycle. |
-| EFFECTS | Enable/disable menu navigation and select sound effects |
-| EFFECTS VOLUME | Navigation/select effects volume |
-| ZERO DEADZONE | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
-| ADSTICK DEVICE | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
-| EXPORT SETTINGS TO USB | Saves essential settings to a USB drive (see below) |
-| IMPORT SETTINGS FROM USB | Restores settings from a USB drive backup (see below) |
-| NETWORK | Connection status, IP address, and Wi-Fi configuration — see [Wi-Fi Configuration](#wi-fi-configuration) |
-| EXIT TO SHELL | Exits the menu to a Linux command prompt (for advanced users) |
+The Settings page is organized into named sections (shown as bold cyan headers) — DISPLAY, HINT BAR, AUDIO, MUSIC, EFFECTS, CONTROLS, BACKUP, NETWORK, SYSTEM — with the rows below each header.
+
+| Section | Setting | Description |
+|---|---|---|
+| DISPLAY  | MARQUEE        | Marquee artwork scaling mode: FIT / STRETCH / ZOOM |
+| DISPLAY  | DVG            | Enable/disable USB-DVG output |
+| DISPLAY  | OVERLAY        | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
+| DISPLAY  | AUTOSTART GAME | Auto-launch the USB-DVG default game on startup |
+| HINT BAR | HINTS          | Show control hints in the scrolling hint bar |
+| HINT BAR | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
+| AUDIO    | OUTPUT         | Read-only short label of the audio output device in use (`USB`, `HEADPHONE`, or `SOUND HAT`) |
+| AUDIO    | MASTER VOLUME  | System-wide volume (0–100%) |
+| MUSIC    | VOLUME         | Background music volume |
+| MUSIC    | TYPE           | Source for background music: **THEME** (single looping track) or **PLAYLIST** (sequential or shuffled play of every track in the music directory). Switching takes effect immediately. |
+| MUSIC    | THEME          | Select the looping theme track — choices are populated from `.mp3` and `.ogg` files found in the themes directory. Selection previews live as you cycle. Grayed when TYPE is PLAYLIST. |
+| MUSIC    | PLAYLIST SHUFFLE | When on, the playlist plays in random order; when off, in alphabetical order. Grayed when TYPE is THEME. |
+| MUSIC    | IMPORT ⏏       | Copy `.mp3` / `.ogg` tracks from a USB drive — the drive's `playlist/` folder feeds the playlist and its `themes/` folder feeds the theme tracks, in a single action. Left/Right toggles between **ADD** (merge) and **REPLACE** (wipe existing tracks first, per side). REPLACE requires a second press to confirm. |
+| EFFECTS  | ENABLED        | Enable/disable menu navigation and select sound effects |
+| EFFECTS  | VOLUME         | Navigation/select effects volume |
+| CONTROLS | ZERO DEADZONE  | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
+| CONTROLS | ADSTICK        | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
+| BACKUP   | SAVE ⏏         | Saves essential settings to a USB drive (see below) |
+| BACKUP   | RESTORE ⏏      | Restores settings from a USB drive backup (see below) |
+| NETWORK  | (page)         | Connection status, IP address, and Wi-Fi configuration — see [Wi-Fi Configuration](#wi-fi-configuration) |
+| SYSTEM   | EXIT TO SHELL  | Exits the menu to a Linux command prompt (for advanced users) |
 
 Changes are saved automatically when closing the settings menu.
 
@@ -268,7 +294,8 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **vector_pie_menu.cfg** — menu preferences (volumes, display toggles, selected theme music, etc.)
 - **gamelist.ini** — your customized game list
 - **Artwork** — marquee and overlay PNGs (including any you've customized or added)
-- **Theme music files** — any `.mp3` / `.ogg` tracks you've added to the sounds directory
+- **Theme music files** — any `.mp3` / `.ogg` tracks you've added to the themes directory
+- **Playlist music files** — any `.mp3` / `.ogg` tracks you've added to the music directory
 - **High scores** — all `.hi` and NVRAM files, plus Battle Zone II and Geometry Wars save files
 - **Wi-Fi connections** — saved network credentials
 - **`/boot/firmware/user-config.txt`** — your personal Pi boot overrides (this file is included from `config.txt` so you can edit it freely without conflicting with image updates)
@@ -278,14 +305,14 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 **Exporting (before reflashing):**
 
 1. Plug a USB drive into the Pi
-2. Open Settings and select **EXPORT SETTINGS TO USB**
+2. Open Settings and select **BACKUP → SAVE ⏏**
 3. A `vectorpie_backup.tar.gz` file is created on the USB drive
 4. Remove the USB drive and reflash the SD card
 
 **Importing (after reflashing):**
 
 1. Boot the new VectorPie image and plug in the USB drive
-2. Open Settings and select **IMPORT SETTINGS FROM USB**
+2. Open Settings and select **BACKUP → RESTORE ⏏**
 3. Your settings are restored from the backup
 
 The USB drive is auto-detected — any mounted USB drive will work. A status message confirms success or indicates if no USB drive or backup file was found.
@@ -367,7 +394,7 @@ Both the high score display and button hints can be individually toggled on or o
 
 ## Launching Games
 
-Pressing Select on a game stops the theme music, suspends the display, and launches the game. After the game exits the menu resumes automatically. Any control mappings or settings changed inside AdvanceMAME take effect immediately.
+Pressing Select on a game fades out the music, suspends the display, and launches the game. After the game exits the menu resumes automatically and the music continues — a playlist track resumes from the position it was at when the game launched. Any control mappings or settings changed inside AdvanceMAME take effect immediately.
 
 ---
 
@@ -419,7 +446,19 @@ Vectrex games run in MESS with the cartridge image loaded from the **fourth fiel
 
 ## Troubleshooting
 
-**ENABLE DVG, OVERLAY, and AUTO START GAME are grayed out in Settings**
+**Do not read or write the SD card directly from a Windows PC or Mac**
+
+Even if your computer can mount the Pi's Linux partitions (modern Windows builds and various third-party tools support ext4), don't edit VectorPie's SD card from a host machine. The running system uses a layered overlay filesystem on top of the base image, so changes made out-of-band may be invisible at runtime, get shadowed by the overlay, or leave the system in an inconsistent state. Files written with the wrong ownership/permissions can also break the menu or game launches.
+
+To add ROMs, replace artwork, edit `gamelist.ini`, copy music, etc., always go through one of the supported paths instead:
+
+- **Network share** from your PC — `\\<pi-ip-address>\pi` (see [Accessing the Pi from a Windows PC](#accessing-the-pi-from-a-windows-pc))
+- **SSH** — `ssh pi@<pi-ip-address>`
+- **USB drive** — for music, use **Settings → MUSIC → IMPORT ⏏**; for backup/restore use **Settings → BACKUP → SAVE ⏏ / RESTORE ⏏**
+
+---
+
+**DVG, OVERLAY, and AUTOSTART GAME are grayed out in Settings**
 
 These options are unavailable because the USB-DVG board is not being detected. Check that the USB-DVG is securely connected to a USB port on the Pi and try again. Once detected, the options will become active.
 
@@ -427,7 +466,7 @@ These options are unavailable because the USB-DVG board is not being detected. C
 
 **Using a mouse yoke with an analog joystick also connected (Star Wars, ESB, Lunar Lander)**
 
-Games that use an analog stick control (Star Wars yoke, Lunar Lander thruster) default to using the analog joystick. To use a mouse or yoke controller instead, change **ADSTICK DEVICE** to **MOUSE** in the Settings menu. This makes the mouse exclusively drive those controls and the analog joystick will have no effect on them. Spinners, trackballs, and all other controls are unaffected by this setting.
+Games that use an analog stick control (Star Wars yoke, Lunar Lander thruster) default to using the analog joystick. To use a mouse or yoke controller instead, change **CONTROLS → ADSTICK** to **MOUSE** in the Settings menu. This makes the mouse exclusively drive those controls and the analog joystick will have no effect on them. Spinners, trackballs, and all other controls are unaffected by this setting.
 
 ---
 
