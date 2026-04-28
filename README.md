@@ -298,6 +298,7 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **Playlist music files** — any `.mp3` / `.ogg` tracks you've added to the music directory
 - **High scores** — all `.hi` and NVRAM files, plus Battle Zone II and Geometry Wars save files
 - **Wi-Fi connections** — saved network credentials
+- **Pi user password** — the `pi` account's login hash is captured surgically from `/etc/shadow` so you keep your password after reflashing without touching other system accounts
 - **`/boot/firmware/user-config.txt`** — your personal Pi boot overrides (this file is included from `config.txt` so you can edit it freely without conflicting with image updates)
 
 ### How to use
