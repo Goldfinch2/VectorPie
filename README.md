@@ -284,9 +284,9 @@ Changes are saved automatically when closing the settings menu.
 
 ---
 
-## Export / Import Settings
+## Backup Save / Restore
 
-When reflashing the SD card with a new VectorPie image, all personalized settings are lost. The export/import feature lets you back up your settings to a USB drive before reflashing, then restore them on the new image.
+When reflashing the SD card with a new VectorPie image, all personalized settings are lost. The backup feature lets you save your settings to a USB drive before reflashing, then restore them on the new image.
 
 ### What is backed up
 
@@ -298,19 +298,20 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **Playlist music files** — any `.mp3` / `.ogg` tracks you've added to the music directory
 - **High scores** — all `.hi` and NVRAM files, plus Battle Zone II and Geometry Wars save files
 - **Wi-Fi connections** — saved network credentials
-- **Pi user password** — the `pi` account's login hash is captured surgically from `/etc/shadow` so you keep your password after reflashing without touching other system accounts
+- **SSH host keys** — `/etc/ssh/ssh_host_*`, so SSH/PuTTY clients no longer complain about a changed host key after reflashing
+- **Pi user password** — your `pi` account password is preserved so you don't need to reset it after reflashing
 - **`/boot/firmware/user-config.txt`** — your personal Pi boot overrides (this file is included from `config.txt` so you can edit it freely without conflicting with image updates)
 
 ### How to use
 
-**Exporting (before reflashing):**
+**Saving (before reflashing):**
 
 1. Plug a USB drive into the Pi
 2. Open Settings and select **BACKUP → SAVE ⏏**
 3. A `vectorpie_backup.tar.gz` file is created on the USB drive
 4. Remove the USB drive and reflash the SD card
 
-**Importing (after reflashing):**
+**Restoring (after reflashing):**
 
 1. Boot the new VectorPie image and plug in the USB drive
 2. Open Settings and select **BACKUP → RESTORE ⏏**
