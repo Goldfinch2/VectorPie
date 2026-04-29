@@ -262,6 +262,7 @@ The Settings page is organized into named sections (shown as bold cyan headers) 
 | DISPLAY  | DVG            | Enable/disable USB-DVG output |
 | DISPLAY  | OVERLAY        | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
 | DISPLAY  | AUTOSTART GAME | Auto-launch the USB-DVG default game on startup |
+| DISPLAY  | MENU ON HDMI   | When USB-DVG is the primary view, show the game menu on HDMI alongside the vector display. When off, HDMI shows only the marquee artwork. |
 | HINT BAR | HINTS          | Show control hints in the scrolling hint bar |
 | HINT BAR | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
 | AUDIO    | OUTPUT         | Read-only short label of the audio output device in use (`USB`, `HEADPHONE`, or `SOUND HAT`) |
@@ -460,7 +461,7 @@ To add ROMs, replace artwork, edit `gamelist.ini`, copy music, etc., always go t
 
 ---
 
-**DVG, OVERLAY, and AUTOSTART GAME are grayed out in Settings**
+**DVG, OVERLAY, AUTOSTART GAME, and MENU ON HDMI are grayed out in Settings**
 
 These options are unavailable because the USB-DVG board is not being detected. Check that the USB-DVG is securely connected to a USB port on the Pi and try again. Once detected, the options will become active.
 
