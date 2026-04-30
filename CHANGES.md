@@ -1,5 +1,5 @@
 
-### Upcoming:
+### vectorpie-1.0-27-g6b95bb9.img.gz
 
 ● Release Notes
 
