@@ -1,4 +1,11 @@
 
+### Next release
+
+● Bug Fixes
+
+  - Diagnostic log (`vector_pie_menu.log`) is written reliably again — previously the file could be silently dropped at startup because it was opened relative to a working directory the menu no longer had write access to.
+
+
 ### vectorpie-1.0-27-g6b95bb9.img.gz
 
 ● Release Notes
