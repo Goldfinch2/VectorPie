@@ -204,7 +204,7 @@ Two-player games that use twin sticks use both `p1_` and `p2_` actions for movem
 Wi-Fi is configured directly from the menu — no keyboard or SSH session required.
 
 1. Press **Tab** to open Settings and scroll down to the **NETWORK** section — the Wi-Fi network list scans in the background and updates automatically
-2. Use Left/Right on **WIFI** to select your network from the scan results
+2. Use Left/Right on **WIFI NETWORK** to select your network from the scan results
 3. Navigate to **WIFI PASSWORD** and press Select to enter edit mode, then enter your password (Up/Down cycles characters, Left/Right moves the cursor; pressing Right at the end of the string appends a new character). Press Select again to commit, or the settings button to cancel.
 4. Navigate to **CONNECT** and press Select
 
@@ -278,9 +278,12 @@ The Settings page is organized into named sections (shown as bold cyan headers) 
 | CONTROLS | ADSTICK        | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
 | BACKUP   | SAVE ⏏         | Saves essential settings to a USB drive — see [Backup Save / Restore](#backup-save--restore) |
 | BACKUP   | RESTORE ⏏      | Restores settings from a USB drive backup — see [Backup Save / Restore](#backup-save--restore) |
+| NETWORK  | ETHERNET       | Enable or disable the wired Ethernet interface. Disabling forces the Pi to use Wi-Fi even when a cable is plugged in. State persists across reboots. |
+| NETWORK  | WIFI           | Enable or disable the Wi-Fi radio. Disabling stops Wi-Fi scanning and disconnects from the current network. State persists across reboots. |
+| NETWORK  | HOSTNAME       | Read-only — the Pi's hostname. Use it with `.local` to SSH or open the network share (e.g. `vectorpie.local`). Useful for telling cabs apart when more than one is on the network. |
 | NETWORK  | CONNECTION     | Read-only — current connection type and SSID (e.g. `WiFi (MyNetwork)` or `Ethernet`) |
 | NETWORK  | IP ADDRESS     | Read-only — the Pi's current IP address |
-| NETWORK  | WIFI           | Pick a Wi-Fi network from the scan results (auto-refreshes in the background) |
+| NETWORK  | WIFI NETWORK   | Pick a Wi-Fi network from the scan results (auto-refreshes in the background) |
 | NETWORK  | WIFI PASSWORD  | Enter the password for the selected Wi-Fi network — see [Wi-Fi Configuration](#wi-fi-configuration) |
 | NETWORK  | CONNECT        | Connect to the selected Wi-Fi network using the entered password |
 | SYSTEM   | EXIT TO SHELL  | Exits the menu to a Linux command prompt (for advanced users) |

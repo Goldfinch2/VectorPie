@@ -1,9 +1,16 @@
 
 ### Next release
 
+● Release Notes
+
+  - Made the network connection UI more intuitive and less confusing.
+  - Added the ability to enable or disable Wi-Fi or Ethernet.
+  - Hostname is now shown in the network settings.
+
 ● Bug Fixes
 
-  - Diagnostic log (`vector_pie_menu.log`) is written reliably again — previously the file could be silently dropped at startup because it was opened relative to a working directory the menu no longer had write access to.
+  - Diagnostic log (`vector_pie_menu.log`) is now written reliably.
+  - Backup/restore now captures more of your system configuration, so settings like the Wi-Fi enabled state survive a restore.
 
 
 ### vectorpie-1.0-27-g6b95bb9.img.gz
