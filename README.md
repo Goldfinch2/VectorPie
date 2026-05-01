@@ -283,9 +283,9 @@ The Settings page is organized into named sections (shown as bold cyan headers) 
 | NETWORK  | HOSTNAME       | Read-only — the Pi's hostname. Use it with `.local` to SSH or open the network share (e.g. `vectorpie.local`). Useful for telling cabs apart when more than one is on the network. |
 | NETWORK  | CONNECTION     | Read-only — current connection type and SSID (e.g. `WiFi (MyNetwork)` or `Ethernet`) |
 | NETWORK  | IP ADDRESS     | Read-only — the Pi's current IP address |
-| NETWORK  | WIFI NETWORK   | Pick a Wi-Fi network from the scan results (auto-refreshes in the background) |
+| NETWORK  | WIFI NETWORK   | Pick a Wi-Fi network from the scan results (auto-refreshes in the background). Defaults to the network you're currently on (or last used). |
 | NETWORK  | WIFI PASSWORD  | Enter the password for the selected Wi-Fi network — see [Wi-Fi Configuration](#wi-fi-configuration) |
-| NETWORK  | CONNECT        | Connect to the selected Wi-Fi network using the entered password |
+| NETWORK  | CONNECT        | Connect to the selected Wi-Fi network using the entered password. Grayed out when you're already on the highlighted network. |
 | SYSTEM   | EXIT TO SHELL  | Exits the menu to a Linux command prompt (for advanced users) |
 
 Changes are saved automatically when closing the settings menu.
