@@ -6,6 +6,8 @@
   - Made the network connection UI more intuitive and less confusing.
   - Added the ability to enable or disable Wi-Fi or Ethernet.
   - Hostname is now shown in the network settings.
+  - **VectorPie Radio**: each time the music playlist starts, a random DJ-announcement clip from the new `radio/` folder plays before the first track. Drop your own `.mp3`/`.ogg` files into `sounds/radio/` to customize.
+  - **Backup export safe-eject**: when saving a backup to USB, the menu now flushes caches, unmounts, and powers down the USB device before showing `SUCCESS` — the activity LED is off when you see the result, so it's truly safe to remove. An `EJECTING…` indicator is shown during the flush/detach phase.
 
 ● Bug Fixes
 
