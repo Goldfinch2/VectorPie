@@ -1,8 +1,9 @@
 
-### Next release
+### vectorpie-1.0-33-g867bdbc.img.gz
 
 ● Release Notes
 
+  - New game: vector kong.
   - Made the network connection UI more intuitive and less confusing.
   - Added the ability to enable or disable Wi-Fi or Ethernet.
   - Hostname is now shown in the network settings.
