@@ -1,4 +1,4 @@
-### Next release
+### vectorpie-1.0-39-g92d0753.img.gz
 
 ● Release Notes
 
