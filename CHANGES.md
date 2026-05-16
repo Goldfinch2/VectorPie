@@ -1,3 +1,18 @@
+### Next release
+
+● Release Notes
+
+  - **New vector game — Vector Galaga**: a vectorised rendering of Galaga, joining Vector Kong in the Other section of the game list.
+  - Added missing sample file for Vector Kong.
+  - **Screensaver video on marquee displays**: the screensaver video now scales to fill the screen width on wide-aspect marquees (e.g. 1920×360), keeping the picture full-width and cropping the height instead of letterboxing.
+  - **Now Playing readability on marquees**: on wide-aspect marquee displays, the NOW PLAYING / NEXT block uses a larger font with a thick black outline so titles stay readable against the screensaver video. Layout is anchored from the bottom so both NOW PLAYING and NEXT fit on short-aspect screens.
+  - **New MARQUEE scaling modes**: Settings → MARQUEE now offers **FIT WIDTH** (scale to screen width, crop/letterbox height) and **FIT HEIGHT** (scale to screen height, crop/pillarbox width) alongside the existing FIT / STRETCH / ZOOM. The new modes are honored everywhere marquee artwork is shown — the menu, AdvanceMAME, and the native games (Battle Zone II, Geometry Wars).
+  - **MAME Sound Quality preset**: new **Settings → AUDIO → MAME SOUND QUALITY** chooses **HIGH** / **MEDIUM** / **LOW**, applying a coordinated set of AdvanceMAME audio settings (sample rate, latency, normalization) to reduce crackling and boost performance on demanding games. **LOW** (11 kHz) is the most performant but makes speech games (Star Trek, Zektor, Space Fury) sound muffled; **HIGH** (48 kHz) is the default.
+
+● Bug Fixes
+
+  - **VectorPie Commercial title flicker**: the NOW PLAYING / NEXT labels no longer briefly swap to the next playlist track around a commercial break. Transitions are now monotonic: current track → "VectorPie Commercial" → next track, with no intermediate state visible.
+
 
 ### vectorpie-1.0-33-g867bdbc.img.gz
 

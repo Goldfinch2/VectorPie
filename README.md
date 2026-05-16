@@ -258,7 +258,7 @@ The Settings page is organized into named sections (shown as bold cyan headers) 
 
 | Section | Setting | Description |
 |---|---|---|
-| DISPLAY  | MARQUEE        | Marquee artwork scaling mode: FIT / STRETCH / ZOOM |
+| DISPLAY  | MARQUEE        | Marquee artwork scaling mode: FIT / STRETCH / ZOOM / FIT WIDTH / FIT HEIGHT |
 | DISPLAY  | DVG            | Enable/disable USB-DVG output |
 | DISPLAY  | OVERLAY        | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
 | DISPLAY  | AUTOSTART GAME | Auto-launch the USB-DVG default game on startup |
@@ -267,6 +267,7 @@ The Settings page is organized into named sections (shown as bold cyan headers) 
 | HINT BAR | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
 | AUDIO    | OUTPUT         | Read-only short label of the audio output device in use (`USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` when the device cannot be identified — typically the headphone jack on a Pi 4) |
 | AUDIO    | MASTER VOLUME  | System-wide volume (0–100%) |
+| AUDIO    | MAME SOUND QUALITY | Preset for AdvanceMAME audio: **HIGH** (48 kHz, full quality), **MEDIUM** (22 kHz, smoother on demanding games), or **LOW** (11 kHz, maximum performance — speech games such as Star Trek sound muffled). Writes coordinated values for `sound_samplerate`, `sound_latency`, and `sound_normalize` in `advmame.rc`. |
 | MUSIC    | VOLUME         | Background music volume |
 | MUSIC    | TYPE           | Source for background music: **THEME** (single looping track) or **PLAYLIST** (sequential or shuffled play of every track in the music directory). Switching takes effect immediately. |
 | MUSIC    | THEME          | Select the looping theme track — choices are populated from `.mp3` and `.ogg` files found in the themes directory. Selection previews live as you cycle. Grayed when TYPE is PLAYLIST. |
