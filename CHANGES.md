@@ -1,4 +1,17 @@
-### vectorpie-1.0-39-g92d0753.img.gz
+### vectorpie-1.0-NN (upcoming)
+
+● Release Notes
+
+  - **Final reflash — atomic in-place updates begin next release.** This is the last time you'll write a VectorPie image to your SD card. The on-disk layout changes to A/B base partitions plus a separate persistent partition for user state; from the next release onward, updates apply in place without reflashing and auto-roll-back if anything goes wrong. Before flashing this image, run **Settings → BACKUP → SAVE ⏏** on your existing card; after flashing, run **Settings → BACKUP → RESTORE ⏏** to bring your settings, Wi-Fi, high scores, music, and artwork onto the new layout. Minimum SD size is still 32 GB.
+  - Animated screensaver background — `vectorpie.mp4` plays on loop after the attract video; falls back to the still PNG if not present.
+  - Per-resolution artwork — `<image>.<height>.png` (e.g. `pacman.360.png`) is picked automatically when it matches the screen height; plain `<image>.png` remains the fallback.
+  - Settings menu polish — dark-purple outlined section headers, slightly larger; SETTINGS title lowered; column block centered as a unit.
+
+● Bug Fixes
+
+  - Galaga high scores in the hint bar were garbage; now decoded correctly.
+
+
 
 ● Release Notes
 

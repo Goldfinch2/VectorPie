@@ -244,9 +244,9 @@ The same drive can carry a `vectorpie_backup.tar.gz`, a `playlist/` folder, and 
 | Timeout | Behavior |
 |---|---|
 | 15 seconds idle | Menu text fades out over the next 15 seconds; marquee image brightens. Button hints remain visible. |
-| 60 seconds idle | Screensaver activates; VectorPie logo displayed as marquee |
+| 60 seconds idle | Screensaver activates: short attract video plays, then `vectorpie.mp4` loops as the background |
 
-On the HDMI display the screensaver shows a bouncing VectorPie logo. When the music playlist is active, the current and next track titles are displayed beneath the logo. On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
+On the HDMI display the screensaver first plays a short attract video, then loops `vectorpie.mp4` as the background. If no MP4 is present it falls back to the still `vectorpie.png` logo. When the music playlist is active, the current and next track titles overlay on top. On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
 
 ---
 
@@ -254,7 +254,7 @@ On the HDMI display the screensaver shows a bouncing VectorPie logo. When the mu
 
 Press **Tab** to open the settings menu (Tab again, or **Escape**, returns to the game menu). Navigate with Up/Down; adjust values with Left/Right; press Select to toggle or activate.
 
-The Settings page is organized into named sections (shown as bold cyan headers) — DISPLAY, HINT BAR, AUDIO, MUSIC, EFFECTS, CONTROLS, BACKUP, NETWORK, SYSTEM — with the rows below each header.
+The Settings page is organized into named sections (shown as bold purple headers) — DISPLAY, HINT BAR, AUDIO, MUSIC, EFFECTS, CONTROLS, BACKUP, NETWORK, SYSTEM — with the rows below each header.
 
 | Section | Setting | Description |
 |---|---|---|
@@ -448,6 +448,10 @@ Games sharing the same parent ROM are grouped as variants and cycled with Left/R
 Artwork images are PNGs. The filename must match the clone ROM name (e.g. `asteroid.png`), with case-insensitive matching so `Asteroid.PNG` also works. If no match is found, the parent ROM name is tried. For marquees, `default.png` is used as a final fallback if neither is found.
 
 Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces as underscores), e.g. `mfg_atari.png`. These are stored in the `artwork/marquees` directory.
+
+### Per-resolution variants
+
+Any image (marquee, overlay, or the settings background) may ship a resolution-specific variant alongside the default by inserting the screen height before `.png`: `<name>.<height>.png`. On a 1920×360 marquee panel, `pacman.360.png` is picked first; on a 1080p screen, `pacman.1080.png` is picked first; if no suffixed variant exists, plain `pacman.png` is used. Useful when you want the same cab to drive a wide marquee panel and a normal HDMI monitor with different artwork on each.
 
 ### Vectrex per-cart marquees
 
