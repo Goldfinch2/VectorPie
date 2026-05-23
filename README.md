@@ -463,7 +463,7 @@ Vectrex games run in MESS with the cartridge image loaded from the **fourth fiel
 
 **Do not read or write the SD card directly from a Windows PC or Mac**
 
-Even if your computer can mount the Pi's Linux partitions (modern Windows builds and various third-party tools support ext4), don't edit VectorPie's SD card from a host machine. The running system uses a layered overlay filesystem on top of the base image, so changes made out-of-band may be invisible at runtime, get shadowed by the overlay, or leave the system in an inconsistent state. Files written with the wrong ownership/permissions can also break the menu or game launches.
+Even if your computer can mount the Pi's Linux partitions (modern Windows builds and various third-party tools support ext4), don't edit VectorPie's SD card from a host machine. Files written with the wrong ownership/permissions can break the menu or game launches, and there's no good way to verify state changes without booting the Pi.
 
 To add ROMs, replace artwork, edit `gamelist.ini`, copy music, etc., always go through one of the supported paths instead:
 

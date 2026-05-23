@@ -3,6 +3,8 @@
 ● Release Notes
 
   - **Final reflash — atomic in-place updates begin next release.** This is the last time you'll write a VectorPie image to your SD card. The on-disk layout changes to A/B base partitions plus a separate persistent partition for user state; from the next release onward, updates apply in place without reflashing and auto-roll-back if anything goes wrong. Before flashing this image, run **Settings → BACKUP → SAVE ⏏** on your existing card; after flashing, run **Settings → BACKUP → RESTORE ⏏** to bring your settings, Wi-Fi, high scores, music, and artwork onto the new layout. Minimum SD size is still 32 GB.
+  - **Removed the AdvanceMAME OverlayFS.** `/usr/local/share/advance/` is now a plain directory on the rootfs. Streamlines updates (writes go directly to the live tree) and removes a frequent source of "I installed it but the change didn't take effect" confusion.
+  - **Tightened backup contents.** Backups now capture only the locked critical-file set (settings, configs, high scores, Wi-Fi/SSH credentials, etc.) — not ROMs, samples, or customized artwork. Backup tarballs are now KB-sized instead of GB. Older backups still restore correctly: only the critical subset is applied; extra content in the archive is ignored.
   - Animated screensaver background — `vectorpie.mp4` plays on loop after the attract video; falls back to the still PNG if not present.
   - Per-resolution artwork — `<image>.<height>.png` (e.g. `pacman.360.png`) is picked automatically when it matches the screen height; plain `<image>.png` remains the fallback.
   - Settings menu polish — dark-purple outlined section headers, slightly larger; SETTINGS title lowered; column block centered as a unit.
