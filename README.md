@@ -142,22 +142,6 @@ The artwork scaling mode (Fit, Stretch, or Zoom) can be changed in the Settings 
 
 ---
 
-## HDMI-1 Overlay Display
-
-VectorPie supports a second display on HDMI-1 configured to show overlay artwork alongside the vector CRT, so both are visible to the player simultaneously. The overlay image is driven by the Pi's second HDMI output and displays game-specific artwork that complements the vector display — replicating the color overlays used in the original arcade cabinets.
-
-When a game is launched, VectorPie automatically loads the matching overlay image onto the second display. The image remains static for the duration of the session. When the game exits the overlay window is closed.
-
-Overlay lookup follows this order:
-
-1. The clone ROM name is tried first (e.g. `asteroid.png` for the `asteroid` ROM)
-2. If not found, the parent ROM name is tried
-3. If neither is found, no overlay is shown and the second display is left blank
-
-The image is scaled to fit the display's resolution while preserving aspect ratio (letterboxed or pillarboxed as needed).
-
----
-
 ## Input Mapping
 
 Control mappings are configured **once inside AdvanceMAME** and apply automatically everywhere:
@@ -262,7 +246,8 @@ The Settings page is organized into named sections (shown as bold purple headers
 | DISPLAY  | DVG            | Enable/disable USB-DVG output |
 | DISPLAY  | OVERLAY        | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
 | DISPLAY  | AUTOSTART GAME | Auto-launch the USB-DVG default game on startup |
-| DISPLAY  | MENU ON HDMI   | When USB-DVG is the primary view, show the game menu on HDMI alongside the vector display. When off, HDMI shows only the marquee artwork. |
+| DISPLAY  | MENU ON HDMI   | When USB-DVG is the primary view, show the game menu on HDMI alongside the vector display. When off, HDMI shows only the marquee (and hint bar if enabled). |
+| DISPLAY  | SHOW GAME PREVIEW | After 15 s of idle on a game, play its preview video (if available at `/usr/local/share/advance/video/<rom>.mp4`) over the marquee. Default on. |
 | HINT BAR | HINTS          | Show control hints in the scrolling hint bar |
 | HINT BAR | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
 | AUDIO    | OUTPUT         | Read-only short label of the audio output device in use (`USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` when the device cannot be identified — typically the headphone jack on a Pi 4) |
@@ -302,14 +287,14 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **advmame.rc** — all input mappings, DVG settings, and audio configuration
 - **vector_pie_menu.cfg** — menu preferences (volumes, display toggles, selected theme music, etc.)
 - **gamelist.ini** — your customized game list
-- **Artwork** — marquee and overlay PNGs (including any you've customized or added)
 - **Theme music files** — any `.mp3` / `.ogg` tracks you've added to the themes directory
-- **Playlist music files** — any `.mp3` / `.ogg` tracks you've added to the music directory
-- **High scores** — all `.hi` and NVRAM files, plus Battle Zone II and Geometry Wars save files
+- **Playlist music files** — any `.mp3` / `.ogg` tracks you've added to the playlist directory
+- **High scores** — all `.hi` and NVRAM files, plus Battle Zone II, Geometry Wars, and Tempest II save files
 - **Wi-Fi connections** — saved network credentials
 - **SSH host keys** — `/etc/ssh/ssh_host_*`, so SSH/PuTTY clients no longer complain about a changed host key after reflashing
 - **Pi user password** — your `pi` account password is preserved so you don't need to reset it after reflashing
 - **`/boot/firmware/user-config.txt`** — your personal Pi boot overrides (this file is included from `config.txt` so you can edit it freely without conflicting with image updates)
+- **`/boot/firmware/cmdline.txt` (partial)** — only the `video=` display-mode token is restored from the backup; the live `root=PARTUUID=…` and other kernel arguments are preserved untouched. (Customizations to ROMs, sample sounds, marquee PNGs, and other large user-modifiable content are *not* included in the backup.)
 
 ### How to use
 
@@ -443,7 +428,7 @@ Games sharing the same parent ROM are grouped as variants and cycled with Left/R
 | ROMs | `/usr/local/share/advance/rom` |
 | Samples | `/usr/local/share/advance/sample` |
 | Marquee artwork | `/usr/local/share/advance/artwork/marquees` |
-| Overlay artwork | `/usr/local/share/advance/artwork/overlays` |
+| Game preview videos | `/usr/local/share/advance/video` |
 
 Artwork images are PNGs. The filename must match the clone ROM name (e.g. `asteroid.png`), with case-insensitive matching so `Asteroid.PNG` also works. If no match is found, the parent ROM name is tried. For marquees, `default.png` is used as a final fallback if neither is found.
 
@@ -451,7 +436,7 @@ Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces
 
 ### Per-resolution variants
 
-Any image (marquee, overlay, or the settings background) may ship a resolution-specific variant alongside the default by inserting the screen height before `.png`: `<name>.<height>.png`. On a 1920×360 marquee panel, `pacman.360.png` is picked first; on a 1080p screen, `pacman.1080.png` is picked first; if no suffixed variant exists, plain `pacman.png` is used. Useful when you want the same cab to drive a wide marquee panel and a normal HDMI monitor with different artwork on each.
+Any image (marquee or the settings background) may ship a resolution-specific variant alongside the default by inserting the screen height before `.png`: `<name>.<height>.png`. On a 1920×360 marquee panel, `pacman.360.png` is picked first; on a 1080p screen, `pacman.1080.png` is picked first; if no suffixed variant exists, plain `pacman.png` is used. Useful when you want the same cab to drive a wide marquee panel and a normal HDMI monitor with different artwork on each.
 
 ### Vectrex per-cart marquees
 
