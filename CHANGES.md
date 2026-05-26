@@ -1,12 +1,11 @@
 ### vectorpie-v1.1.1 (upcoming)
 
-● Bug Fixes (OTA / Settings)
+● Bug Fixes
 
-  - **OTA SHA256 verify**: the menu's and `vectorpie-apply-update`'s integrity checks compared the staged file by name against a sidecar that references the original `vectorpie-base-<tag>.img.gz` filename. Switched to direct hash comparison so the rename of the download to `staged.img.gz` no longer trips the check. (Symptom: `VERIFY FAILED` immediately after download.)
-  - **OTA target device on NVMe**: inactive-partition detection in the menu and `pi_prepare.sh` only handled `mmcblkX` (with `p` separator). On NVMe disks (`nvme0n1`), the partition device was synthesised as `nvme0n13` instead of `nvme0n1p3`. Fix: detect any disk name ending in a digit.
-  - **`tryboot.txt` required on newer Pi 5 EEPROM**: `pi_prepare.sh` used to remove `/boot/firmware/tryboot.txt` as a leftover from spike work. Newer EEPROM bootloader versions (≥ 2026-02) require the file to exist when tryboot is invoked, otherwise boot fails with "No bootable partitions". `pi_prepare.sh` no longer removes it.
-  - **Restore deadlock on boot**: `backup_restore()`'s post-restore `systemctl restart ssh.service` deadlocked at boot because the restore service is ordered `Before=ssh.service` (waiting for ssh, which waits for the restore to finish). Switched to `timeout 5 systemctl reload ssh.service` — bounded, non-blocking, and existing sessions are unaffected.
-  - **Wi-Fi password not persisted**: the menu's Wi-Fi connect path could leave the saved profile with `psk-flags!=0` (agent-owned), so reconnecting required re-entering the password and backup/restore couldn't capture it. Rewrote to always rebuild the profile fresh with `psk-flags=0` and `psk` baked into the keyfile, ensuring the password persists on disk and round-trips through backup/restore.
+  - **OTA updates**: fixed `VERIFY FAILED` right after download, and fixed OTA targeting the wrong partition on NVMe drives.
+  - **Boot on newer Pi 5 EEPROM**: stopped removing `/boot/firmware/tryboot.txt`, which newer bootloaders require.
+  - **Backup restore no longer hangs at boot.**
+  - **Wi-Fi password**: now reliably saved on connect and preserved across backup/restore — no more re-entering it after a reconnect.
 
 ### vectorpie-v1.1.0
 
