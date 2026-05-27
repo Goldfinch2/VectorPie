@@ -1,4 +1,34 @@
-### vectorpie-1.0-39-g92d0753.img.gz
+### vectorpie-v1.1.1 (upcoming)
+
+● Bug Fixes
+
+  - **OTA updates**: fixed `VERIFY FAILED` right after download, and fixed OTA targeting the wrong partition on NVMe drives.
+  - **Boot on newer Pi 5 EEPROM**: stopped removing `/boot/firmware/tryboot.txt`, which newer bootloaders require.
+  - **Backup restore no longer hangs at boot.**
+  - **Wi-Fi password**: now reliably saved on connect and preserved across backup/restore — no more re-entering it after a reconnect.
+
+### vectorpie-v1.1.0
+
+● Release Notes
+
+  - **Game preview videos**: after 15 seconds of idle on a game selection, the game's preview video plays over the marquee. Ships with ~40 vector-arcade preview MP4s at 1920×360 (no audio). New **Settings → DISPLAY → SHOW GAME PREVIEW** toggle (default on). User-supplied videos are picked up from `/usr/local/share/advance/video/<parentRom>.mp4`.
+  - **Hint bar visible without the pie menu**: when **MENU ON HDMI** is off, the hint bar still appears on the marquee provided **SHOW BUTTON HINTS** or **SHOW HIGH SCORES** is enabled.
+  - **Hint bar text legibility**: every non-pill hint segment now renders with a 2-pixel black outline so titles stay readable against bright marquee backgrounds.
+  - **Settings header polish**: the big "SETTINGS" title is now purple to match the section headers.
+  - **HDMI-1 overlay display removed**: the second HDMI output is no longer used for per-game color overlay artwork. ~171 MB of overlay PNGs removed from the image.
+  - **Backup/restore now preserves cmdline.txt PARTUUID**: when a backup is restored, the snapshot's cmdline.txt is no longer written over the live one. Only the `video=` (display-mode) token from the snapshot is merged into the live cmdline.txt; PARTUUID and other system tokens stay untouched. Fixes a class of post-restore boot failures when restoring across A/B-partition swaps or different installs.
+  - **Final reflash — atomic in-place updates begin next release.** This is the last time you'll write a VectorPie image to your SD card. The on-disk layout changes to A/B base partitions plus a separate persistent partition for user state; from the next release onward, updates apply in place without reflashing and auto-roll-back if anything goes wrong. Before flashing this image, run **Settings → BACKUP → SAVE ⏏** on your existing card; after flashing, run **Settings → BACKUP → RESTORE ⏏** to bring your settings, Wi-Fi, high scores, music, and artwork onto the new layout. Minimum SD size is still 32 GB.
+  - **Removed the AdvanceMAME OverlayFS.** `/usr/local/share/advance/` is now a plain directory on the rootfs. Streamlines updates (writes go directly to the live tree) and removes a frequent source of "I installed it but the change didn't take effect" confusion.
+  - **Tightened backup contents.** Backups now capture only the locked critical-file set (settings, configs, high scores, Wi-Fi/SSH credentials, etc.) — not ROMs, samples, or customized artwork. Backup tarballs are now KB-sized instead of GB. Older backups still restore correctly: only the critical subset is applied; extra content in the archive is ignored.
+  - Animated screensaver background — `vectorpie.mp4` plays on loop after the attract video; falls back to the still PNG if not present.
+  - Per-resolution artwork — `<image>.<height>.png` (e.g. `pacman.360.png`) is picked automatically when it matches the screen height; plain `<image>.png` remains the fallback.
+  - Settings menu polish — dark-purple outlined section headers, slightly larger; SETTINGS title lowered; column block centered as a unit.
+
+● Bug Fixes
+
+  - Galaga high scores in the hint bar were garbage; now decoded correctly.
+
+
 
 ● Release Notes
 
