@@ -15,6 +15,7 @@ Key features:
 - **High scores** — scrolling hint bar displays high scores parsed directly from MAME save files for the selected game
 - **Wi-Fi configuration** — connect to a wireless network directly from the menu
 - **Remote access** — built-in SSH server and Windows network share for easy file management from a PC
+- **Software updates from the menu** — check for and apply new VectorPie versions directly from the Settings menu, with automatic rollback if an update fails to boot
 
 VectorPie is compatible with the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
@@ -272,6 +273,7 @@ The Settings page is organized into named sections (shown as bold purple headers
 | NETWORK  | WIFI NETWORK   | Pick a Wi-Fi network from the scan results (auto-refreshes in the background). Defaults to the network you're currently on (or last used). |
 | NETWORK  | WIFI PASSWORD  | Enter the password for the selected Wi-Fi network — see [Wi-Fi Configuration](#wi-fi-configuration) |
 | NETWORK  | CONNECT        | Connect to the selected Wi-Fi network using the entered password. Grayed out when you're already on the highlighted network. |
+| SYSTEM   | CHECK FOR UPDATES | Check online for a newer VectorPie version and apply it in place. First press performs the check; when an update is available, a second press downloads, verifies, and applies it, then reboots. See [Software Updates](#software-updates). |
 | SYSTEM   | EXIT TO SHELL  | Exits the menu to a Linux command prompt (for advanced users) |
 
 Changes are saved automatically when closing the settings menu.
@@ -294,7 +296,18 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **SSH host keys** — `/etc/ssh/ssh_host_*`, so SSH/PuTTY clients no longer complain about a changed host key after reflashing
 - **Pi user password** — your `pi` account password is preserved so you don't need to reset it after reflashing
 - **`/boot/firmware/user-config.txt`** — your personal Pi boot overrides (this file is included from `config.txt` so you can edit it freely without conflicting with image updates)
-- **`/boot/firmware/cmdline.txt` (partial)** — only the `video=` display-mode token is restored from the backup; the live `root=PARTUUID=…` and other kernel arguments are preserved untouched. (Customizations to ROMs, sample sounds, marquee PNGs, and other large user-modifiable content are *not* included in the backup.)
+- **`/boot/firmware/cmdline.txt` (partial)** — only the `video=` display-mode token is restored from the backup; the live `root=PARTUUID=…` and other kernel arguments are preserved untouched.
+
+### What is *not* backed up
+
+Bulky content you've added or customized via the network share is **not** included in the backup. If you want this content to survive reflashing or a software update, copy it off the Pi separately:
+
+- **ROMs** you've added — `/usr/local/share/advance/rom/`
+- **Sound samples** you've added — `/usr/local/share/advance/sample/`
+- **Artwork** you've added or replaced — marquees, manufacturer logos, and overlay artwork, all under `/usr/local/share/advance/artwork/`
+- **Game preview videos** you've added — `/usr/local/share/advance/video/`
+
+Shipped ROMs, samples, and artwork that come with VectorPie are part of the base image and are present automatically on a fresh install and after a software update.
 
 ### How to use
 
@@ -312,6 +325,37 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 3. Your settings are restored from the backup
 
 The USB drive is auto-detected — any mounted USB drive will work. A status message confirms success or indicates if no USB drive or backup file was found.
+
+---
+
+## Software Updates
+
+VectorPie can update itself in place over the internet — no SD card removal or reflashing needed for normal updates.
+
+### How to update
+
+1. Make sure the Pi is connected to a network (see [Wi-Fi Configuration](#wi-fi-configuration))
+2. Open Settings and navigate to **SYSTEM → CHECK FOR UPDATES**
+3. Press Select. The row updates to one of:
+   - **CHECKING** — contacting the update server
+   - **UP TO DATE (*version*)** — you're already on the latest release
+   - **UPDATE AVAILABLE: *version*** — a newer version is available
+   - **OFFLINE** — the Pi could not reach the update server
+4. When an update is available, press Select again to apply it. The row progresses through **DOWNLOADING → VERIFYING → APPLYING**, then the Pi reboots into the new version automatically.
+
+The full update typically takes a few minutes depending on your network speed. Keep the Pi powered throughout — the update is safe to interrupt with power loss (the previous version is preserved until the new one boots successfully), but waiting it out is simpler.
+
+### What carries over
+
+Updates preserve the same files as a USB backup — Wi-Fi credentials, all settings, input mappings, high scores, theme music, playlists, customized game list, SSH host keys, and the Pi user password. See [What is backed up](#what-is-backed-up) for the full list.
+
+### What does *not* carry over
+
+Updates do not carry over user-added ROMs, samples, artwork, or game preview videos — see [What is *not* backed up](#what-is-not-backed-up) for the full list and locations. **If you've added your own content via the network share, copy it off the Pi (or to another machine on your network) before applying an update.** You can re-add it via the network share afterward.
+
+### If an update fails
+
+VectorPie keeps two copies of itself on the SD card. If a new version fails to boot cleanly, the Pi automatically reverts to the previous version on the next reboot — nothing is lost, and you can retry the update later or skip the failed release.
 
 ---
 
