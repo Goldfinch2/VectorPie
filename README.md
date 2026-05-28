@@ -23,8 +23,8 @@ VectorPie is compatible with the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ## Supported Hardware
 
-- Raspberry Pi 4 (4 GB or 8 GB) or Raspberry Pi 5 (4 GB or 8 GB)
-- 32 GB SD card or larger
+- Raspberry Pi 4 (1 GB+) or Raspberry Pi 5 (1 GB+)
+- 32 GB SD card or larger.
 
 ---
 
