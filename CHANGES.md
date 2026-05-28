@@ -23,7 +23,7 @@
 
   - Galaga high scores in the hint bar were garbage; now decoded correctly.
 
-
+### vectorpie-1.0-33-g867bdbc
 
 ● Release Notes
 
