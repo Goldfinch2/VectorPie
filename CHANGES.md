@@ -3,7 +3,7 @@
 
 ● Release Notes
 
-  - **Support for OTA updates. Settings → SYSTEM → CHECK FOR UPDATES, press twice, the Pi reboots into the new version. Your Wi-Fi, settings, high scores, and music are restored after the update.
+  - Support for OTA updates. Settings → SYSTEM → CHECK FOR UPDATES, press twice, the Pi reboots into the new version. Your Wi-Fi, settings, high scores, and music are restored after the update.
 
   - **Game preview videos**: after 15 seconds of idle on a game selection, the game's preview video plays over the marquee. Ships with ~40 vector-arcade preview MP4s at 1920×360 (no audio). New **Settings → DISPLAY → SHOW GAME PREVIEW** toggle (default on).
 
