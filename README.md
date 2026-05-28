@@ -343,7 +343,7 @@ VectorPie can update itself in place over the internet — no SD card removal or
    - **OFFLINE** — the Pi could not reach the update server
 4. When an update is available, press Select again to apply it. The row progresses through **DOWNLOADING → VERIFYING → APPLYING**, then the Pi reboots into the new version automatically.
 
-The full update typically takes a few minutes depending on your network speed. Keep the Pi powered throughout — the update is safe to interrupt with power loss (the previous version is preserved until the new one boots successfully), but waiting it out is simpler.
+The full update typically takes a 10-15 minutes depending on your network speed and backup size. Keep the Pi powered throughout — the update is safe to interrupt with power loss (the previous version is preserved until the new one boots successfully), but waiting it out is simpler.
 
 ### What carries over
 
