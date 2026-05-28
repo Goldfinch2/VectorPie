@@ -12,8 +12,6 @@
   - **Hint bar text legibility**: every non-pill hint segment now renders with a 2-pixel black outline so titles stay readable against bright marquee backgrounds.
 
   - **HDMI-1 overlay display removed**: the second HDMI output is no longer used for per-game color overlay artwork. ~171 MB of overlay PNGs removed from the image.
-
-  - **Backup/restore now preserves cmdline.txt PARTUUID**: when a backup is restored, the snapshot's cmdline.txt is no longer written over the live one. Only the `video=` (display-mode) token from the snapshot is merged into the live cmdline.txt; PARTUUID and other system tokens stay untouched. Fixes a class of post-restore boot failures when restoring across A/B-partition swaps or different installs.
 
   - **Tightened backup contents.** Backups now capture only the locked critical-file set (settings, configs, high scores, Wi-Fi/SSH credentials, etc.) — not ROMs, samples, or customized artwork. Older backups still restore correctly: only the critical subset is applied; extra content in the archive is ignored.
 
