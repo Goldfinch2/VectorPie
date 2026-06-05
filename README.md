@@ -153,6 +153,21 @@ Control mappings are configured **once inside AdvanceMAME** and apply automatica
 
 To remap controls, launch any AdvanceMAME game and use its input configuration menu. The new mappings take effect in the menu and all games immediately on the next launch.
 
+> When the USB-DVG is connected, AdvanceMAME's in-game menus — including the **input configuration** screen — are mirrored on the vector display as you navigate them, in parallel with HDMI, so you can rebind while watching the vector monitor. Bindings appear in a compact, all-caps form there (e.g. `J:BTN1` = joystick button 1, `LCTRL`, `P:1` = keypad 1); HDMI still shows the full names. This works over any game, vector or raster.
+
+### Rebinding from the menu
+
+You can also rebind the common controls **directly from the VectorPie menu** — no keyboard or AdvanceMAME game needed. Open **Settings → CONTROLS**, where the config-menu and cancel controls (**UI CONFIG**, **UI CANCEL**) are listed first, followed by the player controls (P1/P2 directions, fire, start, coin, pause), each with its current binding:
+
+- Highlight a control and press **Select**, then press the key, button, or joystick direction you want. The binding builds up live (e.g. press `p` then `6` shows `p or 6`).
+- Press **several** inputs to add "or" alternatives (e.g. a key *and* a joystick direction).
+- Press your **Cancel** control to save — so a rebind can be finished entirely from the cabinet, with no keyboard. (An abandoned capture also auto-saves after 20 seconds.)
+- When rebinding the **Cancel** control itself, save with **Escape** instead (it can't use itself to finish).
+- **Left / Right** resets a control to its default.
+- The **cancel** control always keeps Escape and the **config-menu** control always keeps Tab, so you can never lock yourself out of quitting or the in-game configuration menu.
+
+These write to the same AdvanceMAME configuration as above, so the changes apply to the menu, AdvanceMAME games, and the native Pi games alike.
+
 The menu and the natively-compiled Pi games read the following AdvanceMAME input actions. The **Read by** column shows which programs honor each action — the VectorPie menu, Battle Zone II (`bzone2`), and Geometry Wars (`opengw`):
 
 | AdvanceMAME Action | Menu Function | Default Key | Read by |
@@ -190,7 +205,7 @@ Wi-Fi is configured directly from the menu — no keyboard or SSH session requir
 
 1. Press **Tab** to open Settings and scroll down to the **NETWORK** section — the Wi-Fi network list scans in the background and updates automatically
 2. Use Left/Right on **WIFI NETWORK** to select your network from the scan results
-3. Navigate to **WIFI PASSWORD** and press Select to enter edit mode, then enter your password (Up/Down cycles characters, Left/Right moves the cursor; pressing Right at the end of the string appends a new character). Press Select again to commit, or the settings button to cancel.
+3. Navigate to **WIFI PASSWORD** and press Select to enter edit mode, then enter your password: **Up/Down** cycle the character under the cursor (the last choice is **DEL**, to delete), **Left/Right** move between characters (pressing **Right** past the last character adds a new one), **Select** picks the character and advances to the next (or removes it on **DEL**), and **Cancel** saves and exits editing.
 4. Navigate to **CONNECT** and press Select
 
 The current connection status and IP address are shown at the top of the NETWORK section.
@@ -239,6 +254,8 @@ On the HDMI display the screensaver first plays a short attract video, then loop
 
 Press **Tab** to open the settings menu (Tab again, or **Escape**, returns to the game menu). Navigate with Up/Down; adjust values with Left/Right; press Select to toggle or activate.
 
+When USB-DVG is enabled, the settings menu is mirrored on the vector display while it's open, styled to match the game menu (the screensaver no longer takes over the DVG during Settings).
+
 The Settings page is organized into named sections (shown as bold purple headers) — DISPLAY, HINT BAR, AUDIO, MUSIC, EFFECTS, CONTROLS, BACKUP, NETWORK, SYSTEM — with the rows below each header.
 
 | Section | Setting | Description |
@@ -248,7 +265,7 @@ The Settings page is organized into named sections (shown as bold purple headers
 | DISPLAY  | OVERLAY        | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
 | DISPLAY  | AUTOSTART GAME | Auto-launch the USB-DVG default game on startup |
 | DISPLAY  | MENU ON HDMI   | When USB-DVG is the primary view, show the game menu on HDMI alongside the vector display. When off, HDMI shows only the marquee (and hint bar if enabled). |
-| DISPLAY  | SHOW GAME PREVIEW | After 15 s of idle on a game, play its preview video (if available at `/usr/local/share/advance/video/<rom>.mp4`) over the marquee. Default on. |
+| DISPLAY  | SHOW GAME PREVIEW | When you land on a game, play its preview video (if available at `/usr/local/share/advance/video/<rom>.mp4`) over the marquee. Default on. |
 | HINT BAR | HINTS          | Show control hints in the scrolling hint bar |
 | HINT BAR | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
 | AUDIO    | OUTPUT         | Read-only short label of the audio output device in use (`USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` when the device cannot be identified — typically the headphone jack on a Pi 4) |
@@ -263,11 +280,12 @@ The Settings page is organized into named sections (shown as bold purple headers
 | EFFECTS  | VOLUME         | Navigation/select effects volume |
 | CONTROLS | ZERO DEADZONE  | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
 | CONTROLS | ADSTICK        | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
+| CONTROLS | UI CONFIG, UI CANCEL, P1/P2 UP·DOWN·LEFT·RIGHT, P1 BUTTON 1/2, START 1, COIN 1, UI PAUSE | Rebind these AdvanceMAME controls without leaving the menu: highlight one, press Select, then press the key/button/joystick direction (press several to add "or" alternatives), then your Cancel control to save (Escape when rebinding Cancel itself); Left/Right resets to default. UI CONFIG always keeps Tab and UI CANCEL always keeps Escape. Writes to the shared `advmame.rc`, so it applies everywhere. See [Rebinding from the menu](#rebinding-from-the-menu). |
 | BACKUP   | SAVE ⏏         | Saves essential settings to a USB drive — see [Backup Save / Restore](#backup-save--restore) |
 | BACKUP   | RESTORE ⏏      | Restores settings from a USB drive backup — see [Backup Save / Restore](#backup-save--restore) |
 | NETWORK  | ETHERNET       | Enable or disable the wired Ethernet interface. Disabling forces the Pi to use Wi-Fi even when a cable is plugged in. State persists across reboots. |
 | NETWORK  | WIFI           | Enable or disable the Wi-Fi radio. Disabling stops Wi-Fi scanning and disconnects from the current network. State persists across reboots. |
-| NETWORK  | HOSTNAME       | Read-only — the Pi's hostname. Use it with `.local` to SSH or open the network share (e.g. `vectorpie.local`). Useful for telling cabs apart when more than one is on the network. |
+| NETWORK  | HOSTNAME       | The Pi's hostname — edit it to tell cabs apart when more than one is on the network. Press Select to start editing, then: **Up/Down** spin the character under the cursor (only lowercase letters, digits, and hyphens are offered, plus a **DEL** choice), **Left/Right** move between characters (pressing **Right** past the last character adds a new one), **Select** picks the character and advances to the next (or **DEL** to remove it), and **Cancel** saves and exits. The change takes effect **live** — no reboot — and updates the name used with `.local` to SSH or open the network share (e.g. `vectorpie.local`). |
 | NETWORK  | CONNECTION     | Read-only — current connection type and SSID (e.g. `WiFi (MyNetwork)` or `Ethernet`) |
 | NETWORK  | IP ADDRESS     | Read-only — the Pi's current IP address |
 | NETWORK  | WIFI NETWORK   | Pick a Wi-Fi network from the scan results (auto-refreshes in the background). Defaults to the network you're currently on (or last used). |
@@ -293,6 +311,7 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **Playlist music files** — any `.mp3` / `.ogg` tracks you've added to the playlist directory
 - **High scores** — all `.hi` and NVRAM files, plus Battle Zone II, Geometry Wars, and Tempest II save files
 - **Wi-Fi connections** — saved network credentials
+- **Hostname** — the Pi's hostname is restored and re-applied live, so its `.local` name and network-share name carry over after reflashing
 - **SSH host keys** — `/etc/ssh/ssh_host_*`, so SSH/PuTTY clients no longer complain about a changed host key after reflashing
 - **Pi user password** — your `pi` account password is preserved so you don't need to reset it after reflashing
 - **`/boot/firmware/user-config.txt`** — your personal Pi boot overrides (this file is included from `config.txt` so you can edit it freely without conflicting with image updates)

@@ -1,3 +1,27 @@
+### vectorpie-1.1.1
+
+
+● Release Notes
+
+  - **New vector games — Vector Galaxian and Vector Centipede**: two more vectorised arcade renderings join Vector Kong and Vector Galaga in the game list — Vector Galaxian under Other and Vector Centipede under Atari.
+
+  - **AdvanceMAME's in-game menus mirror on the vector display**: when the USB-DVG is connected, opening AdvanceMAME's configuration menu (Tab) — including the **input configuration** screen — now shows the same menu on the vector monitor in parallel with HDMI, styled like the game menu. It works over any game (vector or raster) and holds a steady, flicker-free refresh. Control bindings are shown in a compact, all-caps form (e.g. `J:BTN1`, `LCTRL`, `P:1`); the HDMI menu still shows the full names. The in-game menu labels were also shortened to fit the vector screen.
+
+  - **Editable hostname**: **Settings → NETWORK → HOSTNAME** is now editable (it used to be read-only). Press Select to edit it, then use the on-screen character editor (Up/Down spin the character, Left/Right move between them, Right past the end adds one, Select picks it, a **DEL** choice removes one; **Cancel** saves and exits). The change applies **live** — no reboot — so `<name>.local` and the network-share name update right away. The hostname is included in backups and restored onto a new image.
+
+  - **On-screen text editor improvements**: the character editor used for the hostname and Wi-Fi password now has a **DEL** choice to delete characters, scrolls when the text is long, and is finished with your **Cancel** control.
+
+  - **Settings menu mirrored on the vector display**: while Settings is open, the USB-DVG now shows the same menu — styled like the game menu (red title and section headers, the highlighted row in a selection box, choices and sliders with cycle arrows) — instead of the screensaver. You can navigate and change settings while watching the vector monitor.
+
+  - **Rebind the in-game configuration control**: a new **UI CONFIG** entry at the top of **Settings → CONTROLS** rebinds AdvanceMAME's configuration-menu control (default Tab). It always keeps Tab so the in-game menu stays reachable. CONTROLS now lists UI CONFIG and UI CANCEL first, ahead of the player controls.
+
+  - **Rebind without a keyboard**: a control rebind is now saved by pressing your **Cancel** control, so the whole flow works on a cabinet with no keyboard. Rebinding the Cancel control itself is saved with Escape (it can't use itself). Escape still works everywhere as a fallback, and the abandoned-capture auto-save now triggers after 20 seconds (was 30).
+
+  - **Configure controls from the menu**: a new **Settings → CONTROLS** section lets you rebind the common player controls — P1/P2 directions, fire, start, coin, pause, and cancel — directly from the VectorPie menu, without launching AdvanceMAME. Highlight a control, press Select, then press the key/button/joystick direction you want; the binding builds up live (e.g. `p` then `6` → `p or 6`). Press several inputs to add "or" alternatives, then Escape to save; Left/Right resets to the default. Bindings write to the shared AdvanceMAME configuration, so they apply to the menu, AdvanceMAME games, and the native Pi games alike. The cancel control always keeps Escape so you can't lock yourself out.
+
+  - **Game preview videos play instantly**: the preview video now starts the moment you land on a game selection, instead of after 15 seconds of idle.
+
+
 ### vectorpie-1.1.0
 
 
@@ -12,12 +36,12 @@
   - **Hint bar text legibility**: every non-pill hint segment now renders with a 2-pixel black outline so titles stay readable against bright marquee backgrounds.
 
   - **HDMI-1 overlay display removed**: the second HDMI output is no longer used for per-game color overlay artwork. ~171 MB of overlay PNGs removed from the image.
-
+
   - **Tightened backup contents.** Backups now capture only the locked critical-file set (settings, configs, high scores, Wi-Fi/SSH credentials, etc.) — not ROMs, samples, or customized artwork. Older backups still restore correctly: only the critical subset is applied; extra content in the archive is ignored.
 
   - Animated screensaver background — `vectorpie.mp4` plays on loop after the attract video; falls back to the still PNG if not present.
 
-  - Per-resolution artwork — `<image>.<height>.png` (e.g. `pacman.360.png`) is picked automatically when it matches the screen height; plain `<image>.png` remains the fallback.
+  - Per-resolution artwork — `<image>.<height>.png` (e.g. `pacman.360.png`) is picked automatically when it matches the screen height; plain `<image>.png` remains the fallback.
 
 ● Bug Fixes
 
