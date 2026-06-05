@@ -32,7 +32,7 @@ VectorPie is compatible with the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ### VectorPie Image
 
-1. Download the VectorPie image (approximately 2 GB): [VectorPie Image](https://drive.google.com/file/d/1j7YE_V3pvS3dHwR6T5Lmoal-gvuuzD24/view?usp=drive_link)
+1. Download the VectorPie image (approximately 2 GB): [VectorPie Image](https://drive.google.com/file/d/1v0JeQ2N14z0ptUw4e1gdjwjyxoAHHmcV/view?usp=drive_link)
 2. Write the image to a 32 GB or larger micro SD card using **balenaEtcher** ([download](https://etcher.balena.io/)):
    - Open balenaEtcher and click **Flash from file**, then select the downloaded `.img.gz` file
    - Click **Select target** and choose your micro SD card
