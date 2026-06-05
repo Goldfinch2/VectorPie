@@ -3,7 +3,7 @@
 
 ● Release Notes
 
-  - **New vector games — Vector Galaxian and Vector Centipede**: two more vectorised arcade renderings join Vector Kong and Vector Galaga in the game list — Vector Galaxian under Other and Vector Centipede under Atari.
+  - **New vector games — Vector Galaxian and Vector Centipede**: two more vectorised arcade renderings join Vector Kong and Vector Galaga in the game list — Vector Galaxian under Midway and Vector Centipede under Atari.
 
   - **AdvanceMAME's in-game menus mirror on the vector display**: when the USB-DVG is connected, opening AdvanceMAME's configuration menu (Tab) — including the **input configuration** screen — now shows the same menu on the vector monitor in parallel with HDMI, styled like the game menu. It works over any game (vector or raster) and holds a steady, flicker-free refresh. Control bindings are shown in a compact, all-caps form (e.g. `J:BTN1`, `LCTRL`, `P:1`); the HDMI menu still shows the full names. The in-game menu labels were also shortened to fit the vector screen.
 
