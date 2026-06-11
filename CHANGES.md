@@ -1,3 +1,27 @@
+### vectorpie-1.1.2
+
+
+● Release Notes
+
+  - **New vector game — Vector Millipede**: a vectorised rendering of Atari's Millipede joins the vector line-up (Vector Kong, Vector Galaga, Vector Galaxian, Vector Centipede) in the game list, under Atari.
+
+  - **Expanded Vectrex library**: a large batch of new Vectrex titles has been added to the game list, spanning both Vectrex Official releases and Vectrex Homebrew games.
+
+  - **Game preview video returns after the screensaver**: dismissing the screensaver — or coming back from Settings — now brings the selected game's preview video right back, instead of leaving the marquee static until you moved to a different game.
+
+  - **Snappier idle dimming**: the menu text now begins fading the moment you stop pressing keys and is fully hidden after 2.5 seconds (it used to wait 15 seconds, then take another 15 to fade). The fade duration is configurable in Settings → DISPLAY → MENU FADE (1 s to 15 s, default 2.5 s).
+
+  - **Alphabetical game list**: manufacturers and the games within each are now always listed alphabetically by title, so the menu stays tidy even though newly-added games are inserted at the top of the underlying list on update.
+
+  - **New games survive an update**: when you OTA-update, games added to the built-in list since your installed version (such as the new vector games) are merged into your game list on restore — without bringing back games you've removed.
+
+  - **USB-DVG firmware updates from the menu**: a new **Settings → SYSTEM → USB-DVG UPDATE** row checks online for new USB-DVG firmware and — when an update is available — a second press downloads, verifies, and flashes the board right from the menu, then reboots the Pi. The installed version is read from the board itself, and only newer releases are offered (the menu never downgrades).
+
+  - **Firmware type detected automatically**: a new **DISPLAY → DVG TYPE** row shows whether the board runs the STANDARD or ARCADE CONTROL firmware, detected from the board itself at startup. Changing it makes USB-DVG UPDATE offer the other variant — even at the same version — so a board flashed with the wrong variant can be corrected from the menu.
+
+  - **Update rows renamed**: the former CHECK FOR UPDATES row is now **VECTORPIE UPDATE**, sitting alongside the new USB-DVG UPDATE row — each checks with one press and applies with a second.
+
+
 ### vectorpie-1.1.1
 
 

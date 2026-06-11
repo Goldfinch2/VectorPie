@@ -56,7 +56,7 @@ There are two USB-DVG firmware variants:
 
 Flash the firmware that matches your hardware using **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
 
-> **Note:** Skip this section if your USB-DVG board already has firmware version 1.14R1 or later installed.
+> **Note:** Skip this section if you are running VectorPie 1.1.2 or later — the USB-DVG firmware is updated directly from the menu (Settings → SYSTEM → USB-DVG UPDATE), and Teensy Loader is no longer needed. The manual procedure below is only for older VectorPie versions.
 
 1. Download the appropriate USB-DVG firmware `.hex` file:
    - [Standalone Firmware 1.14R1](https://drive.google.com/file/d/1goWkwykACHfnLVW0sk0REXXBPuLQ8ldB/view?usp=drive_link)
@@ -243,7 +243,7 @@ The same drive can carry a `vectorpie_backup.tar.gz`, a `playlist/` folder, and 
 
 | Timeout | Behavior |
 |---|---|
-| 15 seconds idle | Menu text fades out over the next 15 seconds; marquee image brightens. Button hints remain visible. |
+| Stop pressing keys | Menu text begins fading immediately and is fully hidden after the MENU FADE duration (default 2.5 seconds, configurable in Settings → DISPLAY); marquee image brightens. Button hints disappear. |
 | 60 seconds idle | Screensaver activates: short attract video plays, then `vectorpie.mp4` loops as the background |
 
 On the HDMI display the screensaver first plays a short attract video, then loops `vectorpie.mp4` as the background. If no MP4 is present it falls back to the still `vectorpie.png` logo. When the music playlist is active, the current and next track titles overlay on top. On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
@@ -262,10 +262,12 @@ The Settings page is organized into named sections (shown as bold purple headers
 |---|---|---|
 | DISPLAY  | MARQUEE        | Marquee artwork scaling mode: FIT / STRETCH / ZOOM / FIT WIDTH / FIT HEIGHT |
 | DISPLAY  | DVG            | Enable/disable USB-DVG output |
+| DISPLAY  | DVG TYPE       | USB-DVG firmware type fitted on this board: STANDARD (default) or ARCADE CONTROL. Used by USB-DVG UPDATE to check and flash the right firmware. Newer firmware reports its type, in which case this setting is updated automatically on every firmware check. |
 | DISPLAY  | OVERLAY        | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
 | DISPLAY  | AUTOSTART GAME | Auto-launch the USB-DVG default game on startup |
 | DISPLAY  | MENU ON HDMI   | When USB-DVG is the primary view, show the game menu on HDMI alongside the vector display. When off, HDMI shows only the marquee (and hint bar if enabled). |
 | DISPLAY  | SHOW GAME PREVIEW | When you land on a game, play its preview video (if available at `/usr/local/share/advance/video/<rom>.mp4`) over the marquee. Default on. |
+| DISPLAY  | MENU FADE      | How long the menu text takes to fade out once you stop pressing keys: 1.0 s to 15.0 s in 0.5 s steps. Default 2.5 s. |
 | HINT BAR | HINTS          | Show control hints in the scrolling hint bar |
 | HINT BAR | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
 | AUDIO    | OUTPUT         | Read-only short label of the audio output device in use (`USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` when the device cannot be identified — typically the headphone jack on a Pi 4) |
@@ -291,7 +293,8 @@ The Settings page is organized into named sections (shown as bold purple headers
 | NETWORK  | WIFI NETWORK   | Pick a Wi-Fi network from the scan results (auto-refreshes in the background). Defaults to the network you're currently on (or last used). |
 | NETWORK  | WIFI PASSWORD  | Enter the password for the selected Wi-Fi network — see [Wi-Fi Configuration](#wi-fi-configuration) |
 | NETWORK  | CONNECT        | Connect to the selected Wi-Fi network using the entered password. Grayed out when you're already on the highlighted network. |
-| SYSTEM   | CHECK FOR UPDATES | Check online for a newer VectorPie version and apply it in place. First press performs the check; when an update is available, a second press downloads, verifies, and applies it, then reboots. See [Software Updates](#software-updates). |
+| SYSTEM   | VECTORPIE UPDATE | Check online for a newer VectorPie version. First press performs the check; when an update is available, a second press downloads, verifies, and applies it, then reboots. See [Software Updates](#software-updates). |
+| SYSTEM   | USB-DVG UPDATE | Check online for newer USB-DVG firmware (for the variant selected under DISPLAY → DVG TYPE). First press performs the check; when an update is available, a second press downloads, verifies, and flashes the board, then reboots the Pi to bring everything back up cleanly. |
 | SYSTEM   | EXIT TO SHELL  | Exits the menu to a Linux command prompt (for advanced users) |
 
 Changes are saved automatically when closing the settings menu.
@@ -354,7 +357,7 @@ VectorPie can update itself in place over the internet — no SD card removal or
 ### How to update
 
 1. Make sure the Pi is connected to a network (see [Wi-Fi Configuration](#wi-fi-configuration))
-2. Open Settings and navigate to **SYSTEM → CHECK FOR UPDATES**
+2. Open Settings and navigate to **SYSTEM → VECTORPIE UPDATE**
 3. Press Select. The row updates to one of:
    - **CHECKING** — contacting the update server
    - **UP TO DATE (*version*)** — you're already on the latest release
@@ -363,6 +366,10 @@ VectorPie can update itself in place over the internet — no SD card removal or
 4. When an update is available, press Select again to apply it. The row progresses through **DOWNLOADING → VERIFYING → APPLYING**, then the Pi reboots into the new version automatically.
 
 The full update typically takes a 10-15 minutes depending on your network speed and backup size. Keep the Pi powered throughout — the update is safe to interrupt with power loss (the previous version is preserved until the new one boots successfully), but waiting it out is simpler.
+
+### USB-DVG firmware updates
+
+The USB-DVG board's firmware can be updated the same way from **SYSTEM → USB-DVG UPDATE**. The first press checks online (for the variant selected under DISPLAY → DVG TYPE); when an update is available, a second press downloads, verifies, and flashes the board — the vector display goes dark during the flash, and the Pi then reboots automatically so the board comes back up cleanly. After the reboot, USB-DVG UPDATE shows the new version. Only releases newer than the board's installed firmware are offered — the menu never downgrades. Exception: changing DISPLAY → DVG TYPE to the other variant makes USB-DVG UPDATE offer the chosen variant even at the same version, so a board flashed with the wrong variant can be corrected from the menu. A failed flash is always recoverable: the Teensy's bootloader is separate from the firmware, so you can simply try again.
 
 ### What carries over
 
@@ -481,6 +488,8 @@ Sega|Star Trek|startrek|startrek
 ```
 
 Games sharing the same parent ROM are grouped as variants and cycled with Left/Right in the menu.
+
+The menu always displays manufacturers, and the games within each, sorted alphabetically by name — the order of lines in `gamelist.ini` doesn't affect the on-screen order. (This keeps the list tidy even though an update inserts newly-added games at the top of the file.)
 
 ---
 
