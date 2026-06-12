@@ -235,7 +235,7 @@ The same drive can carry a `vectorpie_backup.tar.gz`, a `playlist/` folder, and 
 | File type | Location |
 |---|---|
 | Theme music tracks | `/usr/local/share/advance/themes` |
-| Playlist tracks | `/usr/local/share/advance/playlist` |
+| Playlist tracks | `/persistent/vector_pie_menu_dir/playlist` |
 
 ---
 
@@ -311,7 +311,8 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **vector_pie_menu.cfg** — menu preferences (volumes, display toggles, selected theme music, etc.)
 - **gamelist.ini** — your customized game list
 - **Theme music files** — any `.mp3` / `.ogg` tracks you've added to the themes directory
-- **Playlist music files** — any `.mp3` / `.ogg` tracks you've added to the playlist directory
+
+> **Note:** playlist music is *not* part of backups — it lives on the persistent partition (`/persistent/vector_pie_menu_dir/playlist`), which survives software updates in place. When moving to a new SD card, copy the playlist folder over the network share separately.
 - **High scores** — all `.hi` and NVRAM files, plus Battle Zone II, Geometry Wars, and Tempest II save files
 - **Wi-Fi connections** — saved network credentials
 - **Hostname** — the Pi's hostname is restored and re-applied live, so its `.local` name and network-share name carry over after reflashing
@@ -373,7 +374,7 @@ The USB-DVG board's firmware can be updated the same way from **SYSTEM → USB-D
 
 ### What carries over
 
-Updates preserve the same files as a USB backup — Wi-Fi credentials, all settings, input mappings, high scores, theme music, playlists, customized game list, SSH host keys, and the Pi user password. See [What is backed up](#what-is-backed-up) for the full list.
+Updates preserve the same files as a USB backup — Wi-Fi credentials, all settings, input mappings, high scores, theme music, customized game list, SSH host keys, and the Pi user password. See [What is backed up](#what-is-backed-up) for the full list. Playlist music carries over too, but by a different mechanism: it lives on the persistent partition (`/persistent/vector_pie_menu_dir/playlist`), untouched by updates, so it doesn't need to be copied at all.
 
 ### What does *not* carry over
 

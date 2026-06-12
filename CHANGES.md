@@ -21,6 +21,14 @@
 
   - **Update rows renamed**: the former CHECK FOR UPDATES row is now **VECTORPIE UPDATE**, sitting alongside the new USB-DVG UPDATE row — each checks with one press and applies with a second.
 
+  - **Music playlist moved to the persistent partition**: playlist tracks now live at `/persistent/vector_pie_menu_dir/playlist`, which survives software updates in place. Existing tracks are migrated automatically on first start. As a result, playlist music is no longer part of USB backups or update snapshots — when moving to a new SD card, copy the playlist folder over the network share separately.
+
+● Bug Fixes
+
+  - **Software update could fail half-way with a large music library**: the update's settings-restore staged its working copy on the system partition, which could fill the disk mid-restore and leave settings (including the game list merge) only partially applied. The restore now checks free space before writing anything, stages on the persistent partition instead, and cleans up after itself on failure.
+
+  - **Settings menu auto-closed during long operations**: the 60-second idle timeout no longer triggers while a backup, restore, software update, or firmware flash is running — and once the operation finishes, the timeout restarts so the result stays on screen long enough to read.
+
 
 ### vectorpie-1.1.1
 
