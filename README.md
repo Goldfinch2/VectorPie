@@ -56,7 +56,7 @@ There are two USB-DVG firmware variants:
 
 Flash the firmware that matches your hardware using **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
 
-> **Note:** Skip this section if you are running VectorPie 1.1.2 or later — the USB-DVG firmware is updated directly from the menu (Settings → SYSTEM → USB-DVG UPDATE), and Teensy Loader is no longer needed. The manual procedure below is only for older VectorPie versions.
+> **Note:** Skip this section if you are running VectorPie 1.1.2 or later — the USB-DVG firmware is updated directly from the menu (Settings → USB-DVG → USB-DVG UPDATE), and Teensy Loader is no longer needed. The manual procedure below is only for older VectorPie versions.
 
 1. Download the appropriate USB-DVG firmware `.hex` file:
    - [Standalone Firmware 1.14R1](https://drive.google.com/file/d/1goWkwykACHfnLVW0sk0REXXBPuLQ8ldB/view?usp=drive_link)
@@ -120,7 +120,6 @@ All navigation can be done with either a keyboard or arcade controls. Mappings a
 | Select / Start | Launch the selected game |
 | Settings | Open the settings menu |
 | Quit | Request reboot (then press Select to confirm) |
-| Coin button | Enter USB-DVG calibration mode (USB-DVG only) |
 
 ---
 
@@ -256,20 +255,23 @@ Press **Tab** to open the settings menu (Tab again, or **Escape**, returns to th
 
 When USB-DVG is enabled, the settings menu is mirrored on the vector display while it's open, styled to match the game menu (the screensaver no longer takes over the DVG during Settings).
 
-The Settings page is organized into named sections (shown as bold purple headers) — DISPLAY, HINT BAR, AUDIO, MUSIC, EFFECTS, CONTROLS, BACKUP, NETWORK, SYSTEM — with the rows below each header.
+The Settings page is organized into named sections (shown as bold purple headers) — DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, BACKUP, NETWORK, SYSTEM — with the rows below each header.
 
 | Section | Setting | Description |
 |---|---|---|
 | DISPLAY  | MARQUEE        | Marquee artwork scaling mode: FIT / STRETCH / ZOOM / FIT WIDTH / FIT HEIGHT |
-| DISPLAY  | DVG            | Enable/disable USB-DVG output |
-| DISPLAY  | DVG TYPE       | USB-DVG firmware type fitted on this board: STANDARD (default) or ARCADE CONTROL. Used by USB-DVG UPDATE to check and flash the right firmware. Newer firmware reports its type, in which case this setting is updated automatically on every firmware check. |
-| DISPLAY  | OVERLAY        | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
-| DISPLAY  | AUTOSTART GAME | Auto-launch the USB-DVG default game on startup |
 | DISPLAY  | MENU ON HDMI   | When USB-DVG is the primary view, show the game menu on HDMI alongside the vector display. When off, HDMI shows only the marquee (and hint bar if enabled). |
 | DISPLAY  | SHOW GAME PREVIEW | When you land on a game, play its preview video (if available at `/usr/local/share/advance/video/<rom>.mp4`) over the marquee. Default on. |
 | DISPLAY  | MENU FADE      | How long the menu text takes to fade out once you stop pressing keys: 1.0 s to 15.0 s in 0.5 s steps. Default 2.5 s. |
-| HINT BAR | HINTS          | Show control hints in the scrolling hint bar |
-| HINT BAR | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
+| DISPLAY  | HINTS          | Show control hints in the scrolling hint bar |
+| DISPLAY  | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
+| USB-DVG  | DVG            | Enable/disable USB-DVG output |
+| USB-DVG  | DVG TYPE       | USB-DVG firmware type fitted on this board: STANDARD (default) or ARCADE CONTROL. Used by USB-DVG UPDATE to check and flash the right firmware. Newer firmware reports its type, in which case this setting is updated automatically on every firmware check. |
+| USB-DVG  | USB-DVG UPDATE | Check online for newer USB-DVG firmware (for the variant selected under USB-DVG → DVG TYPE). First press performs the check; when an update is available, a second press downloads, verifies, and flashes the board, then reboots the Pi to bring everything back up cleanly. |
+| USB-DVG  | DVG SETTINGS   | Opens its own page and shows the USB-DVG board's own settings menu on the vector display, navigated with the cabinet controls: Up/Down/Left/Right navigate, Select confirms, Cancel goes back in the board menu (at the top level it closes the board menu and saves), Config closes the board menu from any depth (saving) and leaves the page back to VectorPie Settings. The board menu closes by itself after 30 seconds without a press (without saving), and the page follows. Requires USB-DVG firmware 1.14R2 or later — grayed out on older firmware. |
+| USB-DVG  | CRT CALIBRATION | Opens its own page showing alignment test patterns on the vector display: Left/Right cycles the patterns, Cancel exits. (Previously entered by pressing Coin from the game menu.) |
+| USB-DVG  | OVERLAY        | Controls line artwork and color overlays on supported games (see below). Options: DISABLED / COLORING / ARTWORK / BOTH |
+| USB-DVG  | AUTOSTART GAME | Auto-launch the USB-DVG default game on startup |
 | AUDIO    | OUTPUT         | Read-only short label of the audio output device in use (`USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` when the device cannot be identified — typically the headphone jack on a Pi 4) |
 | AUDIO    | MASTER VOLUME  | System-wide volume (0–100%) |
 | AUDIO    | MAME SOUND QUALITY | Preset for AdvanceMAME audio: **HIGH** (48 kHz, full quality), **MEDIUM** (22 kHz, smoother on demanding games), or **LOW** (11 kHz, maximum performance — speech games such as Star Trek sound muffled). Writes coordinated values for `sound_samplerate`, `sound_latency`, and `sound_normalize` in `advmame.rc`. |
@@ -282,6 +284,7 @@ The Settings page is organized into named sections (shown as bold purple headers
 | EFFECTS  | VOLUME         | Navigation/select effects volume |
 | CONTROLS | ZERO DEADZONE  | Removes the joystick axis deadzone at the kernel level for maximum precision. Required for certain analog controllers such as the Alan-1 Star Wars yoke. |
 | CONTROLS | ADSTICK        | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
+| CONTROLS | CALIBRATE | The row's value shows which joystick to work on — Left/Right cycles the connected devices, Select opens the calibration page for it (live axis bars on HDMI and the vector display). Calibrating is one step: move all axes to their extremes (yellow ticks mark the sampled range), release everything so the axes rest at center, and press Select to save — the resting position becomes the new center. Fixes off-center rest positions and limited range on analog controllers (Star Wars yoke). Saved and reapplied automatically at every startup; running games pick it up on their next launch. Cancel leaves the page. Grayed when no joystick is connected. |
 | CONTROLS | UI CONFIG, UI CANCEL, P1/P2 UP·DOWN·LEFT·RIGHT, P1 BUTTON 1/2, START 1, COIN 1, UI PAUSE | Rebind these AdvanceMAME controls without leaving the menu: highlight one, press Select, then press the key/button/joystick direction (press several to add "or" alternatives), then your Cancel control to save (Escape when rebinding Cancel itself); Left/Right resets to default. UI CONFIG always keeps Tab and UI CANCEL always keeps Escape. Writes to the shared `advmame.rc`, so it applies everywhere. See [Rebinding from the menu](#rebinding-from-the-menu). |
 | BACKUP   | SAVE ⏏         | Saves essential settings to a USB drive — see [Backup Save / Restore](#backup-save--restore) |
 | BACKUP   | RESTORE ⏏      | Restores settings from a USB drive backup — see [Backup Save / Restore](#backup-save--restore) |
@@ -294,7 +297,6 @@ The Settings page is organized into named sections (shown as bold purple headers
 | NETWORK  | WIFI PASSWORD  | Enter the password for the selected Wi-Fi network — see [Wi-Fi Configuration](#wi-fi-configuration) |
 | NETWORK  | CONNECT        | Connect to the selected Wi-Fi network using the entered password. Grayed out when you're already on the highlighted network. |
 | SYSTEM   | VECTORPIE UPDATE | Check online for a newer VectorPie version. First press performs the check; when an update is available, a second press downloads, verifies, and applies it, then reboots. See [Software Updates](#software-updates). |
-| SYSTEM   | USB-DVG UPDATE | Check online for newer USB-DVG firmware (for the variant selected under DISPLAY → DVG TYPE). First press performs the check; when an update is available, a second press downloads, verifies, and flashes the board, then reboots the Pi to bring everything back up cleanly. |
 | SYSTEM   | EXIT TO SHELL  | Exits the menu to a Linux command prompt (for advanced users) |
 
 Changes are saved automatically when closing the settings menu.
@@ -370,7 +372,7 @@ The full update typically takes a 10-15 minutes depending on your network speed 
 
 ### USB-DVG firmware updates
 
-The USB-DVG board's firmware can be updated the same way from **SYSTEM → USB-DVG UPDATE**. The first press checks online (for the variant selected under DISPLAY → DVG TYPE); when an update is available, a second press downloads, verifies, and flashes the board — the vector display goes dark during the flash, and the Pi then reboots automatically so the board comes back up cleanly. After the reboot, USB-DVG UPDATE shows the new version. Only releases newer than the board's installed firmware are offered — the menu never downgrades. Exception: changing DISPLAY → DVG TYPE to the other variant makes USB-DVG UPDATE offer the chosen variant even at the same version, so a board flashed with the wrong variant can be corrected from the menu. A failed flash is always recoverable: the Teensy's bootloader is separate from the firmware, so you can simply try again.
+The USB-DVG board's firmware can be updated the same way from **USB-DVG → USB-DVG UPDATE**. The first press checks online (for the variant selected under USB-DVG → DVG TYPE); when an update is available, a second press downloads, verifies, and flashes the board — the vector display goes dark during the flash, and the Pi then reboots automatically so the board comes back up cleanly. After the reboot, USB-DVG UPDATE shows the new version. Only releases newer than the board's installed firmware are offered — the menu never downgrades. Exception: changing USB-DVG → DVG TYPE to the other variant makes USB-DVG UPDATE offer the chosen variant even at the same version, so a board flashed with the wrong variant can be corrected from the menu. A failed flash is always recoverable: the Teensy's bootloader is separate from the firmware, so you can simply try again.
 
 ### What carries over
 

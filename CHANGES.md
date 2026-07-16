@@ -1,3 +1,22 @@
+### vectorpie-1.1.3
+
+
+● Release Notes
+
+  - **Edit USB-DVG board settings from the menu**: a new **Settings → USB-DVG → DVG SETTINGS** row opens its own page showing the USB-DVG board's own settings menu on the vector display, navigated with the cabinet controls — Up/Down/Left/Right/Select as usual, Cancel goes back in the board menu (closing it at its top level saves to the board), and Config closes the board menu (saving) and leaves the page back to VectorPie Settings. The board menu also closes by itself after 30 seconds without a press. Requires USB-DVG firmware 1.14R2 or later — the row is grayed out on older firmware.
+
+  - **Joystick calibration**: a new **Settings → CONTROLS → CALIBRATE** row opens a live joystick axis view (axis bars on both HDMI and the vector display). Calibrating is one step: move all axes to their extremes, release them to rest, and press Select to save — the resting position becomes the new center. Fixes off-center rest positions and limited range on analog controllers such as the Star Wars yoke. With more than one joystick connected, Left/Right on the row picks which one to work on. Calibration is saved and reapplied automatically at every startup; games pick it up on their next launch.
+
+  - **Long setting values scroll**: a settings value too wide for its row — a long Wi-Fi network name, track title, or joystick name — now scrolls horizontally while the row is highlighted instead of overflowing, on both HDMI and the vector display. AdvanceMAME's mirrored in-game menus benefit too.
+
+  - **Settings layout polish**: labels sit closer to their controls, the whole label/control block is better centered, and sliders are slightly shorter. Rows that open their own page (CALIBRATE, DVG SETTINGS) are marked with a trailing "..." to set them apart from in-place settings.
+
+  - **New USB-DVG settings section**: everything USB-DVG-related now lives under its own **USB-DVG** header — DVG, DVG TYPE, USB-DVG UPDATE (moved from SYSTEM, which keeps VECTORPIE UPDATE and EXIT TO SHELL), DVG SETTINGS, CRT CALIBRATION, OVERLAY, and AUTOSTART GAME. DISPLAY keeps the display-generic rows — MARQUEE, MENU ON HDMI, SHOW GAME PREVIEW, MENU FADE — and absorbs the former HINT BAR section (HINTS, HIGH SCORES).
+
+  - **CRT calibration moved into Settings**: the vector-display alignment test patterns now live at **Settings → USB-DVG → CRT CALIBRATION** with their own page (Left/Right cycles patterns, Cancel exits). Pressing Coin in the game menu no longer opens calibration.
+
+
+
 ### vectorpie-1.1.2
 
 
