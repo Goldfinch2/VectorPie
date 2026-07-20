@@ -1,3 +1,16 @@
+### vectorpie-1.1.4
+
+
+● Release Notes
+
+  - **Battlezone II — proportional single-stick control**: the analog stick now drives the tank proportionally — partial deflection gives partial speed and gentle turns, full deflection gives full speed and the familiar hard turn — instead of acting as on/off switches. The old dual-stick (Xbox-style) input model and the `single_stick` config option are gone; one stick is simply how it works now.
+
+  - **Star Wars — reticle centered at every boot**: the original ROM deliberately loosens its learned yoke calibration at every power-on, which is why the reticle always started off-center until you swept the yoke to its corners. That boot-time relaxation is now patched out when the game loads (Star Wars, its early revision, and The Empire Strikes Back), and the yoke's analog sensitivity default was raised from 70/50 to 100 on both axes to make the calibration an exact pass-through. The reticle is centered from the first frame of every boot — no corner sweep, no per-game configuration.
+
+  - **Settings layout polish**: the label/control divider now sits exactly under the up/down scroll arrows with section headers centered on the same line, labels have more breathing room from their controls, sliders are narrower, and the slider cycle arrows are vertically centered on the bar.
+
+
+
 ### vectorpie-1.1.3
 
 
