@@ -117,7 +117,8 @@ All navigation can be done with either a keyboard or arcade controls. Mappings a
 | Up / Down | Move between games in the current manufacturer's list |
 | Left / Right (on manufacturer header) | Switch to the previous or next manufacturer |
 | Left / Right (on a game) | Cycle through ROM variants (revisions, regions, prototypes) |
-| Select / Start | Launch the selected game |
+| Select / Start (tap) | Launch the selected game |
+| Select / Start (hold ~1 s) | CONTROL GUIDE: tour the game's controls — each button lights alone on the panel while a voice names its function and the name shows on screen. Any input ends the tour |
 | Settings | Open the settings menu |
 | Quit | Request reboot (then press Select to confirm) |
 
@@ -255,7 +256,7 @@ Press **Tab** to open the settings menu (Tab again, or **Escape**, returns to th
 
 When USB-DVG is enabled, the settings menu is mirrored on the vector display while it's open, styled to match the game menu (the screensaver no longer takes over the DVG during Settings).
 
-The Settings page is organized into named sections (shown as bold purple headers) — DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, BACKUP, NETWORK, SYSTEM — with the rows below each header.
+The Settings page is organized into named sections (shown as bold purple headers) — DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, BACKUP, NETWORK, SYSTEM — with the rows below each header.
 
 | Section | Setting | Description |
 |---|---|---|
@@ -266,6 +267,7 @@ The Settings page is organized into named sections (shown as bold purple headers
 | DISPLAY  | HINTS          | Show control hints in the scrolling hint bar |
 | DISPLAY  | HIGH SCORES    | Show high scores for the selected game in the scrolling hint bar |
 | USB-DVG  | DVG            | Enable/disable USB-DVG output |
+| USB-DVG  | DVG REFRESH    | Vector display refresh rate: 30–60 Hz in 1 Hz steps. Default 40. Applies immediately as you adjust, so you can watch the picture on the CRT while tuning — raise it for a steadier, brighter picture, lower it if the display can't keep up with complex scenes. |
 | USB-DVG  | DVG TYPE       | USB-DVG firmware type fitted on this board: STANDARD (default) or ARCADE CONTROL. Used by USB-DVG UPDATE to check and flash the right firmware. Newer firmware reports its type, in which case this setting is updated automatically on every firmware check. |
 | USB-DVG  | USB-DVG UPDATE | Check online for newer USB-DVG firmware (for the variant selected under USB-DVG → DVG TYPE). First press performs the check; when an update is available, a second press downloads, verifies, and flashes the board, then reboots the Pi to bring everything back up cleanly. |
 | USB-DVG  | DVG SETTINGS   | Opens its own page and shows the USB-DVG board's own settings menu on the vector display, navigated with the cabinet controls: Up/Down/Left/Right navigate, Select confirms, Cancel goes back in the board menu (at the top level it closes the board menu and saves), Config closes the board menu from any depth (saving) and leaves the page back to VectorPie Settings. The board menu closes by itself after 30 seconds without a press (without saving), and the page follows. Requires USB-DVG firmware 1.14R2 or later — grayed out on older firmware. |
@@ -286,6 +288,10 @@ The Settings page is organized into named sections (shown as bold purple headers
 | CONTROLS | ADSTICK        | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
 | CONTROLS | CALIBRATE | The row's value shows which joystick to work on — Left/Right cycles the connected devices, Select opens the calibration page for it (live axis bars on HDMI and the vector display). Calibrating is one step: move all axes to their extremes (yellow ticks mark the sampled range), release everything so the axes rest at center, and press Select to save — the resting position becomes the new center. Fixes off-center rest positions and limited range on analog controllers (Star Wars yoke). Saved and reapplied automatically at every startup; running games pick it up on their next launch. Cancel leaves the page. Grayed when no joystick is connected. |
 | CONTROLS | UI CONFIG, UI CANCEL, P1/P2 UP·DOWN·LEFT·RIGHT, P1 BUTTON 1/2, START 1, COIN 1, UI PAUSE | Rebind these AdvanceMAME controls without leaving the menu: highlight one, press Select, then press the key/button/joystick direction (press several to add "or" alternatives), then your Cancel control to save (Escape when rebinding Cancel itself); Left/Right resets to default. UI CONFIG always keeps Tab and UI CANCEL always keeps Escape. Writes to the shared `advmame.rc`, so it applies everywhere. See [Rebinding from the menu](#rebinding-from-the-menu). |
+| LEDS     | LED EFFECTS    | Lights each game's controls (via [LEDSpicer](https://github.com/meduzapat/LEDSpicer)) — both **while browsing** (the panel updates ~half a second after the selection rests on a game) and on launch, restoring the default lighting on exit. Which controls light comes from a per-game controls database — Asteroids lights only its buttons, Tempest lights the spinner; games without data show the all-on default. Grayed when LEDSpicer isn't installed. |
+| LEDS     | DAEMON         | Read-only — whether the LEDSpicer daemon is running (RUNNING / STOPPED / NOT INSTALLED). |
+| LEDS     | LED SETUP      | Builds the LED configuration on-cabinet, no XML editing. Page 1: pick the controller model (PacLED64, PacDrive, LED-Wiz, …) and board ID. Page 2: walk the outputs — the highlighted output **flashes on the physical panel** while you name it from a fixed list of standard control names (P1 BUTTON 1, P1 JOYSTICK 1, P1 DIAL 1, START 1, …). An output is MONO (one lamp) or the RED channel of an RGB LED — then you pick its GREEN and BLUE outputs next, watching the colors change. Select on an assigned output clears it. SAVE AND EXIT (first row) writes `/etc/ledspicer.conf`, installs the default profiles, starts the daemon, and returns to Settings. Cancel walks back a page. |
+| LEDS     | GAME COLORS    | Recolors a game's controls; the colors apply to **all revisions/clones of that game** — profiles are kept per parent title. Opens on the game that was highlighted when you entered Settings (the first of the manufacturer if you were on a header), and the page's MANUFACTURER and GAME rows cycle to any other game in the collection. The BUTTON row cycles the game's RGB-wired controls (single-color and unmapped LEDs have no color to pick, so they are skipped; a game with none shows NO RGB LEDS) and COLOR recolors the one it shows: Left/Right cycles the standard colors and **lights that control on the panel as you pick**, so you see the result before committing. SAVE AND EXIT writes the colors and they apply immediately; RESET TO DEFAULT restores the shipped colors. Games with no color data (e.g. Vectrex titles) show NO COLOR DATA. Edited colors ride along in USB backups. |
 | BACKUP   | SAVE ⏏         | Saves essential settings to a USB drive — see [Backup Save / Restore](#backup-save--restore) |
 | BACKUP   | RESTORE ⏏      | Restores settings from a USB drive backup — see [Backup Save / Restore](#backup-save--restore) |
 | NETWORK  | ETHERNET       | Enable or disable the wired Ethernet interface. Disabling forces the Pi to use Wi-Fi even when a cable is plugged in. State persists across reboots. |

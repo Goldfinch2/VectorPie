@@ -1,3 +1,18 @@
+### vectorpie-1.1.5
+
+
+● Release Notes
+
+  - **Per-game LED lighting (LEDSpicer integration)**: launching a game lights exactly the controls it uses — Asteroids its buttons, Tempest its spinner — and the panel returns to its default lighting on exit. Enable with **Settings → LEDS → LED EFFECTS**.
+
+  - **On-cabinet LED configuration**: **Settings → LEDS → LED SETUP** builds the whole LEDSpicer configuration from the menu — each output flashes on the physical panel while you name it (MONO or RGB). LED settings ride along in USB backups.
+
+  - **Per-game colors, editable on the cabinet**: **Settings → LEDS → GAME COLORS** recolors a game's controls — each control lights in the color as you pick it. RESET TO DEFAULT restores the shipped colors.
+
+  - **Adjustable vector display refresh rate**: **Settings → USB-DVG → DVG REFRESH** sets the vector display refresh rate (30–60 Hz), applied live as you adjust.
+
+
+
 ### vectorpie-1.1.4
 
 
