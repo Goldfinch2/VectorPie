@@ -3,11 +3,15 @@
 
 ● Release Notes
 
-  - **Per-game LED lighting (LEDSpicer integration)**: launching a game lights exactly the controls it uses — Asteroids its buttons, Tempest its spinner — and the panel returns to its default lighting on exit. Enable with **Settings → LEDS → LED EFFECTS**.
+  - **Per-game LED lighting (LEDSpicer integration)**: browsing or launching a game lights exactly the controls it uses, in its own colors — Asteroids its buttons, Tempest its spinner — and the coin buttons stay lit throughout. After a few seconds on a game the launch button blinks white while the rest of the panel dims; the first time, the screen spells out what it does — press to play, hold to hear the controls. Enable with **Settings → LEDS → LED EFFECTS**.
 
-  - **On-cabinet LED configuration**: **Settings → LEDS → LED SETUP** builds the whole LEDSpicer configuration from the menu — each output flashes on the physical panel while you name it (MONO or RGB). LED settings ride along in USB backups.
+  - **Control guide**: hold the launch button on a game and a voice tours its controls — each one blinks alone on the panel while its function is named on screen — ending with INSERT COIN and PRESS START.
+
+  - **On-cabinet LED configuration**: **Settings → LEDS → LED SETUP** builds the whole LEDSpicer configuration from the menu — each output flashes on the physical panel while you name it (MONO or RGB). Backing out with unsaved changes asks to save or discard. LED settings ride along in USB backups.
 
   - **Per-game colors, editable on the cabinet**: **Settings → LEDS → GAME COLORS** recolors a game's controls — each control lights in the color as you pick it. RESET TO DEFAULT restores the shipped colors.
+
+  - **LED attract show**: while the screensaver runs, the control panel breathes slowly through cold colors — cyan, blue, violet, magenta, a new shade each breath — settling to a faint gray glow after 15 minutes, and returns to normal lighting on any input.
 
   - **Adjustable vector display refresh rate**: **Settings → USB-DVG → DVG REFRESH** sets the vector display refresh rate (30–60 Hz), applied live as you adjust.
 

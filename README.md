@@ -118,7 +118,7 @@ All navigation can be done with either a keyboard or arcade controls. Mappings a
 | Left / Right (on manufacturer header) | Switch to the previous or next manufacturer |
 | Left / Right (on a game) | Cycle through ROM variants (revisions, regions, prototypes) |
 | Select / Start (tap) | Launch the selected game |
-| Select / Start (hold ~1 s) | CONTROL GUIDE: tour the game's controls — each button lights alone on the panel while a voice names its function and the name shows on screen. Any input ends the tour |
+| Select / Start (hold ~1 s) | CONTROL GUIDE: tour the game's controls — each control blinks alone on the panel while a voice names its function and the name shows on screen. Every tour ends with INSERT COIN and PRESS START. Any input ends the tour. Needs LEDS → LED EFFECTS; with it off, holding simply launches the game |
 | Settings | Open the settings menu |
 | Quit | Request reboot (then press Select to confirm) |
 
@@ -168,7 +168,7 @@ You can also rebind the common controls **directly from the VectorPie menu** —
 
 These write to the same AdvanceMAME configuration as above, so the changes apply to the menu, AdvanceMAME games, and the native Pi games alike.
 
-The menu and the natively-compiled Pi games read the following AdvanceMAME input actions. The **Read by** column shows which programs honor each action — the VectorPie menu, Battle Zone II (`bzone2`), and Geometry Wars (`opengw`):
+The menu and the natively-compiled Pi games read the following AdvanceMAME input actions. The **Read by** column shows which programs honor each action — the VectorPie menu and Geometry Wars (`opengw`):
 
 | AdvanceMAME Action | Menu Function | Default Key | Read by |
 |---|---|---|---|
@@ -179,7 +179,7 @@ The menu and the natively-compiled Pi games read the following AdvanceMAME input
 | `ui_select` | Launch selected game | 1, Enter, or Left Ctrl | menu |
 | `ui_configure` | Open settings menu | Tab | menu |
 | `ui_pause` | (not used by menu) | P | opengw (pause) |
-| `ui_cancel` | Quit / exit | Escape | menu, bzone2, opengw |
+| `ui_cancel` | Quit / exit | Escape | menu, opengw |
 
 ### Game Controls
 
@@ -187,11 +187,11 @@ VectorPie games use several types of analog and digital controls. AdvanceMAME au
 
 | Control Type | AdvanceMAME Action | Typical Input | Read by |
 |---|---|---|---|
-| Directional movement | `p1_up/down/left/right` | Joystick, keyboard arrows | bzone2, opengw (move) |
+| Directional movement | `p1_up/down/left/right` | Joystick, keyboard arrows | opengw (move) |
 | Twin-stick aim | `p2_up/down/left/right` | Second joystick, keyboard | opengw (aim) |
-| Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button | bzone2, opengw |
-| Player 1 start | `start1` | 1 key | bzone2, opengw |
-| Insert coin | `coin1` | 5 key | menu, bzone2, opengw |
+| Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button | opengw |
+| Player 1 start | `start1` | 1 key | opengw |
+| Insert coin | `coin1` | 5 key | menu, opengw |
 
 Two-player games that use twin sticks use both `p1_` and `p2_` actions for movement and aiming independently.
 
@@ -288,10 +288,10 @@ The Settings page is organized into named sections (shown as bold purple headers
 | CONTROLS | ADSTICK        | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
 | CONTROLS | CALIBRATE | The row's value shows which joystick to work on — Left/Right cycles the connected devices, Select opens the calibration page for it (live axis bars on HDMI and the vector display). Calibrating is one step: move all axes to their extremes (yellow ticks mark the sampled range), release everything so the axes rest at center, and press Select to save — the resting position becomes the new center. Fixes off-center rest positions and limited range on analog controllers (Star Wars yoke). Saved and reapplied automatically at every startup; running games pick it up on their next launch. Cancel leaves the page. Grayed when no joystick is connected. |
 | CONTROLS | UI CONFIG, UI CANCEL, P1/P2 UP·DOWN·LEFT·RIGHT, P1 BUTTON 1/2, START 1, COIN 1, UI PAUSE | Rebind these AdvanceMAME controls without leaving the menu: highlight one, press Select, then press the key/button/joystick direction (press several to add "or" alternatives), then your Cancel control to save (Escape when rebinding Cancel itself); Left/Right resets to default. UI CONFIG always keeps Tab and UI CANCEL always keeps Escape. Writes to the shared `advmame.rc`, so it applies everywhere. See [Rebinding from the menu](#rebinding-from-the-menu). |
-| LEDS     | LED EFFECTS    | Lights each game's controls (via [LEDSpicer](https://github.com/meduzapat/LEDSpicer)) — both **while browsing** (the panel updates ~half a second after the selection rests on a game) and on launch, restoring the default lighting on exit. Which controls light comes from a per-game controls database — Asteroids lights only its buttons, Tempest lights the spinner; games without data show the all-on default. Grayed when LEDSpicer isn't installed. |
+| LEDS     | LED EFFECTS    | Lights each game's controls (via [LEDSpicer](https://github.com/meduzapat/LEDSpicer)) — both **while browsing** (the panel updates ~half a second after the selection rests on a game) and on launch, restoring the default lighting on exit. Which controls light comes from a per-game controls database — Asteroids lights only its buttons, Tempest lights the spinner; games without data show the all-on default. The coin buttons stay lit white throughout. After a few seconds on the same game, the launch button blinks white while the rest of the panel dims to a faint glow; the first time that happens the screen also spells out what it does — press to play, hold to hear the controls — and after that the blink speaks for itself. While the screensaver runs, the panel breathes slowly through cold colors — cyan, blue, violet, magenta, a new shade each breath — settling to a faint gray glow after 15 minutes, and returns to normal lighting on any input. Grayed when LEDSpicer isn't installed. |
 | LEDS     | DAEMON         | Read-only — whether the LEDSpicer daemon is running (RUNNING / STOPPED / NOT INSTALLED). |
-| LEDS     | LED SETUP      | Builds the LED configuration on-cabinet, no XML editing. Page 1: pick the controller model (PacLED64, PacDrive, LED-Wiz, …) and board ID. Page 2: walk the outputs — the highlighted output **flashes on the physical panel** while you name it from a fixed list of standard control names (P1 BUTTON 1, P1 JOYSTICK 1, P1 DIAL 1, START 1, …). An output is MONO (one lamp) or the RED channel of an RGB LED — then you pick its GREEN and BLUE outputs next, watching the colors change. Select on an assigned output clears it. SAVE AND EXIT (first row) writes `/etc/ledspicer.conf`, installs the default profiles, starts the daemon, and returns to Settings. Cancel walks back a page. |
-| LEDS     | GAME COLORS    | Recolors a game's controls; the colors apply to **all revisions/clones of that game** — profiles are kept per parent title. Opens on the game that was highlighted when you entered Settings (the first of the manufacturer if you were on a header), and the page's MANUFACTURER and GAME rows cycle to any other game in the collection. The BUTTON row cycles the game's RGB-wired controls (single-color and unmapped LEDs have no color to pick, so they are skipped; a game with none shows NO RGB LEDS) and COLOR recolors the one it shows: Left/Right cycles the standard colors and **lights that control on the panel as you pick**, so you see the result before committing. SAVE AND EXIT writes the colors and they apply immediately; RESET TO DEFAULT restores the shipped colors. Games with no color data (e.g. Vectrex titles) show NO COLOR DATA. Edited colors ride along in USB backups. |
+| LEDS     | LED SETUP      | Builds the LED configuration on-cabinet, no XML editing. Page 1: pick the controller model (PacLED64, PacDrive, LED-Wiz, …) and board ID. Page 2: walk the outputs — the highlighted output **flashes on the physical panel** while you name it from a fixed list of standard control names (P1 BUTTON 1, P1 JOYSTICK 1, P1 DIAL 1, START 1, …). An output is MONO (one lamp) or the RED channel of an RGB LED — then you pick its GREEN and BLUE outputs next, watching the colors change. Select on an assigned output clears it. SAVE AND EXIT (first row) writes `/etc/ledspicer.conf`, installs the default profiles, starts the daemon, and returns to Settings. Cancel walks back a page; backing all the way out with unsaved changes asks whether to save, discard, or keep editing. |
+| LEDS     | GAME COLORS    | Recolors a game's controls; the colors apply to **all revisions/clones of that game** — profiles are kept per parent title. Opens on the game that was highlighted when you entered Settings (the first of the manufacturer if you were on a header), and the page's MANUFACTURER and GAME rows cycle to any other game in the collection. The BUTTON row cycles the game's RGB-wired controls (single-color and unmapped LEDs have no color to pick, so they are skipped; a game with none shows NO RGB LEDS) and COLOR recolors the one it shows: Left/Right cycles the standard colors and **lights that control on the panel as you pick**, so you see the result before committing. SAVE AND EXIT writes the colors and they apply immediately; RESET TO DEFAULT restores the shipped colors. Games with no color data (e.g. Vectrex titles) show NO COLOR DATA. Edited colors ride along in USB backups. Cancel with unsaved edits asks whether to save, discard, or keep editing. |
 | BACKUP   | SAVE ⏏         | Saves essential settings to a USB drive — see [Backup Save / Restore](#backup-save--restore) |
 | BACKUP   | RESTORE ⏏      | Restores settings from a USB drive backup — see [Backup Save / Restore](#backup-save--restore) |
 | NETWORK  | ETHERNET       | Enable or disable the wired Ethernet interface. Disabling forces the Pi to use Wi-Fi even when a cable is plugged in. State persists across reboots. |
@@ -321,7 +321,7 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **Theme music files** — any `.mp3` / `.ogg` tracks you've added to the themes directory
 
 > **Note:** playlist music is *not* part of backups — it lives on the persistent partition (`/persistent/vector_pie_menu_dir/playlist`), which survives software updates in place. When moving to a new SD card, copy the playlist folder over the network share separately.
-- **High scores** — all `.hi` and NVRAM files, plus Battle Zone II, Geometry Wars, and Tempest II save files
+- **High scores** — all `.hi` and NVRAM files, plus Geometry Wars save files
 - **Wi-Fi connections** — saved network credentials
 - **Hostname** — the Pi's hostname is restored and re-applied live, so its `.local` name and network-share name carry over after reflashing
 - **SSH host keys** — `/etc/ssh/ssh_host_*`, so SSH/PuTTY clients no longer complain about a changed host key after reflashing
