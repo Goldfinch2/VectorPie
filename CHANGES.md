@@ -1,3 +1,15 @@
+### vectorpie-1.1.6
+
+
+● Release Notes
+
+  - LEDSpicer removed — LED lighting rebuilt into the menu. LED settings are included in backups.
+  - LED SETUP: each output flashes on the panel while you set its mode, type, and input by pressing the control.
+  - GAME COLORS: per-control colors, shown live on the panel.
+  - Lighting follows the AdvanceMAME control bindings. Multiple LED boards supported.
+  - Twin-stick games: the second stick works out of the box (R/F/D/G).
+
+
 ### vectorpie-1.1.5
 
 

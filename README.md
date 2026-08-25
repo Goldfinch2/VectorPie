@@ -13,6 +13,7 @@ Key features:
 - **USB-DVG support** — drive a real vector monitor via the USB-DVG vector generator board; HDMI output is also supported for use without USB-DVG
 - **Unified input mapping** — controls are configured once in AdvanceMAME and apply to the menu and every game, including non-emulated titles
 - **High scores** — scrolling hint bar displays high scores parsed directly from MAME save files for the selected game
+- **Per-game LED lighting** — the control panel lights each game's controls in its own colors, with a voice-guided control tour
 - **Wi-Fi configuration** — connect to a wireless network directly from the menu
 - **Remote access** — built-in SSH server and Windows network share for easy file management from a PC
 - **Software updates from the menu** — check for and apply new VectorPie versions directly from the Settings menu, with automatic rollback if an update fails to boot
@@ -67,45 +68,6 @@ Flash the firmware that matches your hardware using **Teensy Loader** ([download
 
 ---
 
-## Accessing the Pi from a Windows PC
-
-VectorPie includes a pre-configured SSH server and Samba network share, so you can manage files and settings from any Windows PC on the same network without needing a keyboard or monitor connected to the Pi.
-
-To find the Pi's IP address, press **Tab** from the main menu to open Settings and scroll down to the **NETWORK** section — the current IP address is displayed there.
-
-The default login credentials for both the network share and SSH are:
-
-| | |
-|---|---|
-| **Username** | `pi` |
-| **Password** | `raspberry` |
-
-### Network Share (File Access)
-
-The Pi's files are accessible as a standard Windows network share named **pi**. To connect:
-
-1. Open **File Explorer** on your Windows PC
-2. In the address bar, type `\\<pi-ip-address>\pi` and press Enter (e.g. `\\192.168.1.50\pi`)
-3. Log in with username `pi` and password `raspberry` when prompted
-4. Use the share to add ROMs, replace artwork, or edit the game list
-
-You can also map it as a persistent network drive:
-1. Right-click **This PC** in File Explorer and choose **Map network drive**
-2. Enter `\\<pi-ip-address>\pi` as the folder path and check **Reconnect at sign-in**
-
-### SSH (Command Line Access)
-
-SSH lets you open a terminal on the Pi from your Windows PC. Windows 10 and 11 include a built-in SSH client.
-
-1. Find the Pi's IP address in the **NETWORK** section of the VectorPie Settings menu
-2. Open **Command Prompt** or **PowerShell** on your PC
-3. Type: `ssh pi@<pi-ip-address>` and press Enter
-4. Enter the password `raspberry` when prompted
-
-Alternatively, use a free SSH client such as **PuTTY** if you prefer a dedicated application.
-
----
-
 ## Menu Navigation
 
 All navigation can be done with either a keyboard or arcade controls. Mappings are read from the AdvanceMAME configuration. A scrolling hint bar along the bottom of the screen shows available controls and high scores for the selected game.
@@ -118,7 +80,7 @@ All navigation can be done with either a keyboard or arcade controls. Mappings a
 | Left / Right (on manufacturer header) | Switch to the previous or next manufacturer |
 | Left / Right (on a game) | Cycle through ROM variants (revisions, regions, prototypes) |
 | Select / Start (tap) | Launch the selected game |
-| Select / Start (hold ~1 s) | CONTROL GUIDE: tour the game's controls — each control blinks alone on the panel while a voice names its function and the name shows on screen. Every tour ends with INSERT COIN and PRESS START. Any input ends the tour. Needs LEDS → LED EFFECTS; with it off, holding simply launches the game |
+| Select / Start (hold ~1 s) | CONTROL GUIDE: tour the game's controls — each control blinks alone on the panel while a voice names its function and the name shows on screen. Every tour ends with INSERT COIN and PRESS START. Any input ends the tour. Needs a configured LED panel (Settings → LEDS → LED SETUP); without one, holding simply launches the game |
 | Settings | Open the settings menu |
 | Quit | Request reboot (then press Select to confirm) |
 
@@ -188,7 +150,7 @@ VectorPie games use several types of analog and digital controls. AdvanceMAME au
 | Control Type | AdvanceMAME Action | Typical Input | Read by |
 |---|---|---|---|
 | Directional movement | `p1_up/down/left/right` | Joystick, keyboard arrows | opengw (move) |
-| Twin-stick aim | `p2_up/down/left/right` | Second joystick, keyboard | opengw (aim) |
+| Twin-stick aim | `p2_up/down/left/right` | Second joystick, keyboard (default R/F/D/G) | opengw (aim) |
 | Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button | opengw |
 | Player 1 start | `start1` | 1 key | opengw |
 | Insert coin | `coin1` | 5 key | menu, opengw |
@@ -288,10 +250,8 @@ The Settings page is organized into named sections (shown as bold purple headers
 | CONTROLS | ADSTICK        | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
 | CONTROLS | CALIBRATE | The row's value shows which joystick to work on — Left/Right cycles the connected devices, Select opens the calibration page for it (live axis bars on HDMI and the vector display). Calibrating is one step: move all axes to their extremes (yellow ticks mark the sampled range), release everything so the axes rest at center, and press Select to save — the resting position becomes the new center. Fixes off-center rest positions and limited range on analog controllers (Star Wars yoke). Saved and reapplied automatically at every startup; running games pick it up on their next launch. Cancel leaves the page. Grayed when no joystick is connected. |
 | CONTROLS | UI CONFIG, UI CANCEL, P1/P2 UP·DOWN·LEFT·RIGHT, P1 BUTTON 1/2, START 1, COIN 1, UI PAUSE | Rebind these AdvanceMAME controls without leaving the menu: highlight one, press Select, then press the key/button/joystick direction (press several to add "or" alternatives), then your Cancel control to save (Escape when rebinding Cancel itself); Left/Right resets to default. UI CONFIG always keeps Tab and UI CANCEL always keeps Escape. Writes to the shared `advmame.rc`, so it applies everywhere. See [Rebinding from the menu](#rebinding-from-the-menu). |
-| LEDS     | LED EFFECTS    | Lights each game's controls (via [LEDSpicer](https://github.com/meduzapat/LEDSpicer)) — both **while browsing** (the panel updates ~half a second after the selection rests on a game) and on launch, restoring the default lighting on exit. Which controls light comes from a per-game controls database — Asteroids lights only its buttons, Tempest lights the spinner; games without data show the all-on default. The coin buttons stay lit white throughout. After a few seconds on the same game, the launch button blinks white while the rest of the panel dims to a faint glow; the first time that happens the screen also spells out what it does — press to play, hold to hear the controls — and after that the blink speaks for itself. While the screensaver runs, the panel breathes slowly through cold colors — cyan, blue, violet, magenta, a new shade each breath — settling to a faint gray glow after 15 minutes, and returns to normal lighting on any input. Grayed when LEDSpicer isn't installed. |
-| LEDS     | DAEMON         | Read-only — whether the LEDSpicer daemon is running (RUNNING / STOPPED / NOT INSTALLED). |
-| LEDS     | LED SETUP      | Builds the LED configuration on-cabinet, no XML editing. Page 1: pick the controller model (PacLED64, PacDrive, LED-Wiz, …) and board ID. Page 2: walk the outputs — the highlighted output **flashes on the physical panel** while you name it from a fixed list of standard control names (P1 BUTTON 1, P1 JOYSTICK 1, P1 DIAL 1, START 1, …). An output is MONO (one lamp) or the RED channel of an RGB LED — then you pick its GREEN and BLUE outputs next, watching the colors change. Select on an assigned output clears it. SAVE AND EXIT (first row) writes `/etc/ledspicer.conf`, installs the default profiles, starts the daemon, and returns to Settings. Cancel walks back a page; backing all the way out with unsaved changes asks whether to save, discard, or keep editing. |
-| LEDS     | GAME COLORS    | Recolors a game's controls; the colors apply to **all revisions/clones of that game** — profiles are kept per parent title. Opens on the game that was highlighted when you entered Settings (the first of the manufacturer if you were on a header), and the page's MANUFACTURER and GAME rows cycle to any other game in the collection. The BUTTON row cycles the game's RGB-wired controls (single-color and unmapped LEDs have no color to pick, so they are skipped; a game with none shows NO RGB LEDS) and COLOR recolors the one it shows: Left/Right cycles the standard colors and **lights that control on the panel as you pick**, so you see the result before committing. SAVE AND EXIT writes the colors and they apply immediately; RESET TO DEFAULT restores the shipped colors. Games with no color data (e.g. Vectrex titles) show NO COLOR DATA. Edited colors ride along in USB backups. Cancel with unsaved edits asks whether to save, discard, or keep editing. |
+| LEDS     | LED SETUP      | Configures the LED panel on-cabinet. LED lighting runs automatically whenever a configured board is present: browsing or launching a game lights exactly the controls it uses in its own colors, the coin buttons stay lit, the launch button blinks after a few seconds (press to play, hold for the voice control guide), and the screensaver breathes the panel through cold colors. LED SETUP lists the LED boards detected on the USB bus (PacLED64, NanoLed, PacDrive, I-PAC Ultimate I/O, LED-Wiz 32) — pick one and walk its outputs: the highlighted output **flashes on the physical panel** while you set its mode (MONO or RGB), its type from a picker (BUTTON, JOYSTICK, SPINNER, TRACKBALL, START, COIN), and its input — captured by simply **pressing the control**, exactly like rebinding in CONTROLS. Changes are applied when you leave the page. Two boards answering to the same ID are flagged, and editing stays locked until the conflict is resolved. Grayed when no LED board is connected. |
+| LEDS     | GAME COLORS    | Recolors a game's lit controls; the colors apply to **all revisions/clones of that game** — they are kept per parent title. Opens on the game that was highlighted when you entered Settings, and the page's MANUFACTURER and GAME rows cycle to any other game in the collection. The BUTTON row cycles the game's lamps and COLOR recolors the one it shows: Left/Right cycles the palette and **the panel mirrors every change live** as you edit, so you see the result before committing. RESET TO DEFAULT restores the shipped colors. Edited colors ride along in USB backups. |
 | BACKUP   | SAVE ⏏         | Saves essential settings to a USB drive — see [Backup Save / Restore](#backup-save--restore) |
 | BACKUP   | RESTORE ⏏      | Restores settings from a USB drive backup — see [Backup Save / Restore](#backup-save--restore) |
 | NETWORK  | ETHERNET       | Enable or disable the wired Ethernet interface. Disabling forces the Pi to use Wi-Fi even when a cable is plugged in. State persists across reboots. |
@@ -318,6 +278,7 @@ When reflashing the SD card with a new VectorPie image, all personalized setting
 - **advmame.rc** — all input mappings, DVG settings, and audio configuration
 - **vector_pie_menu.cfg** — menu preferences (volumes, display toggles, selected theme music, etc.)
 - **gamelist.ini** — your customized game list
+- **LED settings** — the panel wiring from LED SETUP and the per-game colors
 - **Theme music files** — any `.mp3` / `.ogg` tracks you've added to the themes directory
 
 > **Note:** playlist music is *not* part of backups — it lives on the persistent partition (`/persistent/vector_pie_menu_dir/playlist`), which survives software updates in place. When moving to a new SD card, copy the playlist folder over the network share separately.
@@ -473,58 +434,6 @@ Pressing Select on a game fades out the music, suspends the display, and launche
 
 ---
 
-## Game List — `gamelist.ini`
-
-The game list is a pipe-delimited text file located at `/usr/local/share/advance/gamelist.ini`. Each line defines one game:
-
-```
-MANUFACTURER|DISPLAY NAME|PARENT ROM|CLONE ROM[|COMMAND]
-```
-
-| Field | Description |
-|---|---|
-| MANUFACTURER | Groups games by manufacturer (e.g. `Atari`, `Sega`) |
-| DISPLAY NAME | The name shown in the menu |
-| PARENT ROM | The AdvanceMAME parent ROM name |
-| CLONE ROM | The specific ROM variant to launch |
-| COMMAND | (Optional) Custom launcher for non-emulated games |
-
-Example:
-```
-Atari|Asteroids (rev 2)|asteroid|asteroid
-Atari|Tempest (rev 3)|tempest|tempest
-Sega|Star Trek|startrek|startrek
-```
-
-Games sharing the same parent ROM are grouped as variants and cycled with Left/Right in the menu.
-
-The menu always displays manufacturers, and the games within each, sorted alphabetically by name — the order of lines in `gamelist.ini` doesn't affect the on-screen order. (This keeps the list tidy even though an update inserts newly-added games at the top of the file.)
-
----
-
-## Artwork, ROMs and Samples
-
-| File type | Location |
-|---|---|
-| ROMs | `/usr/local/share/advance/rom` |
-| Samples | `/usr/local/share/advance/sample` |
-| Marquee artwork | `/usr/local/share/advance/artwork/marquees` |
-| Game preview videos | `/usr/local/share/advance/video` |
-
-Artwork images are PNGs. The filename must match the clone ROM name (e.g. `asteroid.png`), with case-insensitive matching so `Asteroid.PNG` also works. If no match is found, the parent ROM name is tried. For marquees, `default.png` is used as a final fallback if neither is found.
-
-Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces as underscores), e.g. `mfg_atari.png`. These are stored in the `artwork/marquees` directory.
-
-### Per-resolution variants
-
-Any image (marquee or the settings background) may ship a resolution-specific variant alongside the default by inserting the screen height before `.png`: `<name>.<height>.png`. On a 1920×360 marquee panel, `pacman.360.png` is picked first; on a 1080p screen, `pacman.1080.png` is picked first; if no suffixed variant exists, plain `pacman.png` is used. Useful when you want the same cab to drive a wide marquee panel and a normal HDMI monitor with different artwork on each.
-
-### Vectrex per-cart marquees
-
-Vectrex games run in MESS with the cartridge image loaded from the **fourth field** of `gamelist.ini` (the clone ROM field). For these titles the marquee filename is that field verbatim plus `.png`. For example, a row with clone ROM `lunar.bin` looks up `lunar.bin.png`. Matching is case-insensitive, so `Lunar.BIN.png` also works. If no per-cart marquee is found, `default.png` is used.
-
----
-
 ## Troubleshooting
 
 **Do not read or write the SD card directly from a Windows PC or Mac**
@@ -568,3 +477,94 @@ NET_INSTALL_ENABLED=0
 ```
 
 Save and reboot. The Pi will now boot directly from the local device every time.
+
+---
+
+## Appendix — Low-Level Access
+
+Everything in this appendix is optional: normal use of VectorPie never needs a PC, a shell, or hand-edited files. It's here for adding your own ROMs, artwork, and music, and for customizing the game list.
+
+### Accessing the Pi from a Windows PC
+
+VectorPie includes a pre-configured SSH server and Samba network share, so you can manage files and settings from any Windows PC on the same network without needing a keyboard or monitor connected to the Pi.
+
+To find the Pi's IP address, press **Tab** from the main menu to open Settings and scroll down to the **NETWORK** section — the current IP address is displayed there.
+
+The default login credentials for both the network share and SSH are:
+
+| | |
+|---|---|
+| **Username** | `pi` |
+| **Password** | `raspberry` |
+
+#### Network Share (File Access)
+
+The Pi's files are accessible as a standard Windows network share named **pi**. To connect:
+
+1. Open **File Explorer** on your Windows PC
+2. In the address bar, type `\\<pi-ip-address>\pi` and press Enter (e.g. `\\192.168.1.50\pi`)
+3. Log in with username `pi` and password `raspberry` when prompted
+4. Use the share to add ROMs, replace artwork, or edit the game list
+
+You can also map it as a persistent network drive:
+1. Right-click **This PC** in File Explorer and choose **Map network drive**
+2. Enter `\\<pi-ip-address>\pi` as the folder path and check **Reconnect at sign-in**
+
+#### SSH (Command Line Access)
+
+SSH lets you open a terminal on the Pi from your Windows PC. Windows 10 and 11 include a built-in SSH client.
+
+1. Find the Pi's IP address in the **NETWORK** section of the VectorPie Settings menu
+2. Open **Command Prompt** or **PowerShell** on your PC
+3. Type: `ssh pi@<pi-ip-address>` and press Enter
+4. Enter the password `raspberry` when prompted
+
+Alternatively, use a free SSH client such as **PuTTY** if you prefer a dedicated application.
+
+### Game List — `gamelist.ini`
+
+The game list is a pipe-delimited text file located at `/usr/local/share/advance/gamelist.ini`. Each line defines one game:
+
+```
+MANUFACTURER|DISPLAY NAME|PARENT ROM|CLONE ROM[|COMMAND]
+```
+
+| Field | Description |
+|---|---|
+| MANUFACTURER | Groups games by manufacturer (e.g. `Atari`, `Sega`) |
+| DISPLAY NAME | The name shown in the menu |
+| PARENT ROM | The AdvanceMAME parent ROM name |
+| CLONE ROM | The specific ROM variant to launch |
+| COMMAND | (Optional) Custom launcher for non-emulated games |
+
+Example:
+```
+Atari|Asteroids (rev 2)|asteroid|asteroid
+Atari|Tempest (rev 3)|tempest|tempest
+Sega|Star Trek|startrek|startrek
+```
+
+Games sharing the same parent ROM are grouped as variants and cycled with Left/Right in the menu.
+
+The menu always displays manufacturers, and the games within each, sorted alphabetically by name — the order of lines in `gamelist.ini` doesn't affect the on-screen order. (This keeps the list tidy even though an update inserts newly-added games at the top of the file.)
+
+### Artwork, ROMs and Samples
+
+| File type | Location |
+|---|---|
+| ROMs | `/usr/local/share/advance/rom` |
+| Samples | `/usr/local/share/advance/sample` |
+| Marquee artwork | `/usr/local/share/advance/artwork/marquees` |
+| Game preview videos | `/usr/local/share/advance/video` |
+
+Artwork images are PNGs. The filename must match the clone ROM name (e.g. `asteroid.png`), with case-insensitive matching so `Asteroid.PNG` also works. If no match is found, the parent ROM name is tried. For marquees, `default.png` is used as a final fallback if neither is found.
+
+Manufacturer logos follow the naming pattern `mfg_<name>.png` (lowercase, spaces as underscores), e.g. `mfg_atari.png`. These are stored in the `artwork/marquees` directory.
+
+#### Per-resolution variants
+
+Any image (marquee or the settings background) may ship a resolution-specific variant alongside the default by inserting the screen height before `.png`: `<name>.<height>.png`. On a 1920×360 marquee panel, `pacman.360.png` is picked first; on a 1080p screen, `pacman.1080.png` is picked first; if no suffixed variant exists, plain `pacman.png` is used. Useful when you want the same cab to drive a wide marquee panel and a normal HDMI monitor with different artwork on each.
+
+#### Vectrex per-cart marquees
+
+Vectrex games run in MESS with the cartridge image loaded from the **fourth field** of `gamelist.ini` (the clone ROM field). For these titles the marquee filename is that field verbatim plus `.png`. For example, a row with clone ROM `lunar.bin` looks up `lunar.bin.png`. Matching is case-insensitive, so `Lunar.BIN.png` also works. If no per-cart marquee is found, `default.png` is used.
