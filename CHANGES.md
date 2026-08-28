@@ -4,8 +4,10 @@
 ● Release Notes
 
   - LEDSpicer removed — LED lighting rebuilt into the menu. LED settings are included in backups.
-  - LED SETUP: each output flashes on the panel while you set its mode, type, and input by pressing the control.
+  - LED SETUP: boards are detected automatically; each output flashes on the panel while you set its mode, type, and input by pressing the control.
+  - CABINET COLORS: color the coins, starts, and menu button. Start lights are driven by the running game (Space Duel).
   - GAME COLORS: per-control colors, shown live on the panel.
+  - Voice control guide: hold select and each control lights alone while a voice names it.
   - Lighting follows the AdvanceMAME control bindings. Multiple LED boards supported.
   - Twin-stick games: the second stick works out of the box (R/F/D/G).
 
