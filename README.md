@@ -9,7 +9,7 @@ VectorPie is a pre-configured Raspberry Pi image designed to be used with the US
 Key features:
 
 - **Headless operation** — runs at boot with no monitor or desktop required on the Pi
-- **HDMI-0 marquee display** — the primary HDMI output automatically shows the marquee artwork for the game currently highlighted in the menu
+- **Marquee display** — the HDMI output automatically shows the marquee artwork for the game currently highlighted in the menu
 - **USB-DVG support** — drive a real vector monitor via the USB-DVG vector generator board; HDMI output is also supported for use without USB-DVG
 - **Unified input mapping** — controls are configured once in AdvanceMAME and apply to the menu and every game, including non-emulated titles
 - **High scores** — scrolling hint bar displays high scores parsed directly from MAME save files for the selected game
@@ -97,9 +97,9 @@ The menu shows a vertically scrolling list of games grouped by manufacturer:
 
 ---
 
-## HDMI-0 Marquee Display
+## Marquee Display
 
-The primary HDMI output (HDMI-0) automatically updates to show the marquee artwork for the currently highlighted game. Browsing at the manufacturer level shows the manufacturer's logo. If no artwork exists for a specific game a default image is shown.
+The HDMI output automatically updates to show the marquee artwork for the currently highlighted game. Browsing at the manufacturer level shows the manufacturer's logo. If no artwork exists for a specific game a default image is shown.
 
 The artwork scaling mode (Fit, Stretch, or Zoom) can be changed in the Settings menu.
 
@@ -161,6 +161,41 @@ Two-player games that use twin sticks use both `p1_` and `p2_` actions for movem
 
 ---
 
+## LED Lighting
+
+VectorPie drives control-panel LEDs natively: browsing or launching a game lights exactly the controls that game uses, in its own colors, and a voice-guided tour names each control on the panel. Setup is done once, on the cabinet.
+
+### Connecting the board
+
+Supported LED controllers: **PacLED64**, NanoLed, PacDrive, I-PAC Ultimate I/O, and LED-Wiz 32. Using the PacLED64 as the reference:
+
+1. Wire each lamp to the board's outputs. An RGB lamp uses **three consecutive outputs** — R, G, B on n, n+1, n+2 (so a lamp starting at output 13 also claims 14 and 15). Note the output numbers printed on the board as you go.
+2. Plug the board into one of the Pi's **USB 2.0 ports** (the black connectors — the blue USB 3.0 ports belong to the USB-DVG), directly or through the same hub as your other controls.
+3. That's all — the board is detected automatically, and **Settings → LEDS → LED SETUP** shows it as `PACLED64-1  CONFIGURE...`. No drivers, no background service.
+
+### Configuring each output
+
+Open **Settings → LEDS → LED SETUP**, select the board, and walk its outputs — the highlighted output **flashes on the physical panel** so you always know which lamp you're editing. For each output you set three things:
+
+- **MODE** — MONO (a single-color bulb) or RGB (claims the next two outputs for green and blue).
+- **INPUT** — press the physical control the lamp sits over, exactly like rebinding in CONTROLS. This is the heart of the system: the input ties the lamp to whatever that control *does* in each game, resolved through the AdvanceMAME bindings — so a lamp follows its control even when you rebind the game.
+- **TYPE** — what kind of control is under the lamp. **Getting the type right matters**, because it decides which family the lamp belongs to:
+  - **BUTTON, JOYSTICK, SPINNER, TRACKBALL** — game controls. These light per game, take their colors from the game's data, and are named by the voice guide.
+  - **START, COIN** — the cabinet's start and coin buttons. Coins stay lit while a game is selected; starts light when a game drives its own start LEDs. Both are colored by CABINET COLORS, never by a game.
+  - **OTHER** — a cabinet lamp no game uses at all: a menu button, a service light. It glows steadily while the menu is up, in its cabinet color.
+
+Changes are applied when you leave the page. A configured board that is disconnected shows **NOT DETECTED**; its outputs page then offers **REMOVE CONFIG...** to forget the board's outputs and colors (with a confirmation).
+
+### Cabinet colors — and why
+
+**Settings → LEDS → CABINET COLORS** colors the buttons no game owns. The colors are attached to the button's *function*, not its wiring — COIN 1, START 1, or the menu button (recognized by its UI CONFIG binding, rebinds included) — so they survive rewiring and follow rebinds. Everything defaults to red, the lit-button look of the era. For the start buttons the color is their **ON color**: they light only when something drives them — a game's own start lights, or the guide's PRESS START step — and are dark otherwise, like the original machines.
+
+### Game colors — and why
+
+**Settings → LEDS → GAME COLORS** recolors an individual game's controls. Game colors are statements about the *game* — fire is red in this game, thrust is white — so they apply to every revision and clone of that title and stay valid however the panel is wired. Every game in the library ships with colors and a voice tour; this page is for making a game yours: the BUTTON row cycles the game's lamps, COLOR picks the shade while **the panel mirrors every change live**, and RESET TO DEFAULT restores the shipped look.
+
+---
+
 ## Wi-Fi Configuration
 
 Wi-Fi is configured directly from the menu — no keyboard or SSH session required.
@@ -206,9 +241,9 @@ The same drive can carry a `vectorpie_backup.tar.gz`, a `playlist/` folder, and 
 | Timeout | Behavior |
 |---|---|
 | Stop pressing keys | Menu text begins fading immediately and is fully hidden after the MENU FADE duration (default 2.5 seconds, configurable in Settings → DISPLAY); marquee image brightens. Button hints disappear. |
-| 60 seconds idle | Screensaver activates: short attract video plays, then `vectorpie.mp4` loops as the background |
+| 60 seconds idle | Screensaver activates: a short attract video plays, then the screensaver video loops as the background |
 
-On the HDMI display the screensaver first plays a short attract video, then loops `vectorpie.mp4` as the background. If no MP4 is present it falls back to the still `vectorpie.png` logo. When the music playlist is active, the current and next track titles overlay on top. On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
+On the HDMI display the screensaver first plays a short attract video, then loops the screensaver video as the background. When the music playlist is active, the current and next track titles overlay on top. On the USB-DVG the screensaver shows drifting asteroids and a bouncing VectorPie logo. Any control input returns to the menu.
 
 ---
 
@@ -250,9 +285,9 @@ The Settings page is organized into named sections (shown as bold purple headers
 | CONTROLS | ADSTICK        | Selects which device drives analog stick controls (Star Wars yoke, etc.): JOYSTICK (default) or MOUSE. See Input Mapping for details. |
 | CONTROLS | CALIBRATE | The row's value shows which joystick to work on — Left/Right cycles the connected devices, Select opens the calibration page for it (live axis bars on HDMI and the vector display). Calibrating is one step: move all axes to their extremes (yellow ticks mark the sampled range), release everything so the axes rest at center, and press Select to save — the resting position becomes the new center. Fixes off-center rest positions and limited range on analog controllers (Star Wars yoke). Saved and reapplied automatically at every startup; running games pick it up on their next launch. Cancel leaves the page. Grayed when no joystick is connected. |
 | CONTROLS | UI CONFIG, UI CANCEL, P1/P2 UP·DOWN·LEFT·RIGHT, P1 BUTTON 1/2, START 1, COIN 1, UI PAUSE | Rebind these AdvanceMAME controls without leaving the menu: highlight one, press Select, then press the key/button/joystick direction (press several to add "or" alternatives), then your Cancel control to save (Escape when rebinding Cancel itself); Left/Right resets to default. UI CONFIG always keeps Tab and UI CANCEL always keeps Escape. Writes to the shared `advmame.rc`, so it applies everywhere. See [Rebinding from the menu](#rebinding-from-the-menu). |
-| LEDS     | LED SETUP      | Configures the LED panel on-cabinet. LED lighting runs automatically whenever a configured board is present: browsing or launching a game lights exactly the controls it uses in its own colors, the coin buttons stay lit, the launch button blinks after a few seconds (press to play, hold for the voice control guide), and the screensaver breathes the panel through cold colors. LED SETUP lists the LED boards detected on the USB bus (PacLED64, NanoLed, PacDrive, I-PAC Ultimate I/O, LED-Wiz 32) — pick one and walk its outputs: the highlighted output **flashes on the physical panel** while you set its mode (MONO or RGB), its type from a picker (BUTTON, JOYSTICK, SPINNER, TRACKBALL, START, COIN, OTHER — OTHER is a cabinet lamp no game lights, such as a menu button), and its input — captured by simply **pressing the control**, exactly like rebinding in CONTROLS. Changes are applied when you leave the page. Two boards answering to the same ID are flagged, and editing stays locked until the conflict is resolved. A configured board that is not currently connected shows NOT DETECTED; its outputs page then offers REMOVE CONFIG... to forget the board's outputs and colors (with a confirmation). Grayed when no LED board is connected. |
-| LEDS     | CABINET COLORS | Colors for the buttons no game owns — the coins, the starts, and OTHER-typed lamps such as a menu button, recognized by their function (a lamp on the menu key follows the UI CONFIG binding, rebinds included). Everything defaults to red, the era's lit-button look. The BUTTON row cycles the cabinet lamps, COLOR picks the shade and lights it on the panel as you go; RESET TO DEFAULT returns everything to red. The colors apply everywhere the lamps light: browsing, the voice guide's INSERT COIN and PRESS START steps, and games that drive their own start lights. |
-| LEDS     | GAME COLORS    | Recolors a game's lit controls; the colors apply to **all revisions/clones of that game** — they are kept per parent title. Opens on the game that was highlighted when you entered Settings, and the page's MANUFACTURER and GAME rows cycle to any other game in the collection. The BUTTON row cycles the game's lamps and COLOR recolors the one it shows: Left/Right cycles the palette and **the panel mirrors every change live** as you edit, so you see the result before committing. RESET TO DEFAULT restores the shipped colors. Edited colors ride along in USB backups. |
+| LEDS     | LED SETUP      | Configure the LED panel: boards are detected, each output flashes on the panel while you set its mode, type, and input. See [LED Lighting](#led-lighting). |
+| LEDS     | CABINET COLORS | Colors for the buttons no game owns — coins, starts, menu button. See [Cabinet colors](#cabinet-colors--and-why). |
+| LEDS     | GAME COLORS    | Recolor a game's controls, live on the panel; applies to all the game's revisions. See [Game colors](#game-colors--and-why). |
 | BACKUP   | SAVE ⏏         | Saves essential settings to a USB drive — see [Backup Save / Restore](#backup-save--restore) |
 | BACKUP   | RESTORE ⏏      | Restores settings from a USB drive backup — see [Backup Save / Restore](#backup-save--restore) |
 | NETWORK  | ETHERNET       | Enable or disable the wired Ethernet interface. Disabling forces the Pi to use Wi-Fi even when a cable is plugged in. State persists across reboots. |
@@ -358,7 +393,7 @@ VectorPie keeps two copies of itself on the SD card. If a new version fails to b
 
 ## USB-DVG Support
 
-VectorPie can drive a USB-DVG vector generator board to render the menu on a real vector monitor alongside the HDMI-0 marquee display.
+VectorPie can drive a USB-DVG vector generator board to render the menu on a real vector monitor alongside the marquee display.
 
 The USB-DVG renders the full game menu as vector text, shows manufacturer logos, and runs a drifting asteroids screensaver when idle. It can also query the hardware for a default game to auto-launch on startup.
 
@@ -415,7 +450,7 @@ To enter calibration mode, press the Calibration button while the USB-DVG is ena
 | GRID | Evenly spaced horizontal and vertical lines — useful for checking overall linearity and convergence |
 | COLOR INTENSITY BARS | Graduated brightness bars in each color channel — useful for checking beam intensity and color balance |
 
-The current pattern name is shown on the HDMI-0 marquee display during calibration.
+The current pattern name is shown on the marquee display during calibration.
 
 ---
 
