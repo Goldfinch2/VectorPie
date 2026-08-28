@@ -189,7 +189,7 @@ Changes apply when you leave the page. A disconnected board shows NOT DETECTED; 
 
 ### Cabinet colors
 
-**CABINET COLORS** colors the buttons no game owns — coins, starts, the menu button. The color attaches to the button's function, not its wiring, so it survives rewiring and follows rebinds. Default is red, the lit-button look of the era. For starts the color is the ON color: they light only when the game drives them, dark otherwise — like the original machines.
+**CABINET COLORS** colors the buttons no game owns — coins, starts, the menu button. The color attaches to the button's function, not its wiring, so it survives rewiring. Default is red, the lit-button look of the era. For starts the color is the ON color: they light only when the game drives them, dark otherwise — like the original machines.
 
 ### Game colors
 
