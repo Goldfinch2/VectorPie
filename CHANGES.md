@@ -7,6 +7,8 @@
 
   All Ultimarc output boards are tested: PacLED64, NanoLed, PacDrive and I-PAC Ultimate I/O. LED-Wiz support is tentative and untested.
 
+  Some settings menu refinements.
+
 
 
 ### vectorpie-1.1.6
