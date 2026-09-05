@@ -1,3 +1,14 @@
+### vectorpie-1.1.7
+
+
+● What's new
+
+  You can now create LED light shows that follow the beat of the music on the screensaver. After importing tracks, you can generate the beat maps in Settings -> MUSIC -> GENERATE BEAT MAPS...: a neural network running on the Pi finds the beats (about 30 seconds per track). Then build your show in Settings -> LEDS -> LED SHOW....
+
+  All Ultimarc output boards are tested: PacLED64, NanoLed, PacDrive and I-PAC Ultimate I/O. LED-Wiz support is tentative and untested.
+
+
+
 ### vectorpie-1.1.6
 
 
