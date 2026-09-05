@@ -22,8 +22,8 @@ Runs on the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ## Supported Hardware
 
-- Raspberry Pi 4 or 5, 1 GB or more
-- 32 GB SD card or larger
+- Raspberry Pi 4 or 5, 1 GB or more. Raspberry Pi 5 recommended for better performance.
+- 32 GB SD card or larger. (Pi 5) M.2 NVMe HAT and M.2 NVMe SSD recommended for performance and reliability.
 
 ---
 
@@ -31,7 +31,7 @@ Runs on the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ### VectorPie Image
 
-1. Download the image (about 2 GB): [VectorPie Image](https://drive.google.com/file/d/1F04n3m3ul0oDv74o6r0hZJDfqXayrsgQ/view?usp=drive_link)
+1. Download the image (about 2 GB): [VectorPie Image](https://drive.google.com/file/d/1LUsRHiiyYHzvATRZeuvclLhPZ3dwjVR8/view?usp=sharing)
 2. Write it to the SD card with **balenaEtcher** ([download](https://etcher.balena.io/)): **Flash from file** → the `.img.gz` → **Select target** → **Flash!**
 3. Insert the card and power on. VectorPie boots into the game menu.
 
