@@ -48,7 +48,7 @@ Two variants:
 | v3 or later (standalone) | Standalone |
 | v3 or later (on adapter card) | Arcade Control |
 
-> On VectorPie 1.1.2 or later the firmware is updated from the menu (Settings → USB-DVG → USB-DVG UPDATE). The manual procedure below is for older versions only.
+> On VectorPie 1.1.2 or later the firmware is updated from the menu (Settings → USB-DVG → USB-DVG UPDATE...). The manual procedure below is for older versions only.
 
 Flash with **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
 
@@ -147,7 +147,7 @@ VectorPie drives the control-panel LEDs itself: a game lights the controls it us
 
 ### Connecting the board
 
-1. Wire each lamp to the board. An RGB lamp uses three consecutive outputs — R, G, B on n, n+1, n+2.
+1. Wire each lamp to the board. An RGB lamp uses three consecutive outputs, n, n+1, n+2. On an Ultimate I/O the connectors from output 49 up are rotated, so their pins run B, G, R; plug the lamp in pin for pin on either side and the menu sorts the colors out. (The PacLED64 is R, G, B throughout.)
 2. Plug the board into a USB 2.0 port (black; the blue ones are for the USB-DVG).
 3. The board is detected automatically and LED SETUP lists it. No drivers, no service.
 
@@ -192,7 +192,7 @@ An animation is a list of frames; a frame is which lamps are lit, in what color.
 
 **EDIT FRAMES...** builds the frames lamp by lamp, with the panel showing the frame as you go. Pick the **FRAME** and its **EFFECT** — hold, strobe, fade in, fade out, or random — then:
 
-- **LAMP** walks every lamp on the cabinet by address; while the cursor is on LAMP or COLOR the picked lamp shows alone on the panel (blinking white if it isn't lit), and `*` marks the ones already in the frame. Select puts it in, in **COLOR**, or takes it out. The other rows show the whole frame.
+- **LAMP** walks every lamp on the cabinet by address; while the cursor is on LAMP or COLOR the picked lamp shows at full on the panel (blinking white if it isn't lit) with the frame's other lamps dimmed to a twentieth, and `*` marks the ones already in the frame. Select puts it in, in **COLOR**, or takes it out. The other rows show the whole frame.
 - **COLOR** is the twelve colors and **RANDOM** (a fresh color each time the frame plays). Changing it recolors the picked lamp; on a PacDrive lamp it just reads **ON**.
 - **CLEAR FRAME** turns every lamp off.
 
@@ -230,16 +230,16 @@ A map is a `.beats` file beside its track. Importing from USB copies any already
 
 ### Importing from USB
 
-**Settings → MUSIC → IMPORT ⏏** copies `.mp3` / `.ogg` tracks from a drive's `playlist/` folder into the playlist and from its `themes/` folder into the themes; a missing folder is skipped. Left/Right picks **ADD** (keep what's there, add the rest) or **REPLACE** (empty the destination first). REPLACE asks for a second press.
+**Settings → MUSIC → IMPORT ⏏** copies `.mp3` / `.ogg` tracks from a drive's `playlist/` folder into the playlist, its `themes/` folder into the themes, and its `radio/` folder (DJ announcements) into `/persistent/vector_pie_menu_dir/radio`; a missing folder is skipped. Left/Right picks **ADD** (keep what's there, add the rest) or **REPLACE** (empty the destination first). REPLACE asks for a second press.
 
 Prepare the drive:
 
 1. Format it FAT32, exFAT, or NTFS
-2. Create `playlist/` and/or `themes/` at the root
+2. Create `playlist/`, `themes/`, and/or `radio/` at the root
 3. Copy the `.mp3` / `.ogg` files in; files elsewhere are ignored
 4. Plug it in and run the import
 
-The drive can carry a `vectorpie_backup.tar.gz` too. The row reports `ADDED 23/4` (playlist / themes), `NO playlist/ OR themes/`, or `NO TRACKS ON USB`.
+The drive can carry a `vectorpie_backup.tar.gz` too. The row reports `ADDED 23/4` (playlist / themes, plus `+2 DJ` when radio clips came over), `NO playlist/ themes/ OR radio/`, or `NO TRACKS ON USB`.
 
 | File type | Location |
 |---|---|
@@ -276,7 +276,7 @@ Sections: DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, BACKUP, NETWO
 | USB-DVG  | DVG            | USB-DVG output on/off |
 | USB-DVG  | DVG REFRESH    | Refresh rate, 30–60 Hz. Default 40. Applies as you adjust — raise for a steadier, brighter picture, lower if the display can't keep up. |
 | USB-DVG  | DVG TYPE       | Firmware variant on the board: STANDARD or ARCADE CONTROL. Used by USB-DVG UPDATE. Newer firmware reports it and this follows. |
-| USB-DVG  | USB-DVG UPDATE | Check online for newer firmware (for DVG TYPE). Second press downloads, verifies, flashes, and reboots. |
+| USB-DVG  | USB-DVG UPDATE... | The firmware update page (for DVG TYPE): checks online, shows the release notes, UPDATE flashes. |
 | USB-DVG  | DVG SETTINGS   | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. Needs firmware 1.14R2 or later. |
 | USB-DVG  | CRT CALIBRATION | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
 | USB-DVG  | OVERLAY        | Color overlays: DISABLED / COLORING / ARTWORK / BOTH (see below) |
@@ -288,7 +288,7 @@ Sections: DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, BACKUP, NETWO
 | MUSIC    | TYPE           | **THEME** or **PLAYLIST** |
 | MUSIC    | THEME          | The looping theme track; previews as you cycle. Grayed with PLAYLIST. |
 | MUSIC    | PLAYLIST SHUFFLE | Random or alphabetical order. Grayed with THEME. |
-| MUSIC    | IMPORT ⏏       | Copy tracks from a USB drive — `playlist/` and `themes/` folders. Left/Right: **ADD** or **REPLACE**; REPLACE asks twice. |
+| MUSIC    | IMPORT ⏏       | Copy tracks from a USB drive — `playlist/`, `themes/`, and `radio/` folders. Left/Right: **ADD** or **REPLACE**; REPLACE asks twice. |
 | MUSIC    | GENERATE BEAT MAPS... | Make the beat maps the screensaver light show follows. Cancel stops and keeps what's done. See [Beat maps](#beat-maps). |
 | EFFECTS  | ENABLED        | Navigation and select sounds |
 | EFFECTS  | VOLUME         | Their volume |
@@ -310,7 +310,7 @@ Sections: DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, BACKUP, NETWO
 | NETWORK  | WIFI NETWORK   | Pick a network from the scan. |
 | NETWORK  | WIFI PASSWORD  | Its password. See [Wi-Fi Configuration](#wi-fi-configuration). |
 | NETWORK  | CONNECT        | Connect. Grayed when already on that network. |
-| SYSTEM   | VECTORPIE UPDATE | Check online for a newer VectorPie. Second press downloads, verifies, applies, and reboots. See [Software Updates](#software-updates). |
+| SYSTEM   | VECTORPIE UPDATE... | The update page: checks online, shows the release notes, UPDATE applies. See [Software Updates](#software-updates). |
 | SYSTEM   | EXIT TO SHELL  | Leave the menu for a Linux prompt |
 
 Changes are saved when Settings closes.
@@ -365,14 +365,14 @@ VectorPie updates itself over the internet — no reflashing.
 ### How to update
 
 1. Connect to a network (see [Wi-Fi Configuration](#wi-fi-configuration))
-2. **SYSTEM → VECTORPIE UPDATE**, press Select: **CHECKING**, then **UP TO DATE**, **UPDATE AVAILABLE: *version***, or **OFFLINE**
-3. Press Select again to apply: **DOWNLOADING → VERIFYING → APPLYING**, then the Pi reboots into the new version
+2. **SYSTEM → VECTORPIE UPDATE...** opens the update page, which checks online: **CHECKING**, then **UP TO DATE (*version*)**, **UPDATE AVAILABLE: *version***, or **OFFLINE**, with the latest version's release notes in a box below it (Up/Down scroll, Left/Right a page)
+3. **UPDATE** applies (grayed when you already run that version): **DOWNLOADING → VERIFYING → APPLYING**, then the Pi reboots into the new version. **EXIT** or CANCEL returns to Settings
 
 An update takes 10–15 minutes. Power loss during it is safe — the previous version stays until the new one boots — but let it finish.
 
 ### USB-DVG firmware updates
 
-**USB-DVG → USB-DVG UPDATE** works the same way for the board's firmware (for the DVG TYPE variant): check, then download, verify and flash — the vector display goes dark during the flash — then reboot. Only newer firmware is offered, except that changing DVG TYPE offers the other variant at the same version, so a board flashed with the wrong one can be corrected. A failed flash is recoverable: the Teensy bootloader is separate, so try again.
+**USB-DVG → USB-DVG UPDATE...** works the same way for the board's firmware (for the DVG TYPE variant): the page checks, shows the release notes, and UPDATE downloads, verifies and flashes — the vector display goes dark during the flash — then reboot. Only newer firmware is offered, except that changing DVG TYPE offers the other variant at the same version, so a board flashed with the wrong one can be corrected. A failed flash is recoverable: the Teensy bootloader is separate, so try again.
 
 ### What carries over
 
