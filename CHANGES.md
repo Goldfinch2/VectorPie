@@ -1,3 +1,22 @@
+### vectorpie-1.1.8
+
+
+● What's new
+
+  Re-recorded samples for many MAME games from latest MAME netlist audio.
+
+  Improvement in SP0250 Sega speech board emulation.  Startrek, Tacscan (and other) speech output should sound better.
+
+  Corrected issue with Ultimarc Ultimate I/O LEDs.
+
+  Firmware updates now display release notes.
+
+  Corrected settings layout on 1920x1080 display.
+
+  Corrected default LED configuration and guide for some games.
+
+
+
 ### vectorpie-1.1.7
 
 
