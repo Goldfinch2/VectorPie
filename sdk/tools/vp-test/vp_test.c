@@ -41,6 +41,7 @@ static const char *binding_type_name(vp_binding_type t)
     case VP_BINDING_JOY_AXIS_POS: return "joystick axis +";
     case VP_BINDING_MOUSE_BUTTON: return "mouse button";
     case VP_BINDING_MOUSE_AXIS:   return "mouse axis";
+    case VP_BINDING_JOY_ANALOG:   return "joystick analog";
     }
     return "?";
 }
@@ -71,7 +72,7 @@ static void print_rc(void)
             vp_rc_binding(rc, name, j, &b);
             printf("%s%s dev %s ", j ? " | " : "", binding_type_name(b.type), b.device);
             if (b.type == VP_BINDING_KEY) printf("%s", b.key);
-            else printf("#%d", b.index);
+            else printf("#%d%s", b.index, b.invert ? " reversed" : "");
         }
         printf("\n");
     }

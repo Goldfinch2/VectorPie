@@ -25,3 +25,10 @@ void vp_window_frame(vp_window *w, const vp_vec *vecs, uint32_t count,
 
 // 1 if SDL_QUIT is pending. Pumps events but never removes any.
 int  vp_window_closed(vp_window *w);
+
+// Start SDL's video subsystem the SDK's way (on a Pi with no X11/Wayland
+// display: KMS/DRM). Reference-counted by SDL: pair each successful call with
+// vp_sdl_video_quit(). The input layer needs it for the keyboard even when
+// frames go to the board.
+int  vp_sdl_video_init();
+void vp_sdl_video_quit();

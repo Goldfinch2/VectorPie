@@ -125,6 +125,11 @@ static bool parseBinding(const std::string &token, vp_binding *b)
     memset(b, 0, sizeof(*b));
     std::string t = trim(token);
     if (t.compare(0, 3, "not") == 0) return false;
+    int invert = 0;
+    if (!t.empty() && t[0] == '-') {
+        invert = 1;
+        t = trim(t.substr(1));
+    }
 
     size_t open = t.find('[');
     size_t close = t.find(']');
@@ -172,9 +177,30 @@ static bool parseBinding(const std::string &token, vp_binding *b)
         return true;
     }
     if (kind == "mouse") {
-        if (f.size() < 2 || (f[1] != "x" && f[1] != "y")) return false;
+        // mouse[device,axis]: the axis as x/y or as its number.
+        if (f.size() < 2) return false;
+        if (f[1] == "x" || f[1] == "0")      b->index = 0;
+        else if (f[1] == "y" || f[1] == "1") b->index = 1;
+        else return false;
         b->type = VP_BINDING_MOUSE_AXIS;
-        b->index = (f[1] == "y") ? 1 : 0;
+        b->invert = invert;
+        vp_strlcpy(b->device, deviceToken(f[0]).c_str(), sizeof(b->device));
+        return true;
+    }
+    if (kind == "joystick") {
+        // joystick[device,stick,axis]: an analog axis, numbered like
+        // joystick_digital's.
+        if (f.size() < 3) return false;
+        int stick = isNumber(f[1]) ? atoi(f[1].c_str()) : 0;
+        int axis;
+        if (f[2] == "x")      axis = stick * 2;
+        else if (f[2] == "y") axis = stick * 2 + 1;
+        else if (f[2] == "z") axis = 2;
+        else if (isNumber(f[2])) axis = stick * 2 + atoi(f[2].c_str());
+        else return false;
+        b->type = VP_BINDING_JOY_ANALOG;
+        b->index = axis;
+        b->invert = invert;
         vp_strlcpy(b->device, deviceToken(f[0]).c_str(), sizeof(b->device));
         return true;
     }
@@ -191,13 +217,34 @@ static std::vector<vp_binding> parseBindings(const std::string &value)
                                                       ? std::string::npos : orPos - pos));
         pos = (orPos == std::string::npos) ? value.size() : orPos + 4;
         if (part.empty()) continue;
-        // A combination ("keyboard[0,a] keyboard[0,b]"): keep its first element.
-        size_t endFirst = part.find(']');
-        if (endFirst != std::string::npos) part = part.substr(0, endFirst + 1);
-        vp_binding b;
-        if (parseBinding(part, &b)) out.push_back(b);
+        // Split a part into its bracketed inputs ("keyboard[0,a] keyboard[0,b]").
+        std::vector<std::string> inputs;
+        size_t p = 0;
+        while (p < part.size()) {
+            size_t close = part.find(']', p);
+            if (close == std::string::npos) break;
+            std::string one = trim(part.substr(p, close - p + 1));
+            if (!one.empty()) inputs.push_back(one);
+            p = close + 1;
+        }
+        if (inputs.empty()) continue;
+        // Analog inputs written together are added up by AdvanceMAME: keep
+        // them all. A combination of buttons: keep its first element.
+        std::string first = inputs[0];
+        if (!first.empty() && first[0] == '-') first = first.substr(1);
+        bool analog = first.compare(0, 9, "joystick[") == 0 || first.compare(0, 6, "mouse[") == 0;
+        size_t n = analog ? inputs.size() : 1;
+        for (size_t i = 0; i < n; i++) {
+            vp_binding b;
+            if (parseBinding(inputs[i], &b)) out.push_back(b);
+        }
     }
     return out;
+}
+
+std::vector<vp_binding> vp_rc_parse_bindings(const std::string &value)
+{
+    return parseBindings(trim(value));
 }
 
 // ---------------------------------------------------------------------------

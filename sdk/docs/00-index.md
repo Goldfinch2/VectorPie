@@ -6,16 +6,18 @@ Read in order the first time; each chapter is written to stand alone after that.
 |---|---|
 | [01 — The device layer](01-device-layer.md) | Drawing (color / moveto / lineto), where a frame goes (board or window), which board, the counters |
 | [02 — advmame.rc](02-advmame-rc.md) | Reading the cabinet's settings and control bindings |
+| [03 — The game layer](03-game-layer.md) | The game loop (`vp_run`), the controls (`vp_input`), text (`vp_text`) |
 
-Coming next: the game loop, input, audio, text, 3D, high scores, and
-packaging a game for the VectorPie menu.
+Coming next: audio, 3D, high scores, and packaging a game for the VectorPie
+menu.
 
 ## The layers
 
 ```
 your game
   |
-  |  vp_run, vp_input, vp_audio, vp_text, vp_3d, ...   next
+  |  vp_run    the loop          vp_input  the controls     vp_text  text
+  |  vp_audio, vp_3d, vp_hiscore, ...                     next
   v
 vp_dvg   vp_color / vp_moveto / vp_lineto
          frames -> vector board (USB-DVG, BeamForge)  or  -> window (SDL2)

@@ -53,9 +53,14 @@ add_library(vectorpie STATIC
     src/dvg/vp_dvg.cpp
     src/dvg/vp_serial_posix.cpp
     src/dvg/vp_serial_win.cpp
+    src/text/vp_text.cpp
 )
 if(VP_WITH_SDL2)
-    target_sources(vectorpie PRIVATE src/dvg/vp_window_sdl.cpp)
+    # The window output, the controls and the game loop need SDL2.
+    target_sources(vectorpie PRIVATE
+        src/dvg/vp_window_sdl.cpp
+        src/input/vp_input.cpp
+        src/app/vp_app.cpp)
     target_link_libraries(vectorpie PUBLIC ${VP_SDL2_TARGET})
 else()
     target_sources(vectorpie PRIVATE src/dvg/vp_window_none.cpp)
@@ -103,6 +108,10 @@ endif()
 if(VP_BUILD_EXAMPLES)
     add_executable(poc examples/poc/main.c)
     vp_program(poc)
+    if(VP_WITH_SDL2)
+        add_executable(hello examples/hello/main.c)
+        vp_program(hello)
+    endif()
 endif()
 
 # --- install ---------------------------------------------------------------

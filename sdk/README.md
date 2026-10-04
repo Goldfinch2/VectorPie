@@ -4,10 +4,10 @@ Write vector games for **VectorPie**: a Raspberry Pi driving a real vector
 monitor through a **USB-DVG** (or the coming **BeamForge**) board. Develop
 and test on your PC, in a window; run the same code on the cabinet.
 
-> Status: **0.1.0, proof of concept**: the device layer (frames to the board
-> or to a window), the three drawing calls, the advmame.rc reader, `vp-test`,
-> and `poc`, a small program that builds for the PC and the Pi. The game loop,
-> input, audio, text, 3D, high scores and game packages come next.
+> Status: **0.1.0, in development**: the device layer (frames to the board or
+> to a window), the three drawing calls, the advmame.rc reader, the game loop,
+> the controls, text, `vp-test`, and two examples (`poc`, `hello`). Audio, 3D,
+> high scores and game packages come next.
 
 ## Set up (once)
 
@@ -48,6 +48,7 @@ On the PC (from the Debian shell; the `.exe` runs in Windows):
 ```sh
 build-pc/poc.exe --windowed          # a turning cube in a window
 build-pc/poc.exe --dvg COM5          # on a USB-DVG plugged into the PC
+build-pc/hello.exe --windowed        # a small game: arrows, Left Ctrl, 1 to start, Esc
 build-pc/vp-test.exe --windowed      # the test pattern
 ```
 

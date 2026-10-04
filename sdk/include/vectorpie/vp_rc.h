@@ -31,7 +31,8 @@ typedef enum vp_binding_type {
     VP_BINDING_JOY_AXIS_NEG,   /* joystick_digital[dev,stick,axis,up|left] */
     VP_BINDING_JOY_AXIS_POS,   /* joystick_digital[dev,stick,axis,down|right] */
     VP_BINDING_MOUSE_BUTTON,   /* mouse_button[dev,button] */
-    VP_BINDING_MOUSE_AXIS      /* mouse[dev,x|y]: a spinner or trackball */
+    VP_BINDING_MOUSE_AXIS,     /* mouse[dev,x|y]: a spinner or trackball */
+    VP_BINDING_JOY_ANALOG      /* joystick[dev,stick,axis]: an analog stick axis */
 } vp_binding_type;
 
 typedef struct vp_binding {
@@ -46,6 +47,9 @@ typedef struct vp_binding {
      * "extra" map to 0..4).
      * Joystick axes: axis index. Mouse axes: 0 = x, 1 = y. */
     int index;
+    /* Analog bindings (VP_BINDING_JOY_ANALOG, VP_BINDING_MOUSE_AXIS): 1 when
+     * written with a leading '-' ("-joystick[0,0,1]"): the axis is reversed. */
+    int invert;
 } vp_binding;
 
 /* The path vp_rc_load(NULL, ...) reads. VP_ERR_NOTFOUND if none applies. */
@@ -73,8 +77,10 @@ int vp_rc_action_count(const vp_rc *rc);
 const char *vp_rc_action_name(const vp_rc *rc, int i);
 
 /* The bindings of one action, "or" alternatives in file order. 0 if the
- * action is absent. Parts the SDK does not understand are skipped; a
- * combination ("keyboard[0,a] keyboard[0,b]") is read as its first element. */
+ * action is absent. Parts the SDK does not understand are skipped. A
+ * combination of buttons ("keyboard[0,a] keyboard[0,b]") is read as its first
+ * element; several analog inputs written together ("joystick[0,0,0]
+ * mouse[0,x]", AdvanceMAME adds them up) are all kept. */
 int vp_rc_binding_count(const vp_rc *rc, const char *action);
 int vp_rc_binding(const vp_rc *rc, const char *action, int i, vp_binding *out);
 

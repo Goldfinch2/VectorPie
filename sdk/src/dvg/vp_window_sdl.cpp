@@ -27,8 +27,11 @@ static const char *const GL_RENDER_DRIVER = "opengles2";
 // Brightness of an invisible move when show_blanks is on.
 static const Uint8 BLANK_GRAY = 60;
 
-static int initVideo()
+int vp_sdl_video_init()
 {
+    // The SDK has no main() of its own to hand to SDL; tell SDL so (needed on
+    // Windows when the program does not link SDL2main, harmless elsewhere).
+    SDL_SetMainReady();
 #if defined(__linux__)
     // The Pi runs no windowing system: with no X11 or Wayland display to open
     // a window on, go straight to KMS/DRM, which draws on the HDMI display the
@@ -41,13 +44,15 @@ static int initVideo()
     return vp_fail(VP_ERR_NODEV, "SDL video init failed: %s", SDL_GetError());
 }
 
+void vp_sdl_video_quit()
+{
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+}
+
 int vp_window_open(const char *title, int width, int height, int fullscreen,
                    int showBlanks, vp_window **out)
 {
-    // The SDK has no main() of its own to hand to SDL; tell SDL so (needed on
-    // Windows when the program does not link SDL2main, harmless elsewhere).
-    SDL_SetMainReady();
-    int r = initVideo();
+    int r = vp_sdl_video_init();
     if (r != VP_OK)
         return r;
 

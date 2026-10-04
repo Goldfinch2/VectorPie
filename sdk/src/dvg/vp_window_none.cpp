@@ -16,3 +16,10 @@ int vp_window_closed(vp_window *)
 {
     return 0;
 }
+
+int vp_sdl_video_init()
+{
+    return vp_fail(VP_ERR_NODEV, "this SDK was built without SDL2");
+}
+
+void vp_sdl_video_quit() {}
