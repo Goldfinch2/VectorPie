@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: vectorpie
+Description: VectorPie SDK - vector games for the USB-DVG
+Version: @PROJECT_VERSION@
+Requires: @VP_PC_REQUIRES@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lvectorpie @VP_PC_LIBS_EXTRA@
