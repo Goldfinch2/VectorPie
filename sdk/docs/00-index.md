@@ -8,9 +8,9 @@ Read in order the first time; each chapter is written to stand alone after that.
 | [02 — advmame.rc](02-advmame-rc.md) | Reading the cabinet's settings and control bindings |
 | [03 — The game layer](03-game-layer.md) | The game loop (`vp_run`), the controls (`vp_input`), text (`vp_text`) |
 | [04 — Sound](04-audio.md) | Effects, streamed music, voices (`vp_audio`); where a game's files are (`vp_paths`) |
-| [05 — 3D](05-3d.md) | The view (camera, fog), placements, meshes and OBJ files, wireframe drawing (`vp_3d`) |
+| [05 — 3D](05-3d.md) | The view (camera, fog), placements, meshes and OBJ files, solid and wireframe drawing (`vp_3d`) |
 
-Coming next: solid 3D (hidden lines), high scores, and packaging a game for
+Coming next: 3D objects hiding each other, high scores, and packaging a game for
 the VectorPie menu.
 
 ## The layers
@@ -20,8 +20,8 @@ your game
   |
   |  vp_run    the loop          vp_input  the controls     vp_text  text
   |  vp_audio  effects, music     vp_paths  the game's files
-  |  vp_3d     3D, wireframe
-  |  solid 3D, vp_hiscore, packages ...                   next
+  |  vp_3d     3D, solid and wireframe
+  |  objects hiding each other, vp_hiscore, packages ...  next
   v
 vp_dvg   vp_color / vp_moveto / vp_lineto
          frames -> vector board (USB-DVG, BeamForge)  or  -> window (SDL2)

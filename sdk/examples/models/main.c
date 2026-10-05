@@ -1,14 +1,16 @@
-/* models — look at 3D models in wireframe.
+/* models — look at 3D models, solid or wireframe.
  *
  *   models                      built-in shapes
  *   models tank.obj ship.obj    your OBJ files (with --windowed, --dvg ... as usual)
  *
  * Controls: P1 left/right (or stick) turn around the model, up/down move in
- * and out, button 1 shows the next model. Exit button to quit.
+ * and out, button 1 shows the next model, button 2 switches between solid and
+ * wireframe. Exit button to quit.
  *
  * It shows: a view (vp3d_view), meshes built in code and loaded from OBJ
- * files, wireframe drawing (each edge once, in as few strokes as the shape
- * allows), free 3D lines (the floor grid), and the counters.
+ * files, solid drawing (outline and sharp creases) and wireframe (every edge),
+ * each edge once in as few strokes as possible, free 3D lines (the floor
+ * grid), and the counters.
  */
 #include <vectorpie/vp.h>
 
@@ -25,6 +27,7 @@ static struct {
     const char *name[MAX_MODELS];
     int         count, current;
     float       orbit, distance, spin;
+    vp3d_mode   mode;
     vp3d_view   view;
 } M;
 
@@ -72,6 +75,7 @@ static vp3d_mesh *make_wheel(int spokes)
         int tri[3] = { hub, 1 + i, 1 + (i + 1) % spokes };
         vp3d_mesh_face(m, tri, 3);
     }
+    vp3d_mesh_set_two_sided(m, 1);      /* a flat disk: seen from both sides */
     vp3d_mesh_finish(m);
     return m;
 }
@@ -102,6 +106,8 @@ static void update(vp_game *g, float dt)
     M.spin += 0.5f * dt;
 
     if (vp_input_pressed(in, "p1_button1")) M.current = (M.current + 1) % M.count;
+    if (vp_input_pressed(in, "p1_button2"))
+        M.mode = M.mode == VP3D_SOLID ? VP3D_WIREFRAME : VP3D_SOLID;
 
     vp_vec3 eye = vp_v3(sinf(M.orbit) * M.distance, 6.0f, -cosf(M.orbit) * M.distance);
     vp3d_look_at(&M.view, eye, vp_v3(0, 2, 0), vp_v3(0, 1, 0));
@@ -126,12 +132,14 @@ static void draw(vp_game *g, vp_dvg *d)
     vp_xf place = vp_xf_mul2(vp_xf_translate(0, FIT_RADIUS, 0),
                   vp_xf_mul2(vp_xf_rot_y(M.spin), vp_xf_scale(s, s, s)));
     vp_color(d, 0, 255, 255);
-    vp3d_draw_mesh_wire(d, &M.view, m, &place);
+    vp3d_draw_mesh(d, &M.view, m, &place, M.mode);
 
     /* the text */
     vp_dvg_get_stats(d, &st);         /* last frame's: one frame behind, fine for a readout */
     vp_color(d, 255, 255, 255);
-    vp_text(d, M.name[M.current], 2048, 3850, 120, VP_TEXT_CENTER);
+    snprintf(line, sizeof line, "%s  (%s)", M.name[M.current],
+             M.mode == VP3D_SOLID ? "SOLID" : "WIREFRAME");
+    vp_text(d, line, 2048, 3850, 120, VP_TEXT_CENTER);
     snprintf(line, sizeof line, "%d EDGES  %d STROKES   FRAME: %u LINES %u MOVES",
              vp3d_mesh_edge_count(m), vp3d_mesh_stroke_count(m), st.vectors, st.blank_moves);
     vp_text(d, line, 2048, 150, 70, VP_TEXT_CENTER);

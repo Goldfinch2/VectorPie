@@ -16,7 +16,24 @@ struct vp3d_mesh {
     std::vector<std::vector<int>> strokes;     // vertex paths covering every edge once
     float radius = 0.0f;
     bool finished = false;
+
+    // For solid drawing (also built by vp3d_mesh_finish):
+    std::vector<vp_vec3> faceNormal;           // unit, pointing out of the solid
+    std::vector<vp_vec3> facePoint;            // a point on the face (its centroid)
+    std::vector<int> edgeFace0, edgeFace1;     // faces on each side of an edge, -1 = none
+    std::vector<char> edgeMany;                // shared by more than two faces
+    std::vector<char> edgeCrease;              // the faces meet sharper than the crease angle
+    float creaseDeg = 40.0f;
+    bool twoSided = false;                     // faces seen from both sides (plates)
 };
+
+// Paths over a subset of edges (indices into `edges`), each edge once, as
+// few as the shape allows: walks start where an odd number of edges is left.
+void vp3d_build_strokes(int vertexCount, const std::vector<std::pair<int, int>> &edges,
+                        const std::vector<int> &subset, std::vector<std::vector<int>> &out);
+
+// Recompute edgeCrease from the face normals and creaseDeg.
+void vp3d_update_creases(vp3d_mesh *m);
 
 namespace vp3d_internal {
 

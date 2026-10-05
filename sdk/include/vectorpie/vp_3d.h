@@ -1,4 +1,4 @@
-/* vp_3d.h — 3D: transforms, a camera, meshes, wireframe drawing.
+/* vp_3d.h — 3D: transforms, a camera, meshes, solid and wireframe drawing.
  *
  *   vp3d_view view;
  *   vp3d_view_init(&view, 60.0f);                         // 60 degree field of view
@@ -9,9 +9,9 @@
  *
  *   vp_color(d, 0, 255, 0);
  *   vp_xf place = vp_xf_mul2(vp_xf_translate(0, 0, 20), vp_xf_rot_y(angle));
- *   vp3d_draw_mesh_wire(d, &view, tank, &place);
+ *   vp3d_draw_mesh(d, &view, tank, &place, VP3D_SOLID);
  *
- * UNITS. World units are the game's own (metres, feet...). Camera space:
+ * UNITS. World units are the game's own (meters, feet...). Camera space:
  * +x right, +y up, +z forward, into the screen. Angles in radians, except the
  * field of view in degrees.
  *
@@ -19,10 +19,17 @@
  * monitor to 4:3 (or 3:4 when vertical). The view compensates (`aspect`), so a
  * circle in the world is round on the tube.
  *
- * WIREFRAME draws every edge of a mesh, see-through, each edge once, in
- * connected strokes (a mesh is turned into as few strokes as its shape
- * allows). Lines crossing the near plane are cut there. Hidden-line removal
- * (solid objects) comes in a later version of this API.
+ * SOLID (the default) draws a mesh as an object: only its outline (the
+ * silhouette, where a face turned to the camera meets one turned away) and
+ * its sharp creases (where faces meet at a sharper angle than the mesh's
+ * crease angle). WIREFRAME draws every edge, see-through. Either way each
+ * edge is drawn once, in as few connected strokes as the shape allows, and
+ * lines crossing the near plane are cut there. (One object hiding another
+ * comes in a later version of this API.)
+ *
+ * HANDEDNESS. This world is left-handed: from the default camera, +x is
+ * right, +y up, +z forward. OBJ files are right-handed (Blender and most
+ * tools), so the loader flips z: models look as they were authored.
  *
  * FOG (optional) dims lines with distance: on a vector monitor brightness is
  * the one depth cue there is.
@@ -114,15 +121,26 @@ int  vp3d_mesh_create(vp3d_mesh **out);
 int  vp3d_mesh_vertex(vp3d_mesh *m, float x, float y, float z);    /* its index, or -1 */
 int  vp3d_mesh_face(vp3d_mesh *m, const int *indices, int count);
 int  vp3d_mesh_line(vp3d_mesh *m, int a, int b);
-/* Builds the edges and strokes. Call once, after the last vertex/face/line. */
+/* Builds the edges, the face normals and the strokes. Call once, after the
+ * last vertex/face/line. Faces must all be wound the same way round (either
+ * way: the SDK works out which side is outside). */
 int  vp3d_mesh_finish(vp3d_mesh *m);
 void vp3d_mesh_free(vp3d_mesh *m);
+
+/* Solid drawing: faces meeting at a sharper angle than this keep their edge
+ * (default 40 degrees; 0 = every edge between seen faces, 180 = outline
+ * only). Can be changed at any time. */
+void vp3d_mesh_set_crease(vp3d_mesh *m, float degrees);
+/* Faces seen from both sides: for open shapes (a flag, a plate) that have no
+ * inside. Off by default. */
+void vp3d_mesh_set_two_sided(vp3d_mesh *m, int two_sided);
 
 /* Loading a Wavefront OBJ file. */
 typedef struct vp3d_obj_options {
     float scale;            /* 0 = 1 */
     int   center;           /* 1 = move the model's bounding-box center to the origin */
     int   z_up;             /* 1 = the file is Z-up (some tools): turn it Y-up */
+    float crease_deg;       /* 0 = the default (40), see vp3d_mesh_set_crease */
 } vp3d_obj_options;
 
 /* Reads v, f (all index forms, negative indices) and l; ignores the rest.
@@ -136,8 +154,16 @@ int  vp3d_mesh_stroke_count(const vp3d_mesh *m);   /* connected strokes in wiref
 /* The radius of the smallest origin-centered sphere holding the mesh. */
 float vp3d_mesh_radius(const vp3d_mesh *m);
 
-/* Every edge, see-through, in the current color (dimmed by fog). `place` puts
- * the mesh in the world (NULL = as is). */
+typedef enum vp3d_mode {
+    VP3D_SOLID = 0,         /* outline and sharp creases: an object */
+    VP3D_WIREFRAME          /* every edge, see-through */
+} vp3d_mode;
+
+/* Draw a mesh in the current color (dimmed by fog). `place` puts it in the
+ * world (NULL = as is). */
+void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_xf *place,
+                    vp3d_mode mode);
+/* The same as vp3d_draw_mesh(..., VP3D_WIREFRAME). */
 void vp3d_draw_mesh_wire(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_xf *place);
 
 #ifdef __cplusplus

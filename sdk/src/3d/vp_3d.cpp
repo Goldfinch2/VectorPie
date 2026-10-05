@@ -6,7 +6,7 @@
 
 #include <cmath>
 #include <new>
-#include <unordered_set>
+#include <unordered_map>
 
 // ---------------------------------------------------------------------------
 // Vectors
@@ -304,54 +304,48 @@ int vp3d_mesh_line(vp3d_mesh *m, int a, int b)
     return VP_OK;
 }
 
-// Unique edges from the faces and lines, then strokes: walks along unused
-// edges, starting where an odd number of edges is left (a stroke has to end
-// there anyway), so a mesh takes close to the fewest strokes its shape allows.
-int vp3d_mesh_finish(vp3d_mesh *m)
+void vp3d_build_strokes(int nv, const std::vector<std::pair<int, int>> &edges,
+                        const std::vector<int> &subset, std::vector<std::vector<int>> &out)
 {
-    if (!m) return vp_fail(VP_ERR_INVALID, "vp3d_mesh_finish: NULL mesh");
-    if (m->finished) return VP_OK;
-
-    std::unordered_set<uint64_t> seen;
-    auto addEdge = [&](int a, int b) {
-        if (a == b) return;
-        int lo = a < b ? a : b, hi = a < b ? b : a;
-        uint64_t key = ((uint64_t)(uint32_t)lo << 32) | (uint32_t)hi;
-        if (seen.insert(key).second) m->edges.push_back(std::make_pair(lo, hi));
-    };
-    for (const std::vector<int> &f : m->faces)
-        for (size_t i = 0; i < f.size(); i++)
-            addEdge(f[i], f[(i + 1) % f.size()]);
-    for (const std::pair<int, int> &l : m->lines)
-        addEdge(l.first, l.second);
-
-    const int nv = (int)m->verts.size();
-    std::vector<std::vector<int>> adj(nv);       // edge ids per vertex
-    for (int e = 0; e < (int)m->edges.size(); e++) {
-        adj[m->edges[e].first].push_back(e);
-        adj[m->edges[e].second].push_back(e);
+    // Scratch kept between calls: this runs every frame for solid meshes.
+    static thread_local std::vector<std::vector<int>> adj;     // subset positions per vertex
+    static thread_local std::vector<int> left;
+    static thread_local std::vector<char> used;
+    out.clear();
+    if (subset.empty()) return;
+    if ((int)adj.size() < nv) adj.resize(nv);
+    left.assign(nv, 0);
+    for (int i = 0; i < nv; i++) adj[i].clear();
+    for (int k = 0; k < (int)subset.size(); k++) {
+        const std::pair<int, int> &e = edges[subset[k]];
+        adj[e.first].push_back(k);
+        adj[e.second].push_back(k);
+        left[e.first]++;
+        left[e.second]++;
     }
-    std::vector<char> used(m->edges.size(), 0);
-    std::vector<int> left(nv);
-    for (int i = 0; i < nv; i++) left[i] = (int)adj[i].size();
+    used.assign(subset.size(), 0);
 
-    size_t remaining = m->edges.size();
+    size_t remaining = subset.size();
+    int scanOdd = 0, scanAny = 0;          // where the next start searches resume
     while (remaining > 0) {
         int start = -1;
-        for (int i = 0; i < nv && start < 0; i++)
-            if (left[i] % 2 == 1) start = i;
-        for (int i = 0; i < nv && start < 0; i++)
-            if (left[i] > 0) start = i;
+        for (; scanOdd < nv && start < 0; scanOdd++)
+            if (left[scanOdd] % 2 == 1) start = scanOdd;
+        if (start >= 0) scanOdd = start;   // it may still be odd after this stroke
+        for (; start < 0 && scanAny < nv; scanAny++)
+            if (left[scanAny] > 0) start = scanAny;
+        if (start < 0) break;              // cannot happen: remaining > 0
 
         std::vector<int> stroke(1, start);
         int at = start;
         for (;;) {
             int next = -1;
-            for (int e : adj[at]) {
-                if (used[e]) continue;
-                used[e] = 1;
+            for (int k : adj[at]) {
+                if (used[k]) continue;
+                used[k] = 1;
                 remaining--;
-                next = m->edges[e].first == at ? m->edges[e].second : m->edges[e].first;
+                const std::pair<int, int> &e = edges[subset[k]];
+                next = e.first == at ? e.second : e.first;
                 left[at]--;
                 left[next]--;
                 break;
@@ -360,8 +354,92 @@ int vp3d_mesh_finish(vp3d_mesh *m)
             stroke.push_back(next);
             at = next;
         }
-        m->strokes.push_back(stroke);
+        out.push_back(std::move(stroke));
     }
+}
+
+void vp3d_update_creases(vp3d_mesh *m)
+{
+    const float c = std::cos(m->creaseDeg * 3.14159265f / 180.0f);
+    m->edgeCrease.assign(m->edges.size(), 0);
+    for (size_t e = 0; e < m->edges.size(); e++) {
+        int f0 = m->edgeFace0[e], f1 = m->edgeFace1[e];
+        if (f0 < 0 || f1 < 0 || m->edgeMany[e]) { m->edgeCrease[e] = 1; continue; }
+        // Faces meeting at a sharper angle than the crease angle keep the edge.
+        m->edgeCrease[e] = vp_v3_dot(m->faceNormal[f0], m->faceNormal[f1]) < c;
+    }
+}
+
+// Unique edges from the faces and lines; for each edge the faces on its two
+// sides; face normals, turned to point out of the solid; then the wireframe
+// strokes.
+int vp3d_mesh_finish(vp3d_mesh *m)
+{
+    if (!m) return vp_fail(VP_ERR_INVALID, "vp3d_mesh_finish: NULL mesh");
+    if (m->finished) return VP_OK;
+
+    std::unordered_map<uint64_t, int> edgeIndex;
+    auto addEdge = [&](int a, int b, int face) {
+        if (a == b) return;
+        int lo = a < b ? a : b, hi = a < b ? b : a;
+        uint64_t key = ((uint64_t)(uint32_t)lo << 32) | (uint32_t)hi;
+        auto it = edgeIndex.find(key);
+        int e;
+        if (it == edgeIndex.end()) {
+            e = (int)m->edges.size();
+            edgeIndex.emplace(key, e);
+            m->edges.push_back(std::make_pair(lo, hi));
+            m->edgeFace0.push_back(-1);
+            m->edgeFace1.push_back(-1);
+            m->edgeMany.push_back(0);
+        } else {
+            e = it->second;
+        }
+        if (face < 0) return;
+        if (m->edgeFace0[e] < 0)      m->edgeFace0[e] = face;
+        else if (m->edgeFace1[e] < 0) m->edgeFace1[e] = face;
+        else                          m->edgeMany[e] = 1;
+    };
+    for (int fi = 0; fi < (int)m->faces.size(); fi++) {
+        const std::vector<int> &f = m->faces[fi];
+        for (size_t i = 0; i < f.size(); i++)
+            addEdge(f[i], f[(i + 1) % f.size()], fi);
+    }
+    for (const std::pair<int, int> &l : m->lines)
+        addEdge(l.first, l.second, -1);
+
+    // Face normals (Newell's method: right for any planar polygon, and steady
+    // for slightly bent ones) and centroids.
+    vp_vec3 meshCenter = vp_v3(0, 0, 0);
+    for (const vp_vec3 &p : m->verts) meshCenter = vp_v3_add(meshCenter, p);
+    if (!m->verts.empty()) meshCenter = vp_v3_scale(meshCenter, 1.0f / m->verts.size());
+    float volume = 0.0f;
+    m->faceNormal.resize(m->faces.size());
+    m->facePoint.resize(m->faces.size());
+    for (size_t fi = 0; fi < m->faces.size(); fi++) {
+        const std::vector<int> &f = m->faces[fi];
+        vp_vec3 n = vp_v3(0, 0, 0), c = vp_v3(0, 0, 0);
+        for (size_t i = 0; i < f.size(); i++) {
+            const vp_vec3 &a = m->verts[f[i]], &b = m->verts[f[(i + 1) % f.size()]];
+            n.x += (a.y - b.y) * (a.z + b.z);
+            n.y += (a.z - b.z) * (a.x + b.x);
+            n.z += (a.x - b.x) * (a.y + b.y);
+            c = vp_v3_add(c, a);
+        }
+        c = vp_v3_scale(c, 1.0f / f.size());
+        volume += vp_v3_dot(vp_v3_sub(c, meshCenter), n);     // signed: outward normals give > 0
+        m->faceNormal[fi] = vp_v3_normalize(n);
+        m->facePoint[fi] = c;
+    }
+    // Tools wind faces either way round: whichever it is, make the normals
+    // point out of the solid (faces must at least be wound consistently).
+    if (volume < 0.0f)
+        for (vp_vec3 &n : m->faceNormal) n = vp_v3_scale(n, -1.0f);
+    vp3d_update_creases(m);
+
+    std::vector<int> all(m->edges.size());
+    for (size_t i = 0; i < all.size(); i++) all[i] = (int)i;
+    vp3d_build_strokes((int)m->verts.size(), m->edges, all, m->strokes);
 
     float r2 = 0.0f;
     for (const vp_vec3 &p : m->verts) {
@@ -371,6 +449,18 @@ int vp3d_mesh_finish(vp3d_mesh *m)
     m->radius = std::sqrt(r2);
     m->finished = true;
     return VP_OK;
+}
+
+void vp3d_mesh_set_crease(vp3d_mesh *m, float degrees)
+{
+    if (!m) return;
+    m->creaseDeg = degrees < 0.0f ? 0.0f : (degrees > 180.0f ? 180.0f : degrees);
+    if (m->finished) vp3d_update_creases(m);
+}
+
+void vp3d_mesh_set_two_sided(vp3d_mesh *m, int two_sided)
+{
+    if (m) m->twoSided = two_sided != 0;
 }
 
 void vp3d_mesh_free(vp3d_mesh *m)
@@ -384,7 +474,8 @@ int vp3d_mesh_edge_count(const vp3d_mesh *m)   { return m ? (int)m->edges.size()
 int vp3d_mesh_stroke_count(const vp3d_mesh *m) { return m ? (int)m->strokes.size() : 0; }
 float vp3d_mesh_radius(const vp3d_mesh *m)     { return m ? m->radius : 0.0f; }
 
-void vp3d_draw_mesh_wire(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_xf *place)
+void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_xf *place,
+                    vp3d_mode mode)
 {
     if (!d || !v || !m || !m->finished) return;
     vp_xf toCam = place ? vp_xf_mul2(v->world_to_camera, *place) : v->world_to_camera;
@@ -401,11 +492,46 @@ void vp3d_draw_mesh_wire(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, cons
     for (size_t i = 0; i < m->verts.size(); i++)
         cam[i] = vp_xf_point(&toCam, m->verts[i]);
 
+    const std::vector<std::vector<int>> *strokes = &m->strokes;
+    static thread_local std::vector<std::vector<int>> visibleStrokes;
+    if (mode == VP3D_SOLID && !m->faces.empty()) {
+        // A face is seen when the eye is on its outer side. In the mesh's own
+        // space: the eye moved back through the placement.
+        vp_xf toModel = vp_xf_inverse(toCam);
+        vp_vec3 eye = vp_v3(toModel.t[0], toModel.t[1], toModel.t[2]);
+        static thread_local std::vector<char> seen;
+        seen.resize(m->faces.size());
+        for (size_t f = 0; f < m->faces.size(); f++)
+            seen[f] = m->twoSided || vp_v3_dot(m->faceNormal[f], vp_v3_sub(eye, m->facePoint[f])) > 0.0f;
+
+        // An edge shows on the silhouette (one side seen, the other not), as
+        // a crease between seen faces, on the rim of a seen face, or alone.
+        static thread_local std::vector<int> show;
+        show.clear();
+        for (size_t e = 0; e < m->edges.size(); e++) {
+            int f0 = m->edgeFace0[e], f1 = m->edgeFace1[e];
+            bool visible;
+            if (f0 < 0)                visible = true;                    // a lone line
+            else if (m->edgeMany[e])   visible = true;                    // odd geometry: keep it
+            else if (f1 < 0)           visible = seen[f0];                // a rim
+            else if (seen[f0] != seen[f1]) visible = true;                // silhouette
+            else                       visible = seen[f0] && m->edgeCrease[e];
+            if (visible) show.push_back((int)e);
+        }
+        vp3d_build_strokes((int)m->verts.size(), m->edges, show, visibleStrokes);
+        strokes = &visibleStrokes;
+    }
+
     uint8_t r, g, bl;
     vp_get_color(d, &r, &g, &bl);
     Lens l = lensOf(v);
-    for (const std::vector<int> &s : m->strokes)
+    for (const std::vector<int> &s : *strokes)
         for (size_t i = 1; i < s.size(); i++)
             drawCameraSegment(d, v, l, cam[s[i - 1]], cam[s[i]], r, g, bl);
     vp_color(d, r, g, bl);
+}
+
+void vp3d_draw_mesh_wire(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_xf *place)
+{
+    vp3d_draw_mesh(d, v, m, place, VP3D_WIREFRAME);
 }

@@ -6,7 +6,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <map>
 #include <string>
+#include <tuple>
 
 namespace {
 
@@ -57,6 +59,11 @@ int vp3d_mesh_load_obj(const char *path, const vp3d_obj_options *opt, vp3d_mesh 
     char buf[4096];
     int lineNo = 0;
     std::vector<int> idx;
+    // Files often repeat a vertex (seams, separate parts): identical
+    // positions are merged, or the faces on either side would not share an
+    // edge and solid drawing would show it.
+    std::vector<int> remap;                 // file vertex -> mesh vertex
+    std::map<std::tuple<float, float, float>, int> byPosition;
     while (fgets(buf, sizeof(buf), f)) {
         lineNo++;
         char *p = buf;
@@ -68,18 +75,34 @@ int vp3d_mesh_load_obj(const char *path, const vp3d_obj_options *opt, vp3d_mesh 
                 return vp_fail(VP_ERR_INVALID, "%s:%d: a vertex needs x y z", path, lineNo);
             }
             if (zUp) { float t = y; y = z; z = -t; }
-            vp3d_mesh_vertex(m, x * scale, y * scale, z * scale);
+            // OBJ is right-handed, this world left-handed: flip z, or the
+            // model would come out mirrored.
+            std::tuple<float, float, float> key(x * scale, y * scale, -z * scale);
+            auto it = byPosition.find(key);
+            if (it != byPosition.end()) {
+                remap.push_back(it->second);
+            } else {
+                int i = vp3d_mesh_vertex(m, std::get<0>(key), std::get<1>(key), std::get<2>(key));
+                byPosition.emplace(key, i);
+                remap.push_back(i);
+            }
         } else if ((p[0] == 'f' || p[0] == 'l') && (p[1] == ' ' || p[1] == '\t')) {
             const bool face = p[0] == 'f';
             idx.clear();
             for (char *tok = nextToken(p + 2); tok; tok = nextToken(nullptr)) {
                 int i;
-                if (!parseIndex(tok, (int)m->verts.size(), &i)) {
+                if (!parseIndex(tok, (int)remap.size(), &i)) {
                     vp3d_mesh_free(m); fclose(f);
                     return vp_fail(VP_ERR_INVALID, "%s:%d: bad vertex index \"%s\"", path, lineNo, tok);
                 }
-                idx.push_back(i);
+                idx.push_back(remap[i]);
             }
+            // Merged vertices can leave a corner repeated: drop the repeats.
+            std::vector<int> clean;
+            for (int i : idx)
+                if (clean.empty() || clean.back() != i) clean.push_back(i);
+            if (face && clean.size() > 1 && clean.front() == clean.back()) clean.pop_back();
+            idx.swap(clean);
             if (face) {
                 if (idx.size() >= 3) vp3d_mesh_face(m, idx.data(), (int)idx.size());
             } else {
@@ -104,6 +127,7 @@ int vp3d_mesh_load_obj(const char *path, const vp3d_obj_options *opt, vp3d_mesh 
         vp_vec3 c = vp_v3_scale(vp_v3_add(lo, hi), 0.5f);
         for (vp_vec3 &v : m->verts) v = vp_v3_sub(v, c);
     }
+    if (opt && opt->crease_deg > 0.0f) vp3d_mesh_set_crease(m, opt->crease_deg);
     r = vp3d_mesh_finish(m);
     if (r != VP_OK) { vp3d_mesh_free(m); return r; }
     *out = m;
