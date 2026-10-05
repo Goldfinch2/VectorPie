@@ -4,12 +4,11 @@
  *   models tank.obj ship.obj    your OBJ files (with --windowed, --dvg ... as usual)
  *
  * Controls: P1 left/right (or stick) turn around the model, up/down move in
- * and out, button 1 shows the next model, button 2 toggles the fog. Exit
- * button to quit.
+ * and out, button 1 shows the next model. Exit button to quit.
  *
- * It shows: a view (vp3d_view) with fog, meshes built in code and loaded from
- * OBJ files, wireframe drawing (each edge once, in as few strokes as the
- * shape allows), free 3D lines (the floor grid), and the counters.
+ * It shows: a view (vp3d_view), meshes built in code and loaded from OBJ
+ * files, wireframe drawing (each edge once, in as few strokes as the shape
+ * allows), free 3D lines (the floor grid), and the counters.
  */
 #include <vectorpie/vp.h>
 
@@ -26,7 +25,6 @@ static struct {
     const char *name[MAX_MODELS];
     int         count, current;
     float       orbit, distance, spin;
-    int         fog;
     vp3d_view   view;
 } M;
 
@@ -104,12 +102,9 @@ static void update(vp_game *g, float dt)
     M.spin += 0.5f * dt;
 
     if (vp_input_pressed(in, "p1_button1")) M.current = (M.current + 1) % M.count;
-    if (vp_input_pressed(in, "p1_button2")) M.fog = !M.fog;
 
     vp_vec3 eye = vp_v3(sinf(M.orbit) * M.distance, 6.0f, -cosf(M.orbit) * M.distance);
     vp3d_look_at(&M.view, eye, vp_v3(0, 2, 0), vp_v3(0, 1, 0));
-    M.view.fog_start = M.fog ? M.distance * 0.6f : 0;
-    M.view.fog_end   = M.fog ? M.distance * 3.0f : 0;
 }
 
 static void draw(vp_game *g, vp_dvg *d)
@@ -118,7 +113,7 @@ static void draw(vp_game *g, vp_dvg *d)
     vp_dvg_stats st;
     (void)g;
 
-    /* the floor: free lines, fogged with distance */
+    /* the floor: free lines */
     vp_color(d, 0, 140, 0);
     for (int i = -60; i <= 60; i += 6) {
         vp3d_line(d, &M.view, vp_v3((float)i, 0, -60), vp_v3((float)i, 0, 60));
@@ -171,9 +166,7 @@ int main(int argc, char **argv)
 
     vp3d_view_init(&M.view, 60.0f);
     if (vertical) M.view.aspect = 3.0f / 4.0f;     /* the monitor's shape */
-    M.view.fog_floor = 0.25f;
     M.distance = 25;
-    M.fog = 1;
 
     desc.title  = "VectorPie models";
     desc.update = update;

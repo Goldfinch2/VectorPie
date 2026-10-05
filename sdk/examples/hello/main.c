@@ -260,10 +260,13 @@ static void draw(vp_game *g, vp_dvg *d)
     vp_lineto(d, W, 150);
 
     if (G.state == TITLE) {
+        vp_text_font(VP_FONT_ASTEROIDS);            /* the arcade lettering */
         vp_color(d, 0, 255, 255);
         vp_text(d, "VECTORPIE", W / 2.0f, 2600, 400, VP_TEXT_CENTER);
+        vp_text_font(VP_FONT_HERSHEY);              /* round letters, lower case */
         vp_color(d, 255, 255, 255);
-        vp_text(d, "HELLO, SDK", W / 2.0f, 2100, 180, VP_TEXT_CENTER);
+        vp_text(d, "Hello, SDK", W / 2.0f, 2100, 180, VP_TEXT_CENTER);
+        vp_text_font(VP_FONT_ASTEROIDS);
         if ((int)(G.state_time * 2) % 2 == 0) {
             vp_color(d, 255, 255, 0);
             vp_text(d, "PRESS START", W / 2.0f, 1300, 160, VP_TEXT_CENTER);
@@ -271,6 +274,7 @@ static void draw(vp_game *g, vp_dvg *d)
         return;
     }
 
+    vp_text_font(VP_FONT_ASTEROIDS);
     vp_color(d, 255, 255, 255);
     snprintf(line, sizeof(line), "SCORE %d", G.score);
     vp_text(d, line, 200, W - 250, 120, VP_TEXT_LEFT);

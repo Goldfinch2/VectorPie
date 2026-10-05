@@ -109,7 +109,20 @@ vp_text(d, "GAME OVER", 2048, 2000, 200, VP_TEXT_CENTER);
 float w = vp_text_width("SCORE 100", 120);
 ```
 
-The Hershey Simplex stroke font, printable ASCII. `height` is a capital
+Two stroke fonts, chosen with `vp_text_font` (it applies to the following
+`vp_text` and `vp_text_width` calls):
+
+| font | looks | strokes |
+|---|---|---|
+| `VP_FONT_HERSHEY` (default) | Hershey Simplex: round letters, upper and lower case, full punctuation | more per letter |
+| `VP_FONT_ASTEROIDS` | Atari's Asteroids lettering: capitals only (lower case is drawn as capitals), `<` and `>` as triangles | few per letter: cheap on the beam |
+
+```c
+vp_text_font(VP_FONT_ASTEROIDS);
+vp_text(d, "SCORE 1500", 200, 3800, 120, VP_TEXT_LEFT);
+```
+
+Printable ASCII. `height` is a capital
 letter's height in board units; `(x, y)` is on the baseline, at the left
 end, the center or the right end (`VP_TEXT_LEFT`, `VP_TEXT_CENTER`,
 `VP_TEXT_RIGHT`). Text uses the current color and the same `vp_moveto` /

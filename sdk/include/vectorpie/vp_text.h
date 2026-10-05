@@ -1,7 +1,14 @@
-/* vp_text.h — text, drawn as strokes (the Hershey Simplex font).
+/* vp_text.h — text, drawn as strokes.
  *
  *   vp_color(d, 255, 255, 0);
  *   vp_text(d, "GAME OVER", 2048, 2000, 200, VP_TEXT_CENTER);
+ *
+ * Two fonts (vp_text_font):
+ *   VP_FONT_HERSHEY    Hershey Simplex: upper and lower case, punctuation,
+ *                      round letters (the default)
+ *   VP_FONT_ASTEROIDS  Atari's Asteroids lettering: capitals only (lowercase
+ *                      is drawn as capitals), few strokes per letter, the
+ *                      classic arcade look
  *
  * Text is drawn with the current color through vp_moveto / vp_lineto, each
  * letter in an order chosen to keep the beam's invisible moves short.
@@ -26,6 +33,15 @@ enum {
     VP_TEXT_CENTER,
     VP_TEXT_RIGHT
 };
+
+typedef enum vp_font {
+    VP_FONT_HERSHEY = 0,
+    VP_FONT_ASTEROIDS
+} vp_font;
+
+/* The font the following vp_text / vp_text_width calls use (this thread). */
+void    vp_text_font(vp_font font);
+vp_font vp_text_get_font(void);
 
 void  vp_text(vp_dvg *d, const char *s, float x, float y, float height, int align);
 
