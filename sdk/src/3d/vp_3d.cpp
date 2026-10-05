@@ -378,11 +378,11 @@ int vp3d_mesh_finish(vp3d_mesh *m)
     if (!m) return vp_fail(VP_ERR_INVALID, "vp3d_mesh_finish: NULL mesh");
     if (m->finished) return VP_OK;
 
-    std::unordered_map<uint64_t, int> edgeIndex;
+    std::unordered_map<uint64_t, int> &edgeIndex = m->edgeLookup;
     auto addEdge = [&](int a, int b, int face) {
         if (a == b) return;
         int lo = a < b ? a : b, hi = a < b ? b : a;
-        uint64_t key = ((uint64_t)(uint32_t)lo << 32) | (uint32_t)hi;
+        uint64_t key = vp3d_edge_key(lo, hi);
         auto it = edgeIndex.find(key);
         int e;
         if (it == edgeIndex.end()) {
@@ -437,6 +437,20 @@ int vp3d_mesh_finish(vp3d_mesh *m)
         for (vp_vec3 &n : m->faceNormal) n = vp_v3_scale(n, -1.0f);
     vp3d_update_creases(m);
 
+    // Faces as triangle fans, for hiding what is behind them (faces are taken
+    // to be convex, as exporters write them).
+    m->triVerts.clear();
+    m->triFace.clear();
+    for (int fi = 0; fi < (int)m->faces.size(); fi++) {
+        const std::vector<int> &f = m->faces[fi];
+        for (size_t i = 1; i + 1 < f.size(); i++) {
+            m->triVerts.push_back(f[0]);
+            m->triVerts.push_back(f[i]);
+            m->triVerts.push_back(f[i + 1]);
+            m->triFace.push_back(fi);
+        }
+    }
+
     std::vector<int> all(m->edges.size());
     for (size_t i = 0; i < all.size(); i++) all[i] = (int)i;
     vp3d_build_strokes((int)m->verts.size(), m->edges, all, m->strokes);
@@ -474,6 +488,33 @@ int vp3d_mesh_edge_count(const vp3d_mesh *m)   { return m ? (int)m->edges.size()
 int vp3d_mesh_stroke_count(const vp3d_mesh *m) { return m ? (int)m->strokes.size() : 0; }
 float vp3d_mesh_radius(const vp3d_mesh *m)     { return m ? m->radius : 0.0f; }
 
+void vp3d_visible(const vp3d_mesh *m, const vp_xf &toCam, vp3d_mode mode,
+                  std::vector<char> &seen, std::vector<int> &show)
+{
+    // A face is seen when the eye is on its outer side. In the mesh's own
+    // space: the eye moved back through the placement.
+    vp_xf toModel = vp_xf_inverse(toCam);
+    vp_vec3 eye = vp_v3(toModel.t[0], toModel.t[1], toModel.t[2]);
+    seen.resize(m->faces.size());
+    for (size_t f = 0; f < m->faces.size(); f++)
+        seen[f] = m->twoSided || vp_v3_dot(m->faceNormal[f], vp_v3_sub(eye, m->facePoint[f])) > 0.0f;
+
+    show.clear();
+    for (size_t e = 0; e < m->edges.size(); e++) {
+        if (mode != VP3D_SOLID || m->faces.empty()) { show.push_back((int)e); continue; }
+        // An edge shows on the silhouette (one side seen, the other not), as
+        // a crease between seen faces, on the rim of a seen face, or alone.
+        int f0 = m->edgeFace0[e], f1 = m->edgeFace1[e];
+        bool visible;
+        if (f0 < 0)                    visible = true;                    // a lone line
+        else if (m->edgeMany[e])       visible = true;                    // odd geometry: keep it
+        else if (f1 < 0)               visible = seen[f0];                // a rim
+        else if (seen[f0] != seen[f1]) visible = true;                    // silhouette
+        else                           visible = seen[f0] && m->edgeCrease[e];
+        if (visible) show.push_back((int)e);
+    }
+}
+
 void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_xf *place,
                     vp3d_mode mode)
 {
@@ -495,29 +536,9 @@ void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_
     const std::vector<std::vector<int>> *strokes = &m->strokes;
     static thread_local std::vector<std::vector<int>> visibleStrokes;
     if (mode == VP3D_SOLID && !m->faces.empty()) {
-        // A face is seen when the eye is on its outer side. In the mesh's own
-        // space: the eye moved back through the placement.
-        vp_xf toModel = vp_xf_inverse(toCam);
-        vp_vec3 eye = vp_v3(toModel.t[0], toModel.t[1], toModel.t[2]);
         static thread_local std::vector<char> seen;
-        seen.resize(m->faces.size());
-        for (size_t f = 0; f < m->faces.size(); f++)
-            seen[f] = m->twoSided || vp_v3_dot(m->faceNormal[f], vp_v3_sub(eye, m->facePoint[f])) > 0.0f;
-
-        // An edge shows on the silhouette (one side seen, the other not), as
-        // a crease between seen faces, on the rim of a seen face, or alone.
         static thread_local std::vector<int> show;
-        show.clear();
-        for (size_t e = 0; e < m->edges.size(); e++) {
-            int f0 = m->edgeFace0[e], f1 = m->edgeFace1[e];
-            bool visible;
-            if (f0 < 0)                visible = true;                    // a lone line
-            else if (m->edgeMany[e])   visible = true;                    // odd geometry: keep it
-            else if (f1 < 0)           visible = seen[f0];                // a rim
-            else if (seen[f0] != seen[f1]) visible = true;                // silhouette
-            else                       visible = seen[f0] && m->edgeCrease[e];
-            if (visible) show.push_back((int)e);
-        }
+        vp3d_visible(m, toCam, mode, seen, show);
         vp3d_build_strokes((int)m->verts.size(), m->edges, show, visibleStrokes);
         strokes = &visibleStrokes;
     }

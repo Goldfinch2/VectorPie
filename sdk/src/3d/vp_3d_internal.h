@@ -4,6 +4,7 @@
 #include "../core/vp_internal.h"
 
 #include <cstdint>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -25,7 +26,23 @@ struct vp3d_mesh {
     std::vector<char> edgeCrease;              // the faces meet sharper than the crease angle
     float creaseDeg = 40.0f;
     bool twoSided = false;                     // faces seen from both sides (plates)
+
+    // For scenes (also built by vp3d_mesh_finish):
+    std::unordered_map<uint64_t, int> edgeLookup;   // (low << 32 | high) -> edge index
+    std::vector<int> triVerts;                 // faces as triangles (fans), 3 per triangle
+    std::vector<int> triFace;                  // the face each triangle belongs to
 };
+
+inline uint64_t vp3d_edge_key(int a, int b)
+{
+    int lo = a < b ? a : b, hi = a < b ? b : a;
+    return ((uint64_t)(uint32_t)lo << 32) | (uint32_t)hi;
+}
+
+// Which faces are seen from the camera, and which edges show, for a mesh
+// placed by toCam (model -> camera). Shared by vp3d_draw_mesh and scenes.
+void vp3d_visible(const vp3d_mesh *m, const vp_xf &toCam, vp3d_mode mode,
+                  std::vector<char> &seen, std::vector<int> &edges);
 
 // Paths over a subset of edges (indices into `edges`), each edge once, as
 // few as the shape allows: walks start where an odd number of edges is left.

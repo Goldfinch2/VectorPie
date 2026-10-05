@@ -5,12 +5,13 @@
  *
  * Controls: P1 left/right (or stick) turn around the model, up/down move in
  * and out, button 1 shows the next model, button 2 switches between solid and
- * wireframe. Exit button to quit.
+ * wireframe, button 3 turns hiding (the scene) on and off. Exit button to
+ * quit.
  *
  * It shows: a view (vp3d_view), meshes built in code and loaded from OBJ
  * files, solid drawing (outline and sharp creases) and wireframe (every edge),
  * each edge once in as few strokes as possible, free 3D lines (the floor
- * grid), and the counters.
+ * grid), a scene (the model hides the floor behind it), and the counters.
  */
 #include <vectorpie/vp.h>
 
@@ -28,6 +29,8 @@ static struct {
     int         count, current;
     float       orbit, distance, spin;
     vp3d_mode   mode;
+    int         hiding;
+    vp3d_scene *scene;
     vp3d_view   view;
 } M;
 
@@ -108,6 +111,7 @@ static void update(vp_game *g, float dt)
     if (vp_input_pressed(in, "p1_button1")) M.current = (M.current + 1) % M.count;
     if (vp_input_pressed(in, "p1_button2"))
         M.mode = M.mode == VP3D_SOLID ? VP3D_WIREFRAME : VP3D_SOLID;
+    if (vp_input_pressed(in, "p1_button3")) M.hiding = !M.hiding;
 
     vp_vec3 eye = vp_v3(sinf(M.orbit) * M.distance, 6.0f, -cosf(M.orbit) * M.distance);
     vp3d_look_at(&M.view, eye, vp_v3(0, 2, 0), vp_v3(0, 1, 0));
@@ -119,26 +123,39 @@ static void draw(vp_game *g, vp_dvg *d)
     vp_dvg_stats st;
     (void)g;
 
-    /* the floor: free lines */
-    vp_color(d, 0, 140, 0);
-    for (int i = -60; i <= 60; i += 6) {
-        vp3d_line(d, &M.view, vp_v3((float)i, 0, -60), vp_v3((float)i, 0, 60));
-        vp3d_line(d, &M.view, vp_v3(-60, 0, (float)i), vp_v3(60, 0, (float)i));
-    }
-
-    /* the model, scaled to FIT_RADIUS, standing on the floor, turning */
     vp3d_mesh *m = M.mesh[M.current];
     float s = FIT_RADIUS / (vp3d_mesh_radius(m) > 0 ? vp3d_mesh_radius(m) : 1);
     vp_xf place = vp_xf_mul2(vp_xf_translate(0, FIT_RADIUS, 0),
                   vp_xf_mul2(vp_xf_rot_y(M.spin), vp_xf_scale(s, s, s)));
-    vp_color(d, 0, 255, 255);
-    vp3d_draw_mesh(d, &M.view, m, &place, M.mode);
+
+    if (M.hiding) {
+        /* Through a scene: the floor is cut where the model is in front of it
+         * (and, solid, the model hides its own far parts). */
+        vp3d_scene_begin(M.scene, d, &M.view);
+        vp_color(d, 0, 140, 0);
+        for (int i = -60; i <= 60; i += 6) {
+            vp3d_scene_line(M.scene, vp_v3((float)i, 0, -60), vp_v3((float)i, 0, 60));
+            vp3d_scene_line(M.scene, vp_v3(-60, 0, (float)i), vp_v3(60, 0, (float)i));
+        }
+        vp_color(d, 0, 255, 255);
+        vp3d_scene_mesh(M.scene, m, &place, M.mode);
+        vp3d_scene_end(M.scene);
+    } else {
+        /* Drawn directly: nothing hides anything else. */
+        vp_color(d, 0, 140, 0);
+        for (int i = -60; i <= 60; i += 6) {
+            vp3d_line(d, &M.view, vp_v3((float)i, 0, -60), vp_v3((float)i, 0, 60));
+            vp3d_line(d, &M.view, vp_v3(-60, 0, (float)i), vp_v3(60, 0, (float)i));
+        }
+        vp_color(d, 0, 255, 255);
+        vp3d_draw_mesh(d, &M.view, m, &place, M.mode);
+    }
 
     /* the text */
     vp_dvg_get_stats(d, &st);         /* last frame's: one frame behind, fine for a readout */
     vp_color(d, 255, 255, 255);
-    snprintf(line, sizeof line, "%s  (%s)", M.name[M.current],
-             M.mode == VP3D_SOLID ? "SOLID" : "WIREFRAME");
+    snprintf(line, sizeof line, "%s  (%s%s)", M.name[M.current],
+             M.mode == VP3D_SOLID ? "SOLID" : "WIREFRAME", M.hiding ? ", HIDING" : "");
     vp_text(d, line, 2048, 3850, 120, VP_TEXT_CENTER);
     snprintf(line, sizeof line, "%d EDGES  %d STROKES   FRAME: %u LINES %u MOVES",
              vp3d_mesh_edge_count(m), vp3d_mesh_stroke_count(m), st.vectors, st.blank_moves);
@@ -175,11 +192,14 @@ int main(int argc, char **argv)
     vp3d_view_init(&M.view, 60.0f);
     if (vertical) M.view.aspect = 3.0f / 4.0f;     /* the monitor's shape */
     M.distance = 25;
+    M.hiding = 1;
+    if (vp3d_scene_create(&M.scene) != VP_OK) return 1;
 
     desc.title  = "VectorPie models";
     desc.update = update;
     desc.draw   = draw;
     int status = vp_run(&desc, argc, argv);
     for (int i = 0; i < M.count; i++) vp3d_mesh_free(M.mesh[i]);
+    vp3d_scene_free(M.scene);
     return status;
 }

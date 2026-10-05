@@ -57,6 +57,7 @@ add_library(vectorpie STATIC
     src/text/vp_text.cpp
     src/3d/vp_3d.cpp
     src/3d/vp_obj.cpp
+    src/3d/vp_scene.cpp
 )
 if(VP_WITH_SDL2)
     # The window output, the controls and the game loop need SDL2.

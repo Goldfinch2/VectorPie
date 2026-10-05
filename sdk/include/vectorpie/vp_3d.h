@@ -24,8 +24,8 @@
  * its sharp creases (where faces meet at a sharper angle than the mesh's
  * crease angle). WIREFRAME draws every edge, see-through. Either way each
  * edge is drawn once, in as few connected strokes as the shape allows, and
- * lines crossing the near plane are cut there. (One object hiding another
- * comes in a later version of this API.)
+ * lines crossing the near plane are cut there. One object hiding another:
+ * draw through a SCENE (below).
  *
  * HANDEDNESS. This world is left-handed: from the default camera, +x is
  * right, +y up, +z forward. OBJ files are right-handed (Blender and most
@@ -165,6 +165,44 @@ void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_
                     vp3d_mode mode);
 /* The same as vp3d_draw_mesh(..., VP3D_WIREFRAME). */
 void vp3d_draw_mesh_wire(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_xf *place);
+
+/* ---- scenes: objects hiding each other ------------------------------------------
+ *
+ * vp3d_draw_mesh hides a mesh's own back, nothing else. A SCENE hides
+ * everything behind solid objects:
+ *
+ *   vp3d_scene_begin(scene, d, &view);
+ *   vp_color(d, 0, 140, 0);
+ *   vp3d_scene_line(scene, a, b);                           // the floor...
+ *   vp_color(d, 0, 255, 255);
+ *   vp3d_scene_mesh(scene, ship, &place, VP3D_SOLID);       // ...hidden behind the ship
+ *   vp3d_scene_end(scene);                                  // cut, then draw
+ *
+ * Between begin and end, meshes and lines are collected (each with the color
+ * current when it was added); vp3d_scene_end cuts every line by every SOLID
+ * face nearer the camera, then draws the visible pieces, in the order they
+ * were added. Order does not matter for hiding: add things in any order.
+ *   SOLID meshes hide what is behind them, and themselves (a wing behind the
+ *     body is hidden too).
+ *   WIREFRAME meshes and lines hide nothing; they are hidden by solids in
+ *     front of them.
+ * Faces are taken to be convex (exporters write triangles and quads). */
+typedef struct vp3d_scene vp3d_scene;
+
+typedef struct vp3d_scene_stats {
+    uint32_t lines;          /* line segments added */
+    uint32_t faces;          /* solid faces that could hide something */
+    uint32_t cut;            /* segments partly or wholly hidden */
+    uint32_t pieces;         /* visible pieces drawn */
+} vp3d_scene_stats;
+
+int  vp3d_scene_create(vp3d_scene **out);
+void vp3d_scene_free(vp3d_scene *s);
+void vp3d_scene_begin(vp3d_scene *s, vp_dvg *d, const vp3d_view *v);
+void vp3d_scene_mesh(vp3d_scene *s, const vp3d_mesh *m, const vp_xf *place, vp3d_mode mode);
+void vp3d_scene_line(vp3d_scene *s, vp_vec3 a, vp_vec3 b);
+void vp3d_scene_end(vp3d_scene *s);
+void vp3d_scene_get_stats(const vp3d_scene *s, vp3d_scene_stats *stats);
 
 #ifdef __cplusplus
 }
