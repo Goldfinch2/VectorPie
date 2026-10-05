@@ -49,6 +49,8 @@ bool parseArgs(int argc, char **argv, const char *title, vp_dvg_options *o, cons
             fullscreen = 0;
         } else if (!strcmp(argv[i], "--vertical")) {
             vertical = 1;
+        } else if (argv[i][0] != '-') {
+            // Not an option: the game's own argument (a file to load...).
         } else {
             fprintf(stderr, "usage: %s [--dvg [PORT] | --window | --windowed] [--vertical]\n",
                     argc > 0 ? argv[0] : "game");

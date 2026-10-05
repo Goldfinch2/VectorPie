@@ -55,6 +55,8 @@ add_library(vectorpie STATIC
     src/dvg/vp_serial_posix.cpp
     src/dvg/vp_serial_win.cpp
     src/text/vp_text.cpp
+    src/3d/vp_3d.cpp
+    src/3d/vp_obj.cpp
 )
 if(VP_WITH_SDL2)
     # The window output, the controls and the game loop need SDL2.
@@ -113,6 +115,8 @@ if(VP_BUILD_EXAMPLES)
     add_executable(poc examples/poc/main.c)
     vp_program(poc)
     if(VP_WITH_SDL2)
+        add_executable(models examples/models/main.c)
+        vp_program(models)
         add_executable(hello examples/hello/main.c)
         vp_program(hello)
         # Optional local sounds (see examples/hello/README.md): copied next to

@@ -486,6 +486,13 @@ void vp_color(vp_dvg *d, uint8_t r, uint8_t g, uint8_t b)
     d->penR = r; d->penG = g; d->penB = b;
 }
 
+void vp_get_color(const vp_dvg *d, uint8_t *r, uint8_t *g, uint8_t *b)
+{
+    if (r) *r = d->penR;
+    if (g) *g = d->penG;
+    if (b) *b = d->penB;
+}
+
 void vp_moveto(vp_dvg *d, int x, int y)
 {
     // Nothing is encoded here: the encoder inserts a blank move only when the

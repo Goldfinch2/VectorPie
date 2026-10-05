@@ -31,6 +31,8 @@
  * COMMAND LINE (for development; the menu passes none):
  *   --dvg [PORT]   the vector board      --window     a fullscreen window
  *   --windowed     a normal window       --vertical   a 3:4 monitor
+ * Arguments that do not start with '-' are left to the game (read argv
+ * yourself before or after vp_run).
  *
  * vp_run owns SDL's event queue: events are read and discarded each frame.
  * Read the controls through vp_input.

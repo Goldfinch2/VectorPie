@@ -8,6 +8,7 @@
 #include "vp_rc.h"
 #include "vp_dvg.h"
 #include "vp_text.h"
+#include "vp_3d.h"
 #include "vp_input.h"
 #include "vp_audio.h"
 #include "vp_paths.h"

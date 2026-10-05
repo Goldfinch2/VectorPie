@@ -156,6 +156,7 @@ void vp_dvg_reset_clip(vp_dvg *dvg);
 void vp_dvg_begin_frame(vp_dvg *dvg);
 
 void vp_color(vp_dvg *dvg, uint8_t r, uint8_t g, uint8_t b);
+void vp_get_color(const vp_dvg *dvg, uint8_t *r, uint8_t *g, uint8_t *b);
 void vp_moveto(vp_dvg *dvg, int x, int y);
 void vp_lineto(vp_dvg *dvg, int x, int y);
 
