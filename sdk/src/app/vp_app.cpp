@@ -13,6 +13,7 @@ struct vp_game {
     const vp_game_desc *desc;
     vp_dvg   *out;
     vp_input *in;
+    vp_audio *audio;
     double    time;
     bool      quit;
 };
@@ -101,10 +102,15 @@ int vp_run(const vp_game_desc *desc, int argc, char **argv)
         vp_dvg_close(g.out);
         return 1;
     }
-    printf("%s: VectorPie SDK %s, %s%s%s (%s), %d joystick(s)\n", title, vp_version(),
+    if (vp_audio_open(&g.audio) != VP_OK) {
+        fprintf(stderr, "%s: no sound: %s\n", title, vp_last_error());
+        g.audio = nullptr;      // the game runs silent
+    }
+    printf("%s: VectorPie SDK %s, %s%s%s (%s), %d joystick(s), %s\n", title, vp_version(),
            vp_hardware_name(vp_dvg_hardware(g.out)),
            vp_dvg_get_output(g.out) == VP_DVG_OUTPUT_BOARD ? " on " : "",
-           vp_dvg_port(g.out), reason, vp_input_joystick_count(g.in));
+           vp_dvg_port(g.out), reason, vp_input_joystick_count(g.in),
+           g.audio ? "sound" : "no sound");
     fflush(stdout);
 
     // After SDL is up, so these handlers replace SDL's own.
@@ -167,6 +173,7 @@ int vp_run(const vp_game_desc *desc, int argc, char **argv)
     }
 
     if (desc->shutdown) desc->shutdown(&g);
+    vp_audio_close(g.audio);
     vp_input_close(g.in);
     vp_dvg_close(g.out);
     return status;
@@ -180,6 +187,11 @@ void *vp_game_user(vp_game *g)
 vp_input *vp_game_input(vp_game *g)
 {
     return g ? g->in : nullptr;
+}
+
+vp_audio *vp_game_audio(vp_game *g)
+{
+    return g ? g->audio : nullptr;
 }
 
 vp_dvg *vp_game_output(vp_game *g)

@@ -15,8 +15,10 @@
  *   }
  *
  * WHAT IT DOES
- *   - opens the output (vp_dvg_open_auto: the board, or a window) and the
- *     controls (vp_input);
+ *   - opens the output (vp_dvg_open_auto: the board, or a window), the
+ *     controls (vp_input) and the sound (vp_audio; a game still runs when
+ *     there is no sound device: vp_game_audio is then NULL, which every
+ *     vp_audio call accepts);
  *   - calls update at a FIXED rate (update_hz, default 60), reading the
  *     controls before each call, so game logic does not depend on the frame
  *     rate; a late frame is caught up with at most 5 steps;
@@ -38,6 +40,7 @@
 
 #include "vp_dvg.h"
 #include "vp_input.h"
+#include "vp_audio.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,6 +68,7 @@ int vp_run(const vp_game_desc *desc, int argc, char **argv);
 
 void     *vp_game_user(vp_game *g);
 vp_input *vp_game_input(vp_game *g);
+vp_audio *vp_game_audio(vp_game *g);   /* NULL when there is no sound device */
 vp_dvg   *vp_game_output(vp_game *g);
 double    vp_game_time(vp_game *g);     /* seconds of game time (update steps x dt) */
 void      vp_game_quit(vp_game *g);     /* stop after this step */

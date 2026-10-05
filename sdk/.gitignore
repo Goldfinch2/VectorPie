@@ -3,3 +3,5 @@
 *.o
 *.a
 *.exe
+# Local test sounds for examples/hello (not ours to publish): see its README
+/examples/hello/assets/

@@ -1,10 +1,16 @@
 /* hello — a small complete game on the VectorPie SDK.
  *
  * Shoot the falling diamonds before they reach the ground. It shows the
- * three pieces a game is made of:
+ * pieces a game is made of:
  *   vp_run     the loop: update() at a fixed 60 Hz, draw() once per frame
  *   vp_input   the cabinet's controls by their advmame.rc names
  *   vp_text    text, drawn as strokes
+ *   vp_audio   effects, and a streamed loop
+ *
+ * Sounds: if assets/sounds/ next to the executable holds shipfire.wav and
+ * explosn.wav (Rip Off's, from a MAME sample set: see README.md), they are
+ * used; music.wav (any track), or else bg1.wav, is streamed as the
+ * background loop. Otherwise the game makes its own sounds in code.
  *
  * Controls (AdvanceMAME's defaults unless the cabinet's advmame.rc says
  * otherwise): P1 stick or arrows to move, P1 button 1 (left Ctrl) to fire,
@@ -13,7 +19,9 @@
  */
 #include <vectorpie/vp.h>
 
+#include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define W VP_DVG_COORD_MAX           /* the board space is 0..4095 */
 #define MAX_SHOTS    8
@@ -35,6 +43,8 @@ static struct {
     float    spawn_timer;
     int      score, best, lives;
     unsigned rng;
+    vp_sound *zap, *boom, *hum;
+    vp_voice  music;
 } G;
 
 /* One small deterministic random generator: the same inputs, the same game. */
@@ -55,6 +65,81 @@ static void start_game(void)
     G.spawn_timer = 0;
     G.score = 0;
     G.lives = START_LIVES;
+}
+
+/* ---- sounds -------------------------------------------------------------- */
+
+#define SYNTH_RATE 22050
+
+/* A sound made in code: `seconds` long, each sample from gen(t, i). */
+static vp_sound *synth(vp_audio *a, float seconds, float (*gen)(float t, int i))
+{
+    int n = (int)(seconds * SYNTH_RATE);
+    float *buf = malloc(sizeof(float) * (size_t)n);
+    vp_sound *s = NULL;
+    if (!buf) return NULL;
+    for (int i = 0; i < n; i++) buf[i] = gen((float)i / SYNTH_RATE, i);
+    vp_sound_from_samples(a, buf, n, 1, SYNTH_RATE, &s);
+    free(buf);
+    return s;
+}
+
+static float gen_zap(float t, int i)       /* a falling chirp */
+{
+    (void)i;
+    float f = 1800.0f - 9000.0f * t;
+    return 0.5f * sinf(6.2831853f * f * t) * (1.0f - t / 0.15f);
+}
+
+static float gen_boom(float t, int i)      /* noise, falling away */
+{
+    unsigned x = (unsigned)i * 2654435761u;
+    x ^= x >> 13;
+    float noise = (float)(x & 0xffff) / 32768.0f - 1.0f;
+    return 0.7f * noise * expf(-6.0f * t);
+}
+
+static float gen_hum(float t, int i)       /* a low two-tone hum, loops cleanly */
+{
+    (void)i;
+    return 0.15f * sinf(6.2831853f * 55.0f * t) + 0.08f * sinf(6.2831853f * 110.0f * t);
+}
+
+static int file_exists(const char *path)
+{
+    FILE *f = fopen(path, "rb");
+    if (f) fclose(f);
+    return f != NULL;
+}
+
+static int init(vp_game *g)
+{
+    vp_audio *a = vp_game_audio(g);
+    char path[1024];
+    if (!a) return VP_OK;                   /* no sound device: play silent */
+
+    if (vp_sound_load(a, vp_asset_path("assets/sounds/shipfire.wav", path, sizeof path), &G.zap) != VP_OK)
+        G.zap = synth(a, 0.15f, gen_zap);
+    if (vp_sound_load(a, vp_asset_path("assets/sounds/explosn.wav", path, sizeof path), &G.boom) != VP_OK)
+        G.boom = synth(a, 0.8f, gen_boom);
+
+    /* Background: a music track if there is one, else Rip Off's engine hum,
+     * else a hum made in code. A file is streamed from disk as it plays. */
+    static const char *const backgrounds[] = { "assets/sounds/music.wav", "assets/sounds/bg1.wav" };
+    for (int i = 0; i < 2 && !G.music; i++) {
+        vp_asset_path(backgrounds[i], path, sizeof path);
+        if (file_exists(path)) {
+            G.music = vp_music_play(a, path, 0.5f, 1, 2.0f);   /* streamed, looped, fades in */
+            if (G.music) printf("hello: streaming %s\n", backgrounds[i]);
+        }
+    }
+    if (!G.music) {
+        G.hum = synth(a, 1.0f, gen_hum);                        /* whole cycles: loops cleanly */
+        G.music = vp_sound_play(a, G.hum, 0.0f, 1.0f, 1);
+        vp_voice_set_volume(a, G.music, 1.0f, 2.0f);
+        printf("hello: background made in code\n");
+    }
+    return VP_OK;
 }
 
 /* ---- update: game logic, 60 times a second --------------------------- */
@@ -91,6 +176,7 @@ static void update(vp_game *g, float dt)
                 G.shots[i].x = G.ship_x;
                 G.shots[i].y = G.ship_y + 120;
                 G.shots[i].live = 1;
+                vp_sound_play(vp_game_audio(g), G.zap, 0.8f, 1.0f, 0);
                 break;
             }
         }
@@ -126,11 +212,14 @@ static void update(vp_game *g, float dt)
                 sh->y > tg->y - 130 && sh->y < tg->y + 130) {
                 sh->live = tg->live = 0;
                 G.score += 10;
+                /* a little higher each time: the pitch control */
+                vp_sound_play(vp_game_audio(g), G.boom, 0.9f, 1.0f + (G.score % 50) / 100.0f, 0);
                 break;
             }
         }
         if (tg->live && tg->y < 150) {
             tg->live = 0;
+            vp_sound_play(vp_game_audio(g), G.boom, 1.0f, 0.5f, 0);   /* low: a miss */
             if (--G.lives == 0) {
                 G.state = GAME_OVER;
                 G.state_time = 0;
@@ -218,6 +307,7 @@ int main(int argc, char **argv)
     G.rng = 12345;
 
     desc.title  = "Hello VectorPie";
+    desc.init   = init;
     desc.update = update;
     desc.draw   = draw;
     return vp_run(&desc, argc, argv);

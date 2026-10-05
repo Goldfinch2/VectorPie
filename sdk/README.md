@@ -6,7 +6,7 @@ and test on your PC, in a window; run the same code on the cabinet.
 
 > Status: **0.1.0, in development**: the device layer (frames to the board or
 > to a window), the three drawing calls, the advmame.rc reader, the game loop,
-> the controls, text, `vp-test`, and two examples (`poc`, `hello`). Audio, 3D,
+> the controls, text, sound, `vp-test`, and two examples (`poc`, `hello`). 3D,
 > high scores and game packages come next.
 
 ## Set up (once)

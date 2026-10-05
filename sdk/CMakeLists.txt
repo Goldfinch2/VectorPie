@@ -49,6 +49,7 @@ endif()
 
 add_library(vectorpie STATIC
     src/core/vp_error.cpp
+    src/core/vp_paths.cpp
     src/rc/vp_rc.cpp
     src/dvg/vp_dvg.cpp
     src/dvg/vp_serial_posix.cpp
@@ -60,6 +61,7 @@ if(VP_WITH_SDL2)
     target_sources(vectorpie PRIVATE
         src/dvg/vp_window_sdl.cpp
         src/input/vp_input.cpp
+        src/audio/vp_audio.cpp
         src/app/vp_app.cpp)
     target_link_libraries(vectorpie PUBLIC ${VP_SDL2_TARGET})
 else()
@@ -70,6 +72,8 @@ target_include_directories(vectorpie PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 target_compile_options(vectorpie PRIVATE -Wall -Wextra)
+find_package(Threads REQUIRED)          # the audio streaming thread
+target_link_libraries(vectorpie PUBLIC Threads::Threads)
 if(UNIX)
     target_link_libraries(vectorpie PUBLIC m)
 endif()
@@ -111,6 +115,14 @@ if(VP_BUILD_EXAMPLES)
     if(VP_WITH_SDL2)
         add_executable(hello examples/hello/main.c)
         vp_program(hello)
+        # Optional local sounds (see examples/hello/README.md): copied next to
+        # the executable, where vp_asset_path finds them.
+        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples/hello/assets)
+            add_custom_command(TARGET hello POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_directory
+                        ${CMAKE_CURRENT_SOURCE_DIR}/examples/hello/assets
+                        $<TARGET_FILE_DIR:hello>/assets)
+        endif()
     endif()
 endif()
 
