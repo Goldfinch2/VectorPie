@@ -96,7 +96,8 @@ typedef struct vp_dvg_stats {
 
 /* Choose the output the way a VectorPie game should, filling `options`:
  *   1. the VP_OUTPUT environment variable (the menu sets it when it launches
- *      a game): "dvg", "window" (fullscreen) or "windowed" (a normal window)
+ *      a game, from its own type, as for bzone2_dvg / bzone2_sdl): "dvg" (the
+ *      board) or "sdl" (a fullscreen window: the HDMI screen on the Pi)
  *   2. otherwise advmame.rc: vector_aux_renderer "dvg" -> the board
  *   3. otherwise (the DVG is disabled, or there is no advmame.rc, as on a
  *      PC) -> a fullscreen window

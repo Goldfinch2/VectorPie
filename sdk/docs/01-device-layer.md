@@ -71,7 +71,9 @@ beam is on draws a dot.
 `vp_dvg_open_auto` decides the way every VectorPie game should:
 
 1. `VP_OUTPUT` in the environment, which the menu sets when it launches a
-   game: `dvg`, `window` (fullscreen), `windowed`;
+   game, the same two types as its `bzone2_dvg` / `bzone2_sdl` launches:
+   `dvg` (the board) or `sdl` (a fullscreen window; on the Pi, the HDMI
+   screen);
 2. otherwise advmame.rc: `vector_aux_renderer dvg` means the board;
 3. otherwise a **fullscreen window**: the DVG is disabled in the cabinet's
    settings, or there is no advmame.rc (a PC).

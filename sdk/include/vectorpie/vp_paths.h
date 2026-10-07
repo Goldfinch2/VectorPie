@@ -24,6 +24,11 @@ const char *vp_package_dir(void);
  * slashes work on Windows too. */
 const char *vp_asset_path(const char *relative, char *buf, size_t size);
 
+/* vp_package_dir() + "/save": where the game writes what it keeps (high
+ * scores, settings). Created the first time it is asked for; an installed
+ * package keeps it across upgrades. */
+const char *vp_save_dir(void);
+
 #ifdef __cplusplus
 }
 #endif

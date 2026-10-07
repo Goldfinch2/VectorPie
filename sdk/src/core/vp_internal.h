@@ -20,3 +20,7 @@ void vp_strlcpy(char *dst, const char *src, size_t size);
 // Parse one advmame.rc binding value ("keyboard[0,up] or joystick_button[0,button1]")
 // the way vp_rc does. The input layer writes its defaults in this syntax.
 std::vector<vp_binding> vp_rc_parse_bindings(const std::string &value);
+
+// vp_run, when the output is the board: show the package's marquee on the
+// HDMI screen (vp_marquee.h), if it has one. Nothing elsewhere.
+void vp_marquee_auto(void);

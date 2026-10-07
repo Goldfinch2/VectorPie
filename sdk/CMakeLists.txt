@@ -28,6 +28,13 @@ if(VP_WITH_SDL2)
     find_package(SDL2 CONFIG QUIET)
     if(TARGET SDL2::SDL2)
         set(VP_SDL2_TARGET SDL2::SDL2)
+        # Visible to a game that builds the SDK as a subdirectory too (it
+        # needs SDL2.dll copied next to its .exe: vp_program).
+        get_target_property(vp_sdl2_alias SDL2::SDL2 ALIASED_TARGET)
+        get_target_property(vp_sdl2_global SDL2::SDL2 IMPORTED_GLOBAL)
+        if(NOT vp_sdl2_alias AND NOT vp_sdl2_global)
+            set_target_properties(SDL2::SDL2 PROPERTIES IMPORTED_GLOBAL TRUE)
+        endif()
     else()
         find_package(PkgConfig QUIET)
         if(PKG_CONFIG_FOUND)
@@ -50,6 +57,8 @@ endif()
 add_library(vectorpie STATIC
     src/core/vp_error.cpp
     src/core/vp_paths.cpp
+    src/core/vp_hiscore.cpp
+    src/core/vp_lamps.cpp
     src/rc/vp_rc.cpp
     src/dvg/vp_dvg.cpp
     src/dvg/vp_serial_posix.cpp
@@ -65,7 +74,14 @@ if(VP_WITH_SDL2)
         src/dvg/vp_window_sdl.cpp
         src/input/vp_input.cpp
         src/audio/vp_audio.cpp
-        src/app/vp_app.cpp)
+        src/app/vp_app.cpp
+        src/app/vp_initials.cpp
+        src/app/vp_credits.cpp
+        src/app/vp_marquee.cpp
+        src/third_party/lodepng/lodepng.cpp)
+    # lodepng (zlib license, see its header): third-party code, kept as is.
+    set_source_files_properties(src/third_party/lodepng/lodepng.cpp
+        PROPERTIES COMPILE_OPTIONS "-w")
     target_link_libraries(vectorpie PUBLIC ${VP_SDL2_TARGET})
 else()
     target_sources(vectorpie PRIVATE src/dvg/vp_window_none.cpp)
@@ -74,7 +90,10 @@ endif()
 target_include_directories(vectorpie PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
-target_compile_options(vectorpie PRIVATE -Wall -Wextra)
+target_compile_options(vectorpie PRIVATE -Wall -Wextra
+    # GCC on arm64 notes that passing std::pair<float, float> changed ABI in
+    # GCC 10.1: nothing to do here (no such pair crosses a library boundary).
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-psabi>)
 find_package(Threads REQUIRED)          # the audio streaming thread
 target_link_libraries(vectorpie PUBLIC Threads::Threads)
 if(UNIX)
@@ -120,6 +139,8 @@ if(VP_BUILD_EXAMPLES)
         vp_program(models)
         add_executable(hello examples/hello/main.c)
         vp_program(hello)
+        add_executable(lamps examples/lamps/main.c)
+        vp_program(lamps)
         # Optional local sounds (see examples/hello/README.md): copied next to
         # the executable, where vp_asset_path finds them.
         if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples/hello/assets)

@@ -273,6 +273,7 @@ void vp_dvg_auto_options(vp_dvg_options *o, const char *title, const char **reas
     const char *vert = getenv("VP_VERTICAL");
     o->vertical = (vert && strcmp(vert, "1") == 0) ? 1 : 0;
 
+    // The menu's own two launch types, as for bzone2_dvg / bzone2_sdl.
     const char *env = getenv("VP_OUTPUT");
     if (env && *env) {
         if (strcmp(env, "dvg") == 0) {
@@ -280,15 +281,10 @@ void vp_dvg_auto_options(vp_dvg_options *o, const char *title, const char **reas
             if (reason) *reason = "VP_OUTPUT=dvg";
             return;
         }
-        if (strcmp(env, "windowed") == 0) {
-            o->output = VP_DVG_OUTPUT_WINDOW;
-            if (reason) *reason = "VP_OUTPUT=windowed";
-            return;
-        }
-        if (strcmp(env, "window") == 0) {
+        if (strcmp(env, "sdl") == 0) {
             o->output = VP_DVG_OUTPUT_WINDOW;
             o->fullscreen = 1;
-            if (reason) *reason = "VP_OUTPUT=window";
+            if (reason) *reason = "VP_OUTPUT=sdl";
             return;
         }
         // Unknown value: fall through to the normal rules.

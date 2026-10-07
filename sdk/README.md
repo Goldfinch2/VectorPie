@@ -6,8 +6,10 @@ and test on your PC, in a window; run the same code on the cabinet.
 
 > Status: **0.1.0, in development**: the device layer (frames to the board or
 > to a window), the three drawing calls, the advmame.rc reader, the game loop,
-> the controls, text, sound, 3D in wireframe, `vp-test`, and three examples
-> (`poc`, `hello`, `models`). Solid 3D, high scores and game packages come next.
+> the controls, text, sound, 3D (solid with hidden lines, and wireframe),
+> high scores, credits and START lamps, `vp-test`, and four examples (`poc`,
+> `hello`, `models`, `lamps`). Game
+> packages come next.
 
 ## Set up (once)
 
@@ -50,6 +52,7 @@ build-pc/poc.exe --windowed          # a turning cube in a window
 build-pc/poc.exe --dvg COM5          # on a USB-DVG plugged into the PC
 build-pc/hello.exe --windowed        # a small game: arrows, Left Ctrl, 1 to start, Esc
 build-pc/models.exe --windowed       # 3D wireframe; add .obj files to look at them
+build-pc/lamps.exe --windowed        # START lamps: patterns, coins and credits (lamps light on the Pi)
 build-pc/vp-test.exe --windowed      # the test pattern
 ```
 
@@ -58,7 +61,7 @@ quit the menu (only one program can hold the board), then:
 
 ```sh
 ./poc                     # the board, if advmame.rc enables the DVG
-VP_OUTPUT=window ./poc    # the HDMI screen
+VP_OUTPUT=sdl ./poc       # the HDMI screen
 ```
 
 Ctrl+C or closing the window stops it; the board returns to its home screen.
@@ -69,13 +72,17 @@ Ctrl+C or closing the window stops it; the board returns to its home screen.
 | | |
 |---|---|
 | `VP_OUTPUT=dvg` | the board |
-| `VP_OUTPUT=window` / `windowed` | a fullscreen / normal window (on the Pi, always the whole HDMI screen) |
+| `VP_OUTPUT=sdl` | a fullscreen window (on the Pi, the HDMI screen) |
 | otherwise, advmame.rc `vector_aux_renderer dvg` | the board |
 | otherwise | a fullscreen window (the DVG is disabled, or this is a PC) |
 
 The board's port: `VP_DVG_PORT`, else advmame.rc `vector_aux_renderer_port`,
 else `/dev/ttyACM0`. advmame.rc: `VP_ADVMAME_RC`, else `~/.advance/advmame.rc`,
 else `/home/pi/.advance/advmame.rc`.
+
+`VP_STATS=1` makes a game built on `vp_run` print its frame cost once a
+second (lines, moves, path lengths, draw and send time): see
+[docs/03-game-layer.md](docs/03-game-layer.md).
 
 ## Docs
 
@@ -84,3 +91,7 @@ Start at [docs/00-index.md](docs/00-index.md).
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
+Third-party code, under its own license: [LodePNG](src/third_party/lodepng/)
+(Lode Vandevenne, zlib license, in its header), which reads the marquee
+PNG.

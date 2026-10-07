@@ -30,7 +30,10 @@ int main(int argc, char **argv)
   it behaves the same at any frame rate. A late frame is caught up with at
   most 5 steps;
 * calls `draw` **once per frame** (`frame_hz`, 40 by default), inside the
-  frame (`vp_dvg_begin_frame` / `vp_dvg_end_frame` are done for you);
+  frame (`vp_dvg_begin_frame` / `vp_dvg_end_frame` are done for you). On
+  the board, `frame_hz_board` replaces it when set: a heavy game can give
+  the board more time per frame (30 Hz) and still run at 40 in a window.
+  The game logic keeps its own `update_hz` either way;
 * stops on **`ui_cancel`** (the cabinet's exit, back to the menu), on a closed
   window, on Ctrl+C, or when the game calls `vp_game_quit`; then calls
   `shutdown` and closes everything, so the board gets its exit sequence.
@@ -41,6 +44,15 @@ the game time in seconds.
 
 For development, `vp_run` reads a few options (the menu passes none):
 `--dvg [PORT]`, `--window`, `--windowed`, `--vertical`.
+
+**`VP_STATS=1`** prints what a frame costs, once a second: the frame rate,
+then the average and the peak of the lines drawn, the blank moves, the
+words sent, the lit and blank path lengths (board units), the time in
+`draw` (game drawing plus the 3D scene) and the time sending the frame, and
+how many frames had lines dropped. Use it to tune a game to the board:
+drawing time on the board grows with the number of lines and the path
+length, and a frame the board cannot finish in time is drawn faster and
+dimmer.
 
 `vp_run` owns SDL's event queue: events are read and dropped each frame.
 Read the controls through `vp_input`.

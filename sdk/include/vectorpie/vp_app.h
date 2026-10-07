@@ -62,6 +62,8 @@ typedef struct vp_game_desc {
 
     int update_hz;              /* 0 = 60 */
     int frame_hz;               /* 0 = 40 */
+    int frame_hz_board;         /* 0 = frame_hz: the rate on the board, when it
+                                 * differs (a heavy frame needs more time) */
 } vp_game_desc;
 
 /* Run the game. Returns 0 on a normal exit, 1 if something failed (the

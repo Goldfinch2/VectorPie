@@ -7,7 +7,9 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <direct.h>
 #else
+#include <sys/stat.h>
 #include <unistd.h>
 #endif
 
@@ -37,4 +39,17 @@ const char *vp_asset_path(const char *relative, char *buf, size_t size)
     if (!buf || size == 0) return "";
     snprintf(buf, size, "%s/%s", vp_package_dir(), relative ? relative : "");
     return buf;
+}
+
+const char *vp_save_dir(void)
+{
+    static char dir[1100];
+    if (dir[0]) return dir;
+    snprintf(dir, sizeof dir, "%s/save", vp_package_dir());
+#ifdef _WIN32
+    _mkdir(dir);            // fails harmlessly when it exists
+#else
+    mkdir(dir, 0755);
+#endif
+    return dir;
 }

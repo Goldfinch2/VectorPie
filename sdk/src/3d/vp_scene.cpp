@@ -226,6 +226,39 @@ void vp3d_scene_mesh(vp3d_scene *s, const vp3d_mesh *m, const vp_xf *place, vp3d
     }
 }
 
+void vp3d_scene_polygon(vp3d_scene *s, const vp_vec3 *pts, int count, unsigned edge_mask)
+{
+    if (!s || !s->d || !pts || count < 3 || count > 16) return;
+    const vp3d_view *v = &s->view;
+    const int face = s->nextFace++;
+
+    vp_vec3 cam[16];
+    for (int i = 0; i < count; i++) cam[i] = vp_xf_point(&v->world_to_camera, pts[i]);
+
+    uint8_t r, g, bl;
+    vp_get_color(s->d, &r, &g, &bl);
+    for (int i = 0; i < count; i++) {
+        if (!(edge_mask & (1u << i))) continue;
+        Segment seg;
+        seg.a = cam[i];
+        seg.b = cam[(i + 1) % count];
+        seg.r = r; seg.g = g; seg.bl = bl;
+        seg.faceA = face;
+        seg.faceB = -1;
+        s->segs.push_back(seg);
+    }
+
+    // It hides from both sides: no facing test.
+    const float near = v->near_z > 0.0f ? v->near_z : 0.1f;
+    vp_vec3 n = vp_v3_normalize(vp_v3_cross(vp_v3_sub(cam[1], cam[0]), vp_v3_sub(cam[2], cam[0])));
+    float k = vp_v3_dot(n, cam[0]);
+    if (std::fabs(k) < 1e-6f || vp_v3_length(n) == 0.0f) return;
+    static thread_local std::vector<vp_vec3> poly;
+    clipNear(cam, count, near, poly);
+    for (size_t i = 1; i + 1 < poly.size(); i++)
+        addTri(s, poly[0], poly[i], poly[i + 1], n, k, face);
+}
+
 void vp3d_scene_end(vp3d_scene *s)
 {
     if (!s || !s->d) return;

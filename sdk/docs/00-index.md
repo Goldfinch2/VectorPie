@@ -9,9 +9,10 @@ Read in order the first time; each chapter is written to stand alone after that.
 | [03 — The game layer](03-game-layer.md) | The game loop (`vp_run`), the controls (`vp_input`), text (`vp_text`) |
 | [04 — Sound](04-audio.md) | Effects, streamed music, voices (`vp_audio`); where a game's files are (`vp_paths`) |
 | [05 — 3D](05-3d.md) | The view (camera, fog), placements, meshes and OBJ files, solid and wireframe drawing, scenes where objects hide each other (`vp_3d`) |
+| [06 — High scores and credits](06-hiscores.md) | The top-10 table the menu shows, entering initials, drawing the table (`vp_hiscore`); coins, credits, the START lamps (`vp_credits`) |
+| [07 — Game packages](07-packages.md) | The game's folder, `game.ini`, `VP_OUTPUT`, making a `.vpk` with `vp-pack`, installing from USB |
 
-Coming next: high scores, and packaging a game for
-the VectorPie menu.
+Coming next: installing games online (a signed catalog).
 
 ## The layers
 
@@ -21,7 +22,8 @@ your game
   |  vp_run    the loop          vp_input  the controls     vp_text  text
   |  vp_audio  effects, music     vp_paths  the game's files
   |  vp_3d     3D: solid, wireframe, hidden lines
-  |  vp_hiscore, game packages ...                         next
+  |  vp_hiscore  high scores, initials   vp_credits  coins, START lamps
+  |  game packages: game.ini, vp-pack, installed from USB by the menu
   v
 vp_dvg   vp_color / vp_moveto / vp_lineto
          frames -> vector board (USB-DVG, BeamForge)  or  -> window (SDL2)

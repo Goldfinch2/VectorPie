@@ -12,6 +12,9 @@
 #include "vp_input.h"
 #include "vp_audio.h"
 #include "vp_paths.h"
+#include "vp_hiscore.h"
+#include "vp_credits.h"
+#include "vp_marquee.h"
 #include "vp_app.h"
 
 #endif /* VECTORPIE_VP_H */

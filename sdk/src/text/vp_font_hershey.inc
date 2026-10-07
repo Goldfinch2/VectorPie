@@ -8,7 +8,7 @@
 
 static const vp_glyph HERSHEY_SIMPLEX[] =
 {
-   { 0,16, /* Ascii 32 space */ },
+   { 0,16, /* Ascii 32 space */ { 0 } },
    { 8,10, /* Ascii 33 ! */
      5,21,5,7,-1,-1,5,2,4,1,5,0,6,1,5,2, },
    { 5,16, /* Ascii 34 " */

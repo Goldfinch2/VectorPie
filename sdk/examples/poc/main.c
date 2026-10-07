@@ -6,7 +6,7 @@
  * vp_lineto), on whatever output a VectorPie game would use:
  *
  *   poc                    the USB-DVG if advmame.rc enables it, otherwise a
- *                          fullscreen window (or VP_OUTPUT=dvg|window|windowed)
+ *                          fullscreen window (or VP_OUTPUT=dvg|sdl)
  *   poc --windowed         a normal window (the whole screen on the Pi)
  *   poc --window           a fullscreen window
  *   poc --dvg [PORT]       the vector board, e.g. --dvg COM5 on a PC

@@ -228,17 +228,28 @@ void drawCameraSegment(vp_dvg *d, const vp3d_view *v, const Lens &l, vp_vec3 a, 
     if (a.z < n) { float t = (n - a.z) / (b.z - a.z); a = vp_v3_add(a, vp_v3_scale(vp_v3_sub(b, a), t)); a.z = n; }
     if (b.z < n) { float t = (n - b.z) / (a.z - b.z); b = vp_v3_add(b, vp_v3_scale(vp_v3_sub(a, b), t)); b.z = n; }
 
-    float x0 = l.cx + a.x / a.z * l.fx, y0 = l.cy + a.y / a.z * l.fy;
-    float x1 = l.cx + b.x / b.z * l.fx, y1 = l.cy + b.y / b.z * l.fy;
-    if (!clip2d(x0, y0, x1, y1)) return;
+    // Fog: a line whose ends differ in brightness is drawn in steps (about a
+    // twelfth of full brightness each), so a long line fades along its length.
+    float fa = fogFactor(v, a.z), fb = fogFactor(v, b.z);
+    int steps = (int)std::ceil(std::fabs(fa - fb) * 12.0f);
+    if (steps < 1) steps = 1;
+    if (steps > 12) steps = 12;
+    vp_vec3 ab = vp_v3_sub(b, a);
+    for (int i = 0; i < steps; i++) {
+        vp_vec3 pa = vp_v3_add(a, vp_v3_scale(ab, (float)i / steps));
+        vp_vec3 pb = i + 1 == steps ? b : vp_v3_add(a, vp_v3_scale(ab, (float)(i + 1) / steps));
+        float x0 = l.cx + pa.x / pa.z * l.fx, y0 = l.cy + pa.y / pa.z * l.fy;
+        float x1 = l.cx + pb.x / pb.z * l.fx, y1 = l.cy + pb.y / pb.z * l.fy;
+        if (!clip2d(x0, y0, x1, y1)) continue;
 
-    float f = fogFactor(v, (a.z + b.z) * 0.5f);
-    if (f < 1.0f) vp_color(d, (uint8_t)(r * f + 0.5f), (uint8_t)(g * f + 0.5f), (uint8_t)(bl * f + 0.5f));
-    else          vp_color(d, r, g, bl);
-    // Consecutive segments that share an end chain on the board by themselves:
-    // a moveto to where the beam already is costs nothing.
-    vp_moveto(d, (int)std::lround(x0), (int)std::lround(y0));
-    vp_lineto(d, (int)std::lround(x1), (int)std::lround(y1));
+        float f = fogFactor(v, (pa.z + pb.z) * 0.5f);
+        if (f < 1.0f) vp_color(d, (uint8_t)(r * f + 0.5f), (uint8_t)(g * f + 0.5f), (uint8_t)(bl * f + 0.5f));
+        else          vp_color(d, r, g, bl);
+        // Consecutive segments that share an end chain on the board by themselves:
+        // a moveto to where the beam already is costs nothing.
+        vp_moveto(d, (int)std::lround(x0), (int)std::lround(y0));
+        vp_lineto(d, (int)std::lround(x1), (int)std::lround(y1));
+    }
 }
 
 }  // namespace vp3d_internal
@@ -487,6 +498,20 @@ int vp3d_mesh_face_count(const vp3d_mesh *m)   { return m ? (int)m->faces.size()
 int vp3d_mesh_edge_count(const vp3d_mesh *m)   { return m ? (int)m->edges.size() : 0; }
 int vp3d_mesh_stroke_count(const vp3d_mesh *m) { return m ? (int)m->strokes.size() : 0; }
 float vp3d_mesh_radius(const vp3d_mesh *m)     { return m ? m->radius : 0.0f; }
+
+void vp3d_mesh_bounds(const vp3d_mesh *m, vp_vec3 *min, vp_vec3 *max)
+{
+    vp_vec3 lo = vp_v3(0, 0, 0), hi = vp_v3(0, 0, 0);
+    if (m && !m->verts.empty()) {
+        lo = hi = m->verts[0];
+        for (const vp_vec3 &v : m->verts) {
+            lo.x = std::fmin(lo.x, v.x); lo.y = std::fmin(lo.y, v.y); lo.z = std::fmin(lo.z, v.z);
+            hi.x = std::fmax(hi.x, v.x); hi.y = std::fmax(hi.y, v.y); hi.z = std::fmax(hi.z, v.z);
+        }
+    }
+    if (min) *min = lo;
+    if (max) *max = hi;
+}
 
 void vp3d_visible(const vp3d_mesh *m, const vp_xf &toCam, vp3d_mode mode,
                   std::vector<char> &seen, std::vector<int> &show)

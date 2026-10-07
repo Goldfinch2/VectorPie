@@ -82,8 +82,10 @@ typedef struct vp3d_view {
     float near_z;           /* nothing closer is drawn; lines crossing it are cut. Default 0.1 */
     float far_z;            /* nothing farther is drawn (whole lines). Default 10000 */
     float aspect;           /* the monitor's width / height: 4/3 (default), 3/4 vertical */
-    /* fog: full brightness up to fog_start, fog_floor at fog_end and beyond.
-     * fog_end <= fog_start: no fog (the default). */
+    /* fog: full brightness up to fog_start, fog_floor at fog_end and beyond,
+     * by distance along the view; a line spanning depths fades along its
+     * length (drawn in up to 12 steps). fog_end <= fog_start: no fog (the
+     * default). */
     float fog_start, fog_end, fog_floor;
 } vp3d_view;
 
@@ -153,6 +155,8 @@ int  vp3d_mesh_edge_count(const vp3d_mesh *m);
 int  vp3d_mesh_stroke_count(const vp3d_mesh *m);   /* connected strokes in wireframe */
 /* The radius of the smallest origin-centered sphere holding the mesh. */
 float vp3d_mesh_radius(const vp3d_mesh *m);
+/* The mesh's bounding box (to stand a model on the floor, center it...). */
+void  vp3d_mesh_bounds(const vp3d_mesh *m, vp_vec3 *min, vp_vec3 *max);
 
 typedef enum vp3d_mode {
     VP3D_SOLID = 0,         /* outline and sharp creases: an object */
@@ -201,6 +205,15 @@ void vp3d_scene_free(vp3d_scene *s);
 void vp3d_scene_begin(vp3d_scene *s, vp_dvg *d, const vp3d_view *v);
 void vp3d_scene_mesh(vp3d_scene *s, const vp3d_mesh *m, const vp_xf *place, vp3d_mode mode);
 void vp3d_scene_line(vp3d_scene *s, vp_vec3 a, vp_vec3 b);
+/* A solid, flat, convex polygon in world space, for geometry that changes
+ * every frame (walls that grow, a door that opens) where building a mesh
+ * would be wasteful. It hides what is behind it, from both sides. Of its
+ * edges (edge i joins pts[i] and pts[i+1], the last one back to pts[0]),
+ * only those whose bit is set in `edge_mask` are drawn, in the current color:
+ * VP3D_ALL_EDGES draws its outline, 0 makes it an invisible screen. 3 to 16
+ * points. */
+#define VP3D_ALL_EDGES 0xffffu
+void vp3d_scene_polygon(vp3d_scene *s, const vp_vec3 *pts, int count, unsigned edge_mask);
 void vp3d_scene_end(vp3d_scene *s);
 void vp3d_scene_get_stats(const vp3d_scene *s, vp3d_scene_stats *stats);
 
