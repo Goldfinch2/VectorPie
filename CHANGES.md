@@ -1,3 +1,18 @@
+### vectorpie-1.1.9
+
+
+● What's new
+
+  Game packages. Games made with the VectorPie SDK can now be installed from the menu with Settings -> GAMES -> INSTALL GAMES.... It copies the .vpk files of a USB drive (its games folder or top folder) to /persistent/games/packages, then lists everything in that folder. You can also copy .vpk files there yourself over the network, without a USB drive.
+
+  Installed games show in the menu under their manufacturer, with their marquee and high scores. Settings -> GAMES -> REMOVE GAME... removes a game. You can keep its high scores for a reinstall.
+
+  Backup now saves the high scores of installed games.
+
+  The USB-DVG section of Settings is now called DVG. A new HARDWARE line shows the connected board. DVG TYPE is renamed FIRMWARE VARIANT.
+
+
+
 ### vectorpie-1.1.8
 
 

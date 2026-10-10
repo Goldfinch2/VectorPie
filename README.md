@@ -11,6 +11,7 @@ VectorPie is a Raspberry Pi image for the USB-DVG vector generator board. It boo
 - **USB-DVG** — drives a real vector monitor; HDMI works without it
 - **One input mapping** — configured once in AdvanceMAME, used by the menu and every game
 - **High scores** — read from the MAME save files and shown in the hint bar
+- **Game packages** — games made with the VectorPie SDK install from the menu, from a USB drive or over the network
 - **LED lighting** — each game lights its own controls in its own colors, with a voice-guided tour and beat-synced light shows
 - **Wi-Fi** — set up from the menu
 - **Remote access** — SSH and a Windows network share
@@ -48,7 +49,7 @@ Two variants:
 | v3 or later (standalone) | Standalone |
 | v3 or later (on adapter card) | Arcade Control |
 
-> On VectorPie 1.1.2 or later the firmware is updated from the menu (Settings → USB-DVG → USB-DVG UPDATE...). The manual procedure below is for older versions only.
+> On VectorPie 1.1.2 or later the firmware is updated from the menu (Settings → DVG → DVG UPDATE...). The manual procedure below is for older versions only.
 
 Flash with **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
 
@@ -263,7 +264,7 @@ The HDMI screensaver shows the current and next track titles, and that Player 2 
 
 **Tab** opens Settings; Tab or **Escape** closes it. Up/Down moves, Left/Right adjusts, Select toggles or opens. With a USB-DVG, Settings is mirrored on the vector display.
 
-Sections: DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, BACKUP, NETWORK, SYSTEM.
+Sections: DISPLAY, DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, GAMES, BACKUP, NETWORK, SYSTEM.
 
 | Section | Setting | Description |
 |---|---|---|
@@ -273,14 +274,15 @@ Sections: DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, BACKUP, NETWO
 | DISPLAY  | MENU FADE      | Fade-out time for the menu text: 1.0–15.0 s. Default 2.5 s. |
 | DISPLAY  | HINTS          | Control hints in the hint bar |
 | DISPLAY  | HIGH SCORES    | High scores in the hint bar |
-| USB-DVG  | DVG            | USB-DVG output on/off |
-| USB-DVG  | DVG REFRESH    | Refresh rate, 30–60 Hz. Default 40. Applies as you adjust — raise for a steadier, brighter picture, lower if the display can't keep up. |
-| USB-DVG  | DVG TYPE       | Firmware variant on the board: STANDARD or ARCADE CONTROL. Used by USB-DVG UPDATE. Newer firmware reports it and this follows. |
-| USB-DVG  | USB-DVG UPDATE... | The firmware update page (for DVG TYPE): checks online, shows the release notes, UPDATE flashes. |
-| USB-DVG  | DVG SETTINGS   | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. Needs firmware 1.14R2 or later. |
-| USB-DVG  | CRT CALIBRATION | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
-| USB-DVG  | OVERLAY        | Color overlays: DISABLED / COLORING / ARTWORK / BOTH (see below) |
-| USB-DVG  | AUTOSTART GAME | Launch the USB-DVG default game at startup |
+| DVG      | DVG            | Vector board output on/off |
+| DVG      | HARDWARE       | The connected board, e.g. USB-DVG. OTHER is an unrecognized board: it gets no firmware updates. |
+| DVG      | DVG REFRESH    | Refresh rate, 30–60 Hz. Default 40. Applies as you adjust — raise for a steadier, brighter picture, lower if the display can't keep up. |
+| DVG      | FIRMWARE VARIANT | Firmware variant on the board: STANDARD or ARCADE CONTROL. Used by DVG UPDATE. Newer firmware reports it and this follows. |
+| DVG      | DVG UPDATE...  | The firmware update page (for the FIRMWARE VARIANT): checks online, shows the release notes, UPDATE flashes. |
+| DVG      | DVG SETTINGS   | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. Needs firmware 1.14R2 or later. |
+| DVG      | CRT CALIBRATION | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
+| DVG      | OVERLAY        | Color overlays: DISABLED / COLORING / ARTWORK / BOTH (see below) |
+| DVG      | AUTOSTART GAME | Launch the board's default game at startup |
 | AUDIO    | OUTPUT         | The audio device in use: `USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` |
 | AUDIO    | MASTER VOLUME  | System volume |
 | AUDIO    | MAME SOUND QUALITY | AdvanceMAME audio: **HIGH** (48 kHz), **MEDIUM** (22 kHz, smoother on demanding games), **LOW** (11 kHz, maximum performance; speech games sound muffled) |
@@ -300,6 +302,8 @@ Sections: DISPLAY, USB-DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, BACKUP, NETWO
 | LEDS     | CABINET COLORS | Colors for the coin, start and menu lamps. See [Cabinet colors](#cabinet-colors). |
 | LEDS     | GAME COLORS    | Recolor a game's controls. See [Game colors](#game-colors). |
 | LEDS     | LED SHOW...    | Light shows for the screensaver, startup, game launch and manufacturers. See [Light shows](#light-shows). |
+| GAMES    | INSTALL GAMES... | Install or update game packages. See [Game Packages](#game-packages). |
+| GAMES    | REMOVE GAME... | Remove an installed game, keeping its high scores or not. |
 | BACKUP   | SAVE ⏏         | Save settings to a USB drive. See [Backup Save / Restore](#backup-save--restore). |
 | BACKUP   | RESTORE ⏏      | Restore them from the drive. |
 | NETWORK  | ETHERNET       | Wired interface on/off. Off forces Wi-Fi even with a cable in. |
@@ -328,7 +332,7 @@ Reflashing the SD card loses your settings. Save them to a USB drive first, then
 - **gamelist.ini** — your game list
 - **LED settings** — panel wiring, cabinet colors, game colors, light shows
 - **Theme tracks** you've added
-- **High scores** — `.hi` and NVRAM files, Geometry Wars saves
+- **High scores** — `.hi` and NVRAM files, Geometry Wars saves, and those of installed game packages
 - **Wi-Fi connections**
 - **Hostname** — reapplied live, so the `.local` and share names carry over
 - **SSH host keys** — so SSH clients don't complain after reflashing
@@ -372,7 +376,7 @@ An update takes 10–15 minutes. Power loss during it is safe — the previous v
 
 ### USB-DVG firmware updates
 
-**USB-DVG → USB-DVG UPDATE...** works the same way for the board's firmware (for the DVG TYPE variant): the page checks, shows the release notes, and UPDATE downloads, verifies and flashes — the vector display goes dark during the flash — then reboot. Only newer firmware is offered, except that changing DVG TYPE offers the other variant at the same version, so a board flashed with the wrong one can be corrected. A failed flash is recoverable: the Teensy bootloader is separate, so try again.
+**DVG → DVG UPDATE...** works the same way for the board's firmware (for the FIRMWARE VARIANT): the page checks, shows the release notes, and UPDATE downloads, verifies and flashes — the vector display goes dark during the flash — then reboot. Only newer firmware is offered, except that changing FIRMWARE VARIANT offers the other variant at the same version, so a board flashed with the wrong one can be corrected. A failed flash is recoverable: the Teensy bootloader is separate, so try again.
 
 ### What carries over
 
@@ -426,7 +430,7 @@ Games with native color (Tempest, Major Havoc, Star Wars, Gravitar, Black Widow,
 
 ### Calibration Mode
 
-**Settings → USB-DVG → CRT CALIBRATION** puts test patterns on the vector monitor for geometry adjustment. Left/Right cycles them, Cancel exits. The pattern name shows on the marquee.
+**Settings → DVG → CRT CALIBRATION** puts test patterns on the vector monitor for geometry adjustment. Left/Right cycles them, Cancel exits. The pattern name shows on the marquee.
 
 | Pattern | For |
 |---|---|
@@ -437,9 +441,29 @@ Games with native color (Tempest, Major Havoc, Star Wars, Gravitar, Black Widow,
 
 ---
 
+## Game Packages
+
+Games made with the VectorPie SDK come as packages: one `.vpk` file per game.
+
+**Settings → GAMES → INSTALL GAMES...** installs them:
+
+1. If a USB drive is plugged in, its `.vpk` files (in its `games/` folder or top folder) are copied to `/persistent/games/packages/`. The drive can be pulled out right after.
+2. Every `.vpk` in `/persistent/games/packages/` is listed with its version: **NEW**, **UPDATE**, **SAME** or **OLDER** than what is installed, or why it can't be installed.
+3. Select installs one. An update keeps the game's high scores.
+
+You can also copy `.vpk` files to `/persistent/games/packages/` yourself (network share or scp), no USB drive needed. They stay there after installing.
+
+An installed game shows in the menu under its manufacturer, with its marquee and high scores, and launches like any other game. While it plays on the vector monitor, HDMI shows its marquee.
+
+**Settings → GAMES → REMOVE GAME...** removes one: Left/Right picks **KEEP SCORES** or **DELETE SCORES**, then Select twice. Kept scores come back when the game is installed again.
+
+Installed games live in `/persistent/games`, which updates don't touch. A USB backup also saves their high scores.
+
+---
+
 ## High Scores
 
-The hint bar shows the selected game's high scores, read from its MAME `.hi` and `.nv` save files: the label in gold, ranks and scores in cyan, names in white, alternating with the control hints in gray. Both can be turned off in Settings → DISPLAY.
+The hint bar shows the selected game's high scores, read from its MAME `.hi` and `.nv` save files (or a game package's own high-score file): the label in gold, ranks and scores in cyan, names in white, alternating with the control hints in gray. Both can be turned off in Settings → DISPLAY.
 
 ---
 
