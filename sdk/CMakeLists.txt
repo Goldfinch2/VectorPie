@@ -78,9 +78,12 @@ if(VP_WITH_SDL2)
         src/app/vp_initials.cpp
         src/app/vp_credits.cpp
         src/app/vp_marquee.cpp
-        src/third_party/lodepng/lodepng.cpp)
+        src/third_party/lodepng/lodepng.cpp
+        src/third_party/stb/stb_vorbis.c)
     # lodepng (zlib license, see its header): third-party code, kept as is.
+    # stb_vorbis (public domain or MIT, see its end): Ogg Vorbis, kept as is.
     set_source_files_properties(src/third_party/lodepng/lodepng.cpp
+                                src/third_party/stb/stb_vorbis.c
         PROPERTIES COMPILE_OPTIONS "-w")
     target_link_libraries(vectorpie PUBLIC ${VP_SDL2_TARGET})
 else()

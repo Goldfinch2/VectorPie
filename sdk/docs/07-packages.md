@@ -1,8 +1,8 @@
 # 07 — Game packages (`game.ini`, `.vpk`)
 
 A finished game goes to a cabinet as a **package**: one folder, installed
-from a USB drive by the VectorPie menu (Settings -> GAMES -> INSTALL FROM
-USB), listed under its manufacturer, launched like any other game.
+by the VectorPie menu (Settings -> GAMES -> INSTALL GAMES), listed under its
+manufacturer, launched like any other game.
 
 ## The folder
 
@@ -28,6 +28,7 @@ executable   = gltron          ; relative to the folder
 version      = 0.1.0           ; compared part by part: 1.10 > 1.9
 sdk          = 0.1             ; optional
 author       = ...             ; optional
+description  = ...             ; optional: one line, shown by the menu's GAMES page
 marquee      = marquee.png     ; optional (marquee.<screen height>.png too)
 hiscores     = yes             ; yes = save/highscores.txt (vp_hiscore), shown in
                                ; the menu's hint bar; or a relative path; or no
@@ -60,9 +61,16 @@ A `.vpk` is a `.tar.gz` of one `<id>/` folder. `vp-pack` checks the
 manifest, that the executable is a 64-bit ARM program (warns if not), and
 that there are no links; it leaves `save/` out.
 
-Copy it to a USB drive's `games/` folder (or its top folder). The INSTALL
-page lists every `.vpk` with NEW, UPDATE, SAME or OLDER against what is
-installed, or why it cannot be installed. REMOVE GAME takes a game off,
+To get it on the cabinet, either:
+
+* put it in a USB drive's `games/` folder (or its top folder) and plug the
+  drive in: INSTALL GAMES copies it to `/persistent/games/packages/` first;
+* or copy it straight to `/persistent/games/packages/` (scp, the network
+  share), no USB drive needed.
+
+INSTALL GAMES lists every `.vpk` in that folder with NEW, UPDATE, SAME or
+OLDER against what is installed, or why it cannot be installed. The files
+stay there after installing (a reinstall needs no USB drive). REMOVE GAME takes a game off,
 keeping its high scores for a reinstall unless told otherwise.
 
 GLtron's `vpk` build target is an example: it stages the folder and runs

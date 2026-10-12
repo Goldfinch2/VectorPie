@@ -94,4 +94,5 @@ MIT, see [LICENSE](LICENSE).
 
 Third-party code, under its own license: [LodePNG](src/third_party/lodepng/)
 (Lode Vandevenne, zlib license, in its header), which reads the marquee
-PNG.
+PNG; [stb_vorbis](src/third_party/stb/) (Sean Barrett, public domain or MIT,
+at its end), which plays Ogg Vorbis sounds and music.

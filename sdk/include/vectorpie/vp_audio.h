@@ -9,8 +9,10 @@
  * EFFECTS (vp_sound) are loaded into memory once and played as often as
  * needed, many at once, each with its own volume, pitch and looping.
  * MUSIC and speech (vp_music_play) is streamed from disk while it plays, so
- * long tracks cost no memory. Both are WAV files: PCM 8, 16, 24 or 32-bit, or
- * 32-bit float; mono or stereo; any sample rate (converted as it plays).
+ * long tracks cost no memory. Both take WAV files (PCM 8, 16, 24 or 32-bit,
+ * or 32-bit float) or Ogg Vorbis files (.ogg, about a tenth of the size),
+ * told apart by their contents; mono or stereo (Ogg surround is folded to
+ * stereo); any sample rate (converted as it plays).
  *
  * A playing sound is a VOICE, identified by the vp_voice handle the play call
  * returns. A handle stays valid until the voice ends; after that every call

@@ -25,9 +25,12 @@ vp_voice_stop(a, music, 1.5f);             /* 1.5 s fade out */
   second and a half; if it ever falls behind, the stream goes quiet briefly and
   `vp_audio_stats.underruns` counts it.
 
-Files are **WAV**: PCM 8, 16, 24 or 32-bit, or 32-bit float, mono or stereo,
-at any sample rate (converted as it plays). Compressed WAV is refused with a
-message.
+Files are **WAV** (PCM 8, 16, 24 or 32-bit, or 32-bit float; compressed WAV
+is refused with a message) or **Ogg Vorbis** (`.ogg`, about a tenth of the
+size: the choice for music). The SDK tells them apart by their contents, not
+their names. Mono or stereo (Ogg surround is folded to stereo), any sample
+rate (converted as it plays). An effect loaded from Ogg is decoded once, at
+load; Ogg music is decoded as it streams, on the feeder thread.
 
 ## Voices
 
