@@ -171,6 +171,7 @@ struct vp_input {
     int   sdlJoystickCount = -1;
     float deadzone = 0.15f;
     int   mouseDx = 0, mouseDy = 0;
+    bool  wantGrab = false;     // vp_input_grab_mouse: relative mouse mode wanted
 };
 
 namespace {
@@ -277,6 +278,9 @@ int vp_input_open(vp_input **out)
 void vp_input_close(vp_input *in)
 {
     if (!in) return;
+    // Release a grab before the program ends: left captured, the display
+    // can keep the keyboard from the next program (the menu).
+    if (in->wantGrab) SDL_SetRelativeMouseMode(SDL_FALSE);
     closeJoysticks(in);
     delete in;
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_EVENTS);
@@ -287,6 +291,9 @@ void vp_input_update(vp_input *in)
 {
     if (!in) return;
     SDL_PumpEvents();
+    // A grab asked for before there was a window (the marquee's, the
+    // game's) takes effect once there is one.
+    if (in->wantGrab && !SDL_GetRelativeMouseMode()) SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_JoystickUpdate();
     if (SDL_NumJoysticks() != in->sdlJoystickCount)
         openJoysticks(in);
@@ -394,4 +401,12 @@ void vp_input_set_deadzone(vp_input *in, float fraction)
 int vp_input_joystick_count(const vp_input *in)
 {
     return in ? (int)in->joysticks.size() : 0;
+}
+
+void vp_input_grab_mouse(vp_input *in, int grab)
+{
+    if (!in) return;
+    in->wantGrab = grab != 0;
+    SDL_SetRelativeMouseMode(grab ? SDL_TRUE : SDL_FALSE);
+    SDL_GetRelativeMouseState(nullptr, nullptr);   // count from now
 }

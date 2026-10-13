@@ -1,0 +1,29 @@
+# The VectorPie SDK, installed: find_package(VectorPie) gives
+#   VectorPie::vectorpie   the library (static), with its headers
+#   vp_program(<target>)   links a program with it (see VectorPieProgram.cmake)
+#   VECTORPIE_PACK         the vp-pack tool (makes a game's .vpk)
+# One installation per platform (the PC's .exe, the Pi's arm64): point
+# CMAKE_PREFIX_PATH at the one matching the build.
+
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+
+set(VECTORPIE_WITH_SDL2 @VP_WITH_SDL2@)
+if(VECTORPIE_WITH_SDL2)
+    # The SDL2 the library was built with, found the same way.
+    if("@VP_SDL2_TARGET@" STREQUAL "SDL2::SDL2")
+        find_dependency(SDL2 CONFIG)
+    else()
+        find_dependency(PkgConfig)
+        pkg_check_modules(SDL2PC REQUIRED IMPORTED_TARGET sdl2)
+    endif()
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/VectorPieTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/VectorPieProgram.cmake")
+
+set_and_check(VECTORPIE_PACK "@PACKAGE_CMAKE_INSTALL_BINDIR@/vp-pack")
+
+check_required_components(VectorPie)

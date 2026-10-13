@@ -90,6 +90,9 @@ else()
     target_sources(vectorpie PRIVATE src/dvg/vp_window_none.cpp)
 endif()
 
+# The name games link, whether they build the SDK or use it installed.
+add_library(VectorPie::vectorpie ALIAS vectorpie)
+
 target_include_directories(vectorpie PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
@@ -105,29 +108,11 @@ endif()
 
 # --- programs built on the library -------------------------------------------
 
-# Everything a program needs to link the library and run where it is built.
-function(vp_program target)
-    target_link_libraries(${target} PRIVATE vectorpie)
-    target_compile_options(${target} PRIVATE -Wall -Wextra)
-    # The library is C++ inside: link with the C++ driver.
-    set_target_properties(${target} PROPERTIES LINKER_LANGUAGE CXX)
-    if(MINGW)
-        # No libstdc++ / libgcc / winpthread DLLs next to the .exe: -static
-        # links all three in (-static-libstdc++ alone still left
-        # libwinpthread-1.dll dynamic). SDL2 stays a DLL: it is linked through
-        # its import library file, which -static does not change. Only
-        # SDL2.dll travels with the .exe, copied next to it here.
-        target_link_options(${target} PRIVATE -static)
-        if(TARGET SDL2::SDL2)
-            get_target_property(sdl_type SDL2::SDL2 TYPE)
-            if(sdl_type STREQUAL "SHARED_LIBRARY")
-                add_custom_command(TARGET ${target} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                            $<TARGET_FILE:SDL2::SDL2> $<TARGET_FILE_DIR:${target}>)
-            endif()
-        endif()
-    endif()
-endfunction()
+# vp_program(<target>): link a program with the library (installed with it,
+# for games using the installed SDK).
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/VectorPieProgram.cmake)
+# vp-pack, for a game that builds the SDK as a subdirectory (its vpk target).
+set(VECTORPIE_PACK ${CMAKE_CURRENT_SOURCE_DIR}/tools/vp-pack/vp-pack.sh CACHE INTERNAL "vp-pack")
 
 if(VP_BUILD_TOOLS)
     add_executable(vp-test tools/vp-test/vp_test.c)
@@ -157,9 +142,35 @@ endif()
 
 # --- install ---------------------------------------------------------------
 
+# `cmake --install build-pc` / `build-pi`: the library, its headers, a CMake
+# package (find_package(VectorPie)) and pkg-config file, vp-pack and the
+# cross-compiling toolchain files, in the preset's install prefix
+# (~/VectorPie/dist/pc or /pi: one per platform). See README.md.
 include(GNUInstallDirs)
-install(TARGETS vectorpie ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+include(CMakePackageConfigHelpers)
+set(VP_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/VectorPie)
+install(TARGETS vectorpie EXPORT VectorPieTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(DIRECTORY include/vectorpie DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(EXPORT VectorPieTargets NAMESPACE VectorPie:: DESTINATION ${VP_CMAKE_DIR})
+configure_package_config_file(cmake/VectorPieConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/VectorPieConfig.cmake
+    INSTALL_DESTINATION ${VP_CMAKE_DIR}
+    PATH_VARS CMAKE_INSTALL_BINDIR)
+# 0.x: a game asks for the minor version it was written for.
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/VectorPieConfigVersion.cmake
+    VERSION ${PROJECT_VERSION} COMPATIBILITY SameMinorVersion)
+install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/VectorPieConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/VectorPieConfigVersion.cmake
+        cmake/VectorPieProgram.cmake
+        cmake/toolchain-mingw-w64.cmake
+        cmake/toolchain-pi-arm64.cmake
+        DESTINATION ${VP_CMAKE_DIR})
+install(PROGRAMS tools/vp-pack/vp-pack.sh DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME vp-pack)
+install(FILES LICENSE README.md DESTINATION ${CMAKE_INSTALL_DOCDIR})
+install(DIRECTORY docs/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/docs)
 if(VP_BUILD_TOOLS)
     install(TARGETS vp-test RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

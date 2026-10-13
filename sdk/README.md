@@ -43,6 +43,38 @@ The same source gives both. `SDL2.dll` is copied next to the `.exe`; nothing
 else needs to travel with it. The library itself is `libvectorpie.a`: a game
 links it into its own executable.
 
+## Install, and use it from a game
+
+`cmake --install` puts the built SDK in one folder per platform (the
+presets' install prefix):
+
+```sh
+cmake --install build-pc        # ~/VectorPie/dist/pc
+cmake --install build-pi        # ~/VectorPie/dist/pi
+```
+
+Each holds `lib/libvectorpie.a`, `include/vectorpie/`, a CMake package
+(`lib/cmake/VectorPie/`, with the toolchain files), a pkg-config file,
+`bin/vp-pack` and the docs. A game uses it with:
+
+```cmake
+find_package(VectorPie 0.1 REQUIRED CONFIG)    # CMAKE_PREFIX_PATH = the platform's folder
+add_executable(mygame src/main.c)
+vp_program(mygame)                             # links VectorPie::vectorpie (+ SDL2, threads)
+# the package: sh ${VECTORPIE_PACK} <staged folder> <output dir>
+```
+
+with presets setting `CMAKE_PREFIX_PATH` to `~/VectorPie/dist/pc` or
+`/pi`, and the toolchain file from `lib/cmake/VectorPie/`. The library is
+static: a game's executable carries its SDK, and a cabinet needs nothing
+installed besides SDL2. The `0.1` asks for the 0.1 series (a 0.x minor
+version may change the API).
+
+GLtron, Neverball and Torus Trooper are built this way: after changing the
+SDK, install it again, then rebuild the game. (A game can also build the SDK
+from its source tree, `add_subdirectory(<sdk> vectorpie-sdk)` and the same
+`vp_program`.)
+
 ## Try it
 
 On the PC (from the Debian shell; the `.exe` runs in Windows):

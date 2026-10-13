@@ -103,7 +103,10 @@ Any other action listed in advmame.rc works too, by its name.
   default 0.15 of full travel). advmame.rc writes it `joystick[dev,stick,axis]`;
   a leading `-` reverses it; several analog inputs add up.
 * **Relative** (`vp_input_delta`): mouse, spinner and trackball movement since
-  the last step, in counts.
+  the last step, in counts. A spinner or trackball game calls
+  `vp_input_grab_mouse(in, 1)` once: the mouse is captured (SDL's relative
+  mode), so the counts keep coming however far it turns instead of stopping
+  at the screen's edge. `vp_input_close` releases it.
 
 Joysticks are matched as advmame.rc names them: by number (`0` is the
 first) or by name (`atari_controls`). Joysticks plugged in later are picked

@@ -38,68 +38,8 @@ const float CLICK_FREE_S     = 0.005f;    // every volume change takes at least 
 const uint32_t RING_FRAMES   = 1u << 16;  // per stream: ~1.4 s at 48 kHz
 const int   FEED_CHUNK       = 4096;      // frames read from disk at a time
 const int   FEED_PERIOD_MS   = 10;
-const float LIMIT_CEILING    = 0.97f;     // the limiter keeps the mix under this,
-const int   LIMIT_LOOKAHEAD  = 256;       // seeing this many frames ahead (~5 ms),
-const float LIMIT_RELEASE_S  = 0.15f;     // and lets go over this long
-
-// A look-ahead limiter: the output is delayed LIMIT_LOOKAHEAD frames, so the
-// gain can come down smoothly over that time and be where it must exactly
-// when a peak plays; it never steps (a step would click). The gain needed at
-// each frame is ceiling / peak; its minimum over the look-ahead window,
-// averaged over the window, is the gain applied; it recovers slowly.
-struct Limiter {
-    float  delay[LIMIT_LOOKAHEAD * 2] = {};   // stereo frames waiting to go out
-    float  need[LIMIT_LOOKAHEAD]  = {};       // the window minima, for the average
-    double needSum = LIMIT_LOOKAHEAD;         // their sum
-    float  dqVal[LIMIT_LOOKAHEAD + 1] = {};   // sliding minimum: candidates...
-    long   dqAt[LIMIT_LOOKAHEAD + 1]  = {};   // ...and their frame numbers
-    int    dqHead = 0, dqCount = 0;
-    long   frame = 0;
-    float  gain = 1.0f;
-    float  release = 0.0f;                    // recovery per frame
-
-    void reset(int rate)
-    {
-        for (float &x : delay) x = 0.0f;
-        for (float &x : need) x = 1.0f;
-        needSum = LIMIT_LOOKAHEAD;
-        dqHead = dqCount = 0;
-        frame = 0;
-        gain = 1.0f;
-        release = 1.0f - std::exp(-1.0f / (LIMIT_RELEASE_S * (float)rate));
-    }
-
-    // One frame in (l, r), the frame LIMIT_LOOKAHEAD ago out.
-    void process(float &l, float &r)
-    {
-        const int W = LIMIT_LOOKAHEAD + 1;
-        float peak = std::fmax(std::fabs(l), std::fabs(r));
-        float req = peak > LIMIT_CEILING ? LIMIT_CEILING / peak : 1.0f;
-
-        // sliding minimum of req over the last W frames
-        while (dqCount > 0 && dqVal[(dqHead + dqCount - 1) % W] >= req) dqCount--;
-        dqVal[(dqHead + dqCount) % W] = req;
-        dqAt[(dqHead + dqCount) % W] = frame;
-        dqCount++;
-        while (dqAt[dqHead] <= frame - W) { dqHead = (dqHead + 1) % W; dqCount--; }
-        float m = dqVal[dqHead];
-
-        // averaged over the window: a ramp, at or under req when its frame plays
-        int k = (int)(frame % LIMIT_LOOKAHEAD);
-        needSum += m - need[k];
-        need[k] = m;
-        float target = (float)(needSum / LIMIT_LOOKAHEAD);
-        gain += (1.0f - gain) * release;
-        if (gain > target) gain = target;
-
-        float outL = delay[k * 2] * gain, outR = delay[k * 2 + 1] * gain;
-        delay[k * 2] = l;
-        delay[k * 2 + 1] = r;
-        l = outL;
-        r = outR;
-        frame++;
-    }
-};
+const uint32_t RING_GUARD    = 4;         // frames the feeder leaves free behind the
+                                          // reader (the resampler looks one back)
 
 // ---------------------------------------------------------------------------
 // WAV files
@@ -201,6 +141,7 @@ bool isOgg(const char *path)
 struct Stream {
     FILE    *file = nullptr;            // WAV
     stb_vorbis *ogg = nullptr;          // or Ogg Vorbis
+    int         oggChannels = 2;        // its channels as decoded: 1 or 2
     WavInfo  wav;                       // WAV: its format; Ogg: rate only
     bool     loop = false;
     uint32_t bytesLeft = 0;             // in the data chunk (feeder only)
@@ -218,8 +159,10 @@ void closeStream(Stream *s)
     delete s;
 }
 
-// Ogg Vorbis: decoded straight to stereo float (stb_vorbis folds mono and
-// surround to stereo), looping by seeking back to the start.
+// Ogg Vorbis: decoded to float at the file's own channel count (stb_vorbis's
+// float call does NOT fold mono to stereo: asked for 2 channels of a mono
+// file it fills the second with silence), a mono file copied to both sides;
+// beyond stereo, the first two channels. Looping by seeking back to the start.
 void feedOgg(Stream *s)
 {
     static thread_local std::vector<float> conv;
@@ -227,11 +170,12 @@ void feedOgg(Stream *s)
     for (;;) {
         uint32_t w = s->writeFrames.load(std::memory_order_relaxed);
         uint32_t r = s->readFrames.load(std::memory_order_acquire);
-        uint32_t space = RING_FRAMES - (w - r);
+        uint32_t space = RING_FRAMES - RING_GUARD - (w - r);
         if (space < 2) return;
         uint32_t frames = space < (uint32_t)FEED_CHUNK ? space : (uint32_t)FEED_CHUNK;
+        const int ch = s->oggChannels;
         conv.resize((size_t)frames * 2);
-        int got = stb_vorbis_get_samples_float_interleaved(s->ogg, 2, conv.data(), (int)frames * 2);
+        int got = stb_vorbis_get_samples_float_interleaved(s->ogg, ch, conv.data(), (int)frames * ch);
         if (got <= 0) {
             // the end: again from the start, unless that gives nothing either
             if (!s->loop || restarted || !stb_vorbis_seek_start(s->ogg)) {
@@ -244,8 +188,8 @@ void feedOgg(Stream *s)
         restarted = false;
         for (int i = 0; i < got; i++) {
             uint32_t at = ((w + (uint32_t)i) & (RING_FRAMES - 1)) * 2;
-            s->ring[at] = conv[i * 2];
-            s->ring[at + 1] = conv[i * 2 + 1];
+            s->ring[at] = conv[i * ch];
+            s->ring[at + 1] = conv[i * ch + ch - 1];
         }
         s->writeFrames.store(w + (uint32_t)got, std::memory_order_release);
     }
@@ -263,7 +207,7 @@ void feed(Stream *s)
     for (;;) {
         uint32_t w = s->writeFrames.load(std::memory_order_relaxed);
         uint32_t r = s->readFrames.load(std::memory_order_acquire);
-        uint32_t space = RING_FRAMES - (w - r);
+        uint32_t space = RING_FRAMES - RING_GUARD - (w - r);
         if (space < 2) return;
         if (s->bytesLeft < (uint32_t)bpf) {
             if (!s->loop) { s->eof.store(true, std::memory_order_release); return; }
@@ -320,7 +264,6 @@ struct vp_audio {
     SDL_AudioDeviceID dev = 0;
     int    rate = DEVICE_RATE;
     float  master = 1.0f;
-    Limiter limiter;                    // the mix's final stage (callback)
     Voice  voices[VP_AUDIO_VOICES];
     uint32_t nextGeneration = 1;
     uint32_t refused = 0;
@@ -379,6 +322,17 @@ void endVoice(Voice &v)
 // The mixer (SDL's audio thread, device lock held)
 // ---------------------------------------------------------------------------
 
+// Resampling: 4-point cubic (Catmull-Rom) between y1 and y2, t in 0..1.
+// Straight-line interpolation dulled the highs (-1.5 dB at 10 kHz, 44.1 to
+// 48 kHz) and added a harsh edge; this keeps them.
+inline float cubic(float y0, float y1, float y2, float y3, float t)
+{
+    float c1 = 0.5f * (y2 - y0);
+    float c2 = y0 - 2.5f * y1 + 2.0f * y2 - 0.5f * y3;
+    float c3 = 0.5f * (y3 - y0) + 1.5f * (y1 - y2);
+    return ((c3 * t + c2) * t + c1) * t + y1;
+}
+
 void SDLCALL mix(void *userdata, Uint8 *stream, int len)
 {
     vp_audio *a = static_cast<vp_audio *>(userdata);
@@ -406,29 +360,39 @@ void SDLCALL mix(void *userdata, Uint8 *stream, int len)
                     v.pos -= n * std::floor(v.pos / n);
                     i0 = (uint32_t)v.pos;
                 }
-                uint32_t i1 = i0 + 1 < n ? i0 + 1 : (v.loop ? 0 : i0);
+                // the frames around the position (wrapping when looped,
+                // held at the ends when not)
+                uint32_t im = i0 > 0 ? i0 - 1 : (v.loop ? n - 1 : 0);
+                uint32_t i1 = i0 + 1 < n ? i0 + 1 : (v.loop ? (i0 + 1) % n : i0);
+                uint32_t i2 = i0 + 2 < n ? i0 + 2 : (v.loop ? (i0 + 2) % n : n - 1);
                 float t = (float)(v.pos - i0);
-                l = s->frames[i0 * 2] + (s->frames[i1 * 2] - s->frames[i0 * 2]) * t;
-                r = s->frames[i0 * 2 + 1] + (s->frames[i1 * 2 + 1] - s->frames[i0 * 2 + 1]) * t;
+                const float *f = s->frames.data();
+                l = cubic(f[im * 2], f[i0 * 2], f[i1 * 2], f[i2 * 2], t);
+                r = cubic(f[im * 2 + 1], f[i0 * 2 + 1], f[i1 * 2 + 1], f[i2 * 2 + 1], t);
                 v.pos += v.step;
             } else {
                 Stream *s = v.stream;
                 uint32_t rd = s->readFrames.load(std::memory_order_relaxed);
                 uint32_t avail = s->writeFrames.load(std::memory_order_acquire) - rd;
-                if (avail < 2) {
+                if (avail < 3) {
                     if (s->eof.load(std::memory_order_acquire)) { endVoice(v); break; }
                     a->underruns.fetch_add(1, std::memory_order_relaxed);
                     break;      // silence for the rest of this buffer
                 }
+                // one frame back (still in the ring: the feeder keeps a
+                // guard), the frame, and two ahead
+                uint32_t im = ((rd - 1) & (RING_FRAMES - 1)) * 2;
                 uint32_t i0 = (rd & (RING_FRAMES - 1)) * 2;
                 uint32_t i1 = ((rd + 1) & (RING_FRAMES - 1)) * 2;
+                uint32_t i2 = ((rd + 2) & (RING_FRAMES - 1)) * 2;
                 float t = (float)v.pos;
-                l = s->ring[i0] + (s->ring[i1] - s->ring[i0]) * t;
-                r = s->ring[i0 + 1] + (s->ring[i1 + 1] - s->ring[i0 + 1]) * t;
+                const float *f = s->ring.data();
+                l = cubic(f[im], f[i0], f[i1], f[i2], t);
+                r = cubic(f[im + 1], f[i0 + 1], f[i1 + 1], f[i2 + 1], t);
                 v.pos += v.step;
                 uint32_t whole = (uint32_t)v.pos;
                 if (whole) {
-                    if (whole > avail - 1) whole = avail - 1;
+                    if (whole > avail - 2) whole = avail - 2;
                     v.pos -= whole;
                     s->readFrames.store(rd + whole, std::memory_order_release);
                 }
@@ -438,15 +402,12 @@ void SDLCALL mix(void *userdata, Uint8 *stream, int len)
         }
     }
 
-    // The limiter: where the voices add up past full scale (an effect on a
-    // loud passage of the music), the whole mix is turned down, just enough,
-    // smoothly, and back up; clipping the peaks instead would be heard as a
-    // pop or a burst of noise. Both channels share the gain, so the stereo
-    // image holds.
+    // The master volume, then clipped at full scale: keep the voices'
+    // volumes such that they do not add up past it (clipping is heard as a
+    // pop or a burst of noise).
     for (int i = 0; i < frames; i++) {
         float l = out[i * 2] * a->master, r = out[i * 2 + 1] * a->master;
-        a->limiter.process(l, r);
-        out[i * 2]     = l > 1.0f ? 1.0f : (l < -1.0f ? -1.0f : l);  // safety only
+        out[i * 2]     = l > 1.0f ? 1.0f : (l < -1.0f ? -1.0f : l);
         out[i * 2 + 1] = r > 1.0f ? 1.0f : (r < -1.0f ? -1.0f : r);
     }
 }
@@ -525,7 +486,6 @@ int vp_audio_open(vp_audio **out)
         return r;
     }
     a->rate = have.freq;
-    a->limiter.reset(a->rate);
     a->feeder = std::thread(feederLoop, a);
     SDL_PauseAudioDevice(a->dev, 0);
     *out = a;
@@ -671,8 +631,10 @@ vp_voice vp_music_play(vp_audio *a, const char *path, float volume, int loop, fl
             vp_fail(VP_ERR_INVALID, "%s: not a readable Ogg Vorbis file (error %d)", path, err);
             return 0;
         }
-        s->wav.rate = (int)stb_vorbis_get_info(s->ogg).sample_rate;
+        stb_vorbis_info info = stb_vorbis_get_info(s->ogg);
+        s->wav.rate = (int)info.sample_rate;
         s->wav.channels = 2;
+        s->oggChannels = info.channels == 1 ? 1 : 2;
     } else {
         FILE *f = fopen(path, "rb");
         if (!f) { delete s; vp_fail(VP_ERR_NOTFOUND, "cannot open %s", path); return 0; }

@@ -10,7 +10,8 @@
       "toolchainFile": "${sourceDir}/cmake/toolchain-mingw-w64.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "SDL2_DIR": "/opt/sdl2-mingw/cmake"
+        "SDL2_DIR": "/opt/sdl2-mingw/cmake",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/VectorPie/dist/pc"
       }
     },
     {
@@ -20,7 +21,8 @@
       "binaryDir": "${sourceDir}/build-pi",
       "toolchainFile": "${sourceDir}/cmake/toolchain-pi-arm64.cmake",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/VectorPie/dist/pi"
       }
     }
   ],

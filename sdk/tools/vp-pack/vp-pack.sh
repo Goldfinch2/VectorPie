@@ -11,7 +11,8 @@
 #
 # Checks: game.ini has id (a-z 0-9 _), name, manufacturer, executable and
 # version; no value holds ':' or '|'; the executable exists and is a 64-bit
-# ARM Linux program (the cabinet's); the folder has no links.
+# ARM Linux program (the cabinet's); the folder has no links; leds.cfg (the
+# game's lamp colors and control guide), if there is one, is well formed.
 set -eu
 
 die() { echo "vp-pack: $*" >&2; exit 1; }
@@ -51,6 +52,29 @@ if command -v file >/dev/null 2>&1; then
         echo "vp-pack: warning: $executable is not a 64-bit ARM program (the Pi build?): $(file -b "$src/$executable")" >&2
 fi
 [ -z "$(find "$src" -type l | head -n 1)" ] || die "the folder holds links (not allowed in a package)"
+
+# leds.cfg: the game's lamp colors and control guide, in the cabinet
+# leds.cfg's syntax, lines for this game's id only.
+if [ -f "$src/leds.cfg" ]; then
+    n=0
+    while IFS= read -r line || [ -n "$line" ]; do
+        n=$((n + 1))
+        line=$(printf '%s' "$line" | sed 's/\r$//; s/^[[:space:]]*//; s/[[:space:]]*$//')
+        case "$line" in ''|'#'*) continue ;; esac
+        key=${line%%[[:space:]]*}
+        value=$(printf '%s' "${line#"$key"}" | sed 's/^[[:space:]]*//')
+        echo "$key" | grep -Eq "^$id/(color_map|voice_map|lamp_map)\[[^]]+\]\$" ||
+            die "leds.cfg:$n: want $id/color_map[<control>] or $id/voice_map[<control>] (got '$key')"
+        [ -n "$value" ] || die "leds.cfg:$n: no value"
+        case "$key" in
+            */color_map*)
+                echo "$value" | grep -Eq '^#[0-9A-Fa-f]{6}$' || die "leds.cfg:$n: color must be #RRGGBB (got '$value')" ;;
+            */voice_map*)
+                [ "$value" = "-" ] || [ -f "$src/guide/$value.wav" ] ||
+                    echo "vp-pack: note: guide word '$value' has no guide/$value.wav: the cabinet's own clip, if it has one" >&2 ;;
+        esac
+    done < "$src/leds.cfg"
+fi
 
 # The archive's one folder is named after the id, whatever the source is called.
 tmp=$(mktemp -d)

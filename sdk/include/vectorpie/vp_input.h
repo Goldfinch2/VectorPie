@@ -61,6 +61,12 @@ float vp_input_axis(const vp_input *in, const char *action);
  * update, signed. */
 int vp_input_delta(const vp_input *in, const char *action);
 
+/* Capture the mouse (SDL relative mode): the pointer is hidden and held,
+ * so mouse, spinner and trackball movement keeps counting however far it
+ * goes (otherwise it stops at the screen's edge). For spinner and
+ * trackball games. Released by vp_input_close. 0 releases it. */
+void vp_input_grab_mouse(vp_input *in, int grab);
+
 /* The stick dead zone, as a fraction of full travel. Default 0.15. */
 void vp_input_set_deadzone(vp_input *in, float fraction);
 
