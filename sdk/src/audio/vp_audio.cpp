@@ -93,6 +93,15 @@ int readWavHeader(FILE *f, const char *path, WavInfo *w)
                 return vp_fail(VP_ERR_INVALID, "%s: audio data before its format", path);
             w->dataOffset = ftell(f);
             w->dataBytes = size;
+            // Some tools write a bogus size (0xFFFFFFFF, or 2 GB for a 16 KB
+            // file): never more than the file holds, or loading it allocates
+            // gigabytes (bad_alloc on a 1 GB Pi).
+            if (fseek(f, 0, SEEK_END) == 0) {
+                long end = ftell(f);
+                if (end > w->dataOffset && (uint64_t)(end - w->dataOffset) < size)
+                    w->dataBytes = (uint32_t)(end - w->dataOffset);
+                fseek(f, w->dataOffset, SEEK_SET);
+            }
             return VP_OK;
         } else {
             fseek(f, (long)(size + (size & 1)), SEEK_CUR);   // chunks are word-aligned
