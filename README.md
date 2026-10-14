@@ -448,14 +448,17 @@ Games made with the VectorPie SDK come as packages: one `.vpk` file per game.
 **Settings → GAMES → INSTALL GAMES...** installs them:
 
 1. If a USB drive is plugged in, its `.vpk` files (in its `games/` folder or top folder) are copied to `/persistent/games/packages/`. The drive can be pulled out right after.
-2. Every `.vpk` in `/persistent/games/packages/` is listed with its version: **NEW**, **UPDATE**, **SAME** or **OLDER** than what is installed, or why it can't be installed.
-3. Select installs one. An update keeps the game's high scores.
+2. Packages of games already installed at the same or a newer version are deleted from that folder. The page offers the rest: new games, and updates of installed ones.
+3. **GAME** picks the game with Left/Right. Under it are its manufacturer, author, description, the installed version and the package's version. On HDMI, the game's marquee shows beside them.
+4. Select asks **INSTALL** (or **UPDATE**) with the game's name. **YES** installs it. An update keeps the game's high scores. The `.vpk` is deleted once installed.
 
-You can also copy `.vpk` files to `/persistent/games/packages/` yourself (network share or scp), no USB drive needed. They stay there after installing.
+You can also copy `.vpk` files to `/persistent/games/packages/` yourself (network share or scp), no USB drive needed.
 
 An installed game shows in the menu under its manufacturer, with its marquee and high scores, and launches like any other game. While it plays on the vector monitor, HDMI shows its marquee.
 
-**Settings → GAMES → REMOVE GAME...** removes one: Left/Right picks **KEEP SCORES** or **DELETE SCORES**, then Select twice. Kept scores come back when the game is installed again.
+An installed game lights its controls in its own colors, and holding select on it in the menu plays its voice control guide, like any other game (see [LED Lighting](#led-lighting)).
+
+**Settings → GAMES → REMOVE GAME...** removes one: **GAME** picks it with Left/Right (its details and marquee show the same way), Select asks **REMOVE** with its name, and **YES** removes the game and its high scores.
 
 Installed games live in `/persistent/games`, which updates don't touch. A USB backup also saves their high scores.
 

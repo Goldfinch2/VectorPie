@@ -1,3 +1,14 @@
+### vectorpie-1.1.10
+
+
+● What's new
+
+  New pages for Settings -> GAMES -> INSTALL GAMES... and REMOVE GAME.... Pick a game with Left/Right to see its marquee, manufacturer, author, description and version, then confirm. INSTALL GAMES only offers new games and updates. A package is deleted once installed. Removing a game now also removes its high scores.
+
+  Installed games now light the controls in their own colors and have a voice control guide, like the other games.
+
+
+
 ### vectorpie-1.1.9
 
 
