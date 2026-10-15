@@ -85,7 +85,9 @@ void addTri(vp3d_scene *s, const vp_vec3 &a, const vp_vec3 &b, const vp_vec3 &c,
     const vp_vec3 *p[3] = { &a, &b, &c };
     for (int i = 0; i < 3; i++) project(s->lens, *p[i], t.x[i], t.y[i]);
     float area = (t.x[1] - t.x[0]) * (t.y[2] - t.y[0]) - (t.x[2] - t.x[0]) * (t.y[1] - t.y[0]);
-    if (std::fabs(area) < 1.0f) return;              // seen edge-on: hides nothing
+    // Seen exactly edge-on: hides nothing. Only that: a detailed model's
+    // small triangles (a kart down the road) still hide what is behind them.
+    if (std::fabs(area) < 1e-4f) return;
     if (area < 0.0f) { std::swap(t.x[1], t.x[2]); std::swap(t.y[1], t.y[2]); }
     t.minX = std::min({ t.x[0], t.x[1], t.x[2] });
     t.maxX = std::max({ t.x[0], t.x[1], t.x[2] });
