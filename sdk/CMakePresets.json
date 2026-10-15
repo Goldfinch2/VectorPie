@@ -24,10 +24,21 @@
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/VectorPie/dist/pi"
       }
+    },
+    {
+      "name": "linux",
+      "displayName": "Linux x86_64 (WSL2 Debian, a window through WSLg): testing on the PC",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/VectorPie/dist/linux"
+      }
     }
   ],
   "buildPresets": [
     { "name": "pc", "configurePreset": "pc" },
-    { "name": "pi", "configurePreset": "pi" }
+    { "name": "pi", "configurePreset": "pi" },
+    { "name": "linux", "configurePreset": "linux" }
   ]
 }
