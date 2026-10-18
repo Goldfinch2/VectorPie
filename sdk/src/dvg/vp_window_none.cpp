@@ -3,7 +3,7 @@
 #include "vp_window.h"
 #include "../core/vp_internal.h"
 
-int vp_window_open(const char *, int, int, int, int, vp_window **)
+int vp_window_open(const char *, int, int, int, int, int, vp_window **)
 {
     return vp_fail(VP_ERR_NODEV, "this SDK was built without SDL2: no window output");
 }

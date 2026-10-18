@@ -31,6 +31,7 @@
  * COMMAND LINE (for development; the menu passes none):
  *   --dvg [PORT]   the vector board      --window     a fullscreen window
  *   --windowed     a normal window       --vertical   a 3:4 monitor
+ *   --maximized    a normal window, maximized (screen recorders capture it)
  * Arguments that do not start with '-' are left to the game (read argv
  * yourself before or after vp_run).
  *
@@ -63,7 +64,9 @@ typedef struct vp_game_desc {
     int update_hz;              /* 0 = 60 */
     int frame_hz;               /* 0 = 40 */
     int frame_hz_board;         /* 0 = frame_hz: the rate on the board, when it
-                                 * differs (a heavy frame needs more time) */
+                                 * differs (a heavy frame needs more time);
+                                 * game.ini's [dvg] / [beamforge] frame_hz
+                                 * override it per board */
 } vp_game_desc;
 
 /* Run the game. Returns 0 on a normal exit, 1 if something failed (the

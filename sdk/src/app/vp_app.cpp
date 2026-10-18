@@ -8,6 +8,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
+#include <string>
 
 struct vp_game {
     const vp_game_desc *desc;
@@ -31,11 +33,11 @@ void onSignal(int)
 // the game slows down instead of freezing to catch up.
 const int MAX_STEPS_PER_FRAME = 5;
 
-// --dvg [PORT], --window, --windowed, --vertical. Returns false on anything
+// --dvg [PORT], --window, --windowed, --maximized, --vertical. Returns false on anything
 // else (the usage is printed).
 bool parseArgs(int argc, char **argv, const char *title, vp_dvg_options *o, const char **reason)
 {
-    int forced = 0, fullscreen = 0, vertical = 0;
+    int forced = 0, fullscreen = 0, maximized = 0, vertical = 0;
     const char *port = nullptr;
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--dvg")) {
@@ -47,12 +49,16 @@ bool parseArgs(int argc, char **argv, const char *title, vp_dvg_options *o, cons
         } else if (!strcmp(argv[i], "--windowed")) {
             forced = VP_DVG_OUTPUT_WINDOW;
             fullscreen = 0;
+        } else if (!strcmp(argv[i], "--maximized")) {
+            forced = VP_DVG_OUTPUT_WINDOW;
+            fullscreen = 0;
+            maximized = 1;
         } else if (!strcmp(argv[i], "--vertical")) {
             vertical = 1;
         } else if (argv[i][0] != '-') {
             // Not an option: the game's own argument (a file to load...).
         } else {
-            fprintf(stderr, "usage: %s [--dvg [PORT] | --window | --windowed] [--vertical]\n",
+            fprintf(stderr, "usage: %s [--dvg [PORT] | --window | --windowed | --maximized] [--vertical]\n",
                     argc > 0 ? argv[0] : "game");
             return false;
         }
@@ -62,6 +68,7 @@ bool parseArgs(int argc, char **argv, const char *title, vp_dvg_options *o, cons
         o->output = (vp_dvg_output)forced;
         o->port = port;
         o->fullscreen = fullscreen;
+        o->maximized = maximized;
         o->window_title = title;
         *reason = "command line";
     } else {
@@ -119,6 +126,30 @@ double msSince(uint64_t counter)
 
 }  // namespace
 
+std::string vp_manifest_value(const char *key, const char *section)
+{
+    char path[1100];
+    std::ifstream f(vp_asset_path("game.ini", path, sizeof path));
+    std::string line, in;                   // in: the section the line is in ("": none yet)
+    const std::string want = section ? section : "";
+    auto trim = [](const std::string &s) {
+        size_t b = s.find_first_not_of(" \t\r"), e = s.find_last_not_of(" \t\r");
+        return b == std::string::npos ? std::string() : s.substr(b, e - b + 1);
+    };
+    while (std::getline(f, line)) {
+        size_t c = line.find_first_of(";#");
+        if (c != std::string::npos) line.erase(c);
+        line = trim(line);
+        if (line.size() >= 2 && line.front() == '[' && line.back() == ']') {
+            in = trim(line.substr(1, line.size() - 2));
+            continue;
+        }
+        size_t eq = line.find('=');
+        if (in == want && eq != std::string::npos && trim(line.substr(0, eq)) == key) return trim(line.substr(eq + 1));
+    }
+    return {};
+}
+
 int vp_run(const vp_game_desc *desc, int argc, char **argv)
 {
     if (!desc) {
@@ -154,8 +185,14 @@ int vp_run(const vp_game_desc *desc, int argc, char **argv)
         fprintf(stderr, "%s: no sound: %s\n", title, vp_last_error());
         g.audio = nullptr;      // the game runs silent
     }
-    if (vp_dvg_get_output(g.out) == VP_DVG_OUTPUT_BOARD && desc->frame_hz_board > 0)
-        frameHz = desc->frame_hz_board;
+    if (vp_dvg_get_output(g.out) == VP_DVG_OUTPUT_BOARD) {
+        if (desc->frame_hz_board > 0) frameHz = desc->frame_hz_board;
+        // game.ini can set it per board, without rebuilding the game: its
+        // [dvg] (the USB-DVG) or [beamforge] section's frame_hz.
+        const bool beamforge = vp_dvg_hardware(g.out) == VP_HW_BEAMFORGE;
+        int hz = atoi(vp_manifest_value("frame_hz", beamforge ? "beamforge" : "dvg").c_str());
+        if (hz >= 10 && hz <= 120) frameHz = hz;
+    }
     // On the board, the cabinet's HDMI screen shows the game's marquee.
     if (vp_dvg_get_output(g.out) == VP_DVG_OUTPUT_BOARD)
         vp_marquee_auto();

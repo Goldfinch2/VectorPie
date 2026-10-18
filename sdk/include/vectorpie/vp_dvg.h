@@ -74,6 +74,7 @@ typedef struct vp_dvg_options {
     int         window_height;  /* 0 = 768 (1024 when vertical) */
     int         vertical;       /* 1 = a vertically mounted monitor (3:4) */
     int         show_blanks;    /* 1 = draw the invisible moves, dimly */
+    int         maximized;      /* 1 = a normal window, opened maximized (not fullscreen) */
 } vp_dvg_options;
 
 /* Counters. The "last frame" fields describe the most recent vp_dvg_end_frame;
@@ -166,6 +167,11 @@ void vp_lineto(vp_dvg *dvg, int x, int y);
 int vp_dvg_end_frame(vp_dvg *dvg, int monochrome);
 
 void vp_dvg_get_stats(const vp_dvg *dvg, vp_dvg_stats *stats);
+
+/* Save the last frame sent (vp_dvg_end_frame) as a PNG picture, its lines on
+ * black, the board square stretched to width x height (1024 x 768 for a 4:3
+ * monitor). For a game's screenshots and for comparing frames; any output. */
+int vp_dvg_save_png(const vp_dvg *dvg, const char *path, int width, int height);
 
 #ifdef __cplusplus
 }

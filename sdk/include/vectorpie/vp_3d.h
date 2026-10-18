@@ -123,6 +123,15 @@ int  vp3d_mesh_create(vp3d_mesh **out);
 int  vp3d_mesh_vertex(vp3d_mesh *m, float x, float y, float z);    /* its index, or -1 */
 int  vp3d_mesh_face(vp3d_mesh *m, const int *indices, int count);
 int  vp3d_mesh_line(vp3d_mesh *m, int a, int b);
+/* A face's own color (face: its index, in the order faces were added). Its
+ * edges are drawn in it instead of the current color; an edge between two
+ * colored faces takes the first face's. Can be changed at any time, also
+ * after finishing. Faces without one, and lone lines, use the current color. */
+int  vp3d_mesh_face_color(vp3d_mesh *m, int face, uint8_t r, uint8_t g, uint8_t b);
+/* A face's material name in its OBJ file (its usemtl), or NULL: to color
+ * faces by their material yourself (vp3d_mesh_face_color), e.g. from a
+ * palette that changes while the game runs. Read even with no_materials. */
+const char *vp3d_mesh_face_material(const vp3d_mesh *m, int face);
 /* Builds the edges, the face normals and the strokes. Call once, after the
  * last vertex/face/line. Faces must all be wound the same way round (either
  * way: the SDK works out which side is outside). */
@@ -143,10 +152,16 @@ typedef struct vp3d_obj_options {
     int   center;           /* 1 = move the model's bounding-box center to the origin */
     int   z_up;             /* 1 = the file is Z-up (some tools): turn it Y-up */
     float crease_deg;       /* 0 = the default (40), see vp3d_mesh_set_crease */
+    int   no_materials;     /* 1 = ignore the file's colors (mtllib); the faces' material
+                               names are kept (vp3d_mesh_face_material) */
 } vp3d_obj_options;
 
-/* Reads v, f (all index forms, negative indices) and l; ignores the rest.
- * `options` may be NULL. Errors name the file and line (vp_last_error). */
+/* Reads v, f (all index forms, negative indices) and l, and the faces'
+ * colors: "mtllib" material libraries (next to the file) give each material
+ * its diffuse color (Kd), "usemtl" gives it to the faces that follow (see
+ * vp3d_mesh_face_color). A missing library is not an error: those faces use
+ * the current color. Ignores the rest. `options` may be NULL. Errors name the
+ * file and line (vp_last_error). */
 int  vp3d_mesh_load_obj(const char *path, const vp3d_obj_options *options, vp3d_mesh **out);
 
 int  vp3d_mesh_vertex_count(const vp3d_mesh *m);
@@ -163,8 +178,8 @@ typedef enum vp3d_mode {
     VP3D_WIREFRAME          /* every edge, see-through */
 } vp3d_mode;
 
-/* Draw a mesh in the current color (dimmed by fog). `place` puts it in the
- * world (NULL = as is). */
+/* Draw a mesh in the current color, or its faces' own colors (dimmed by
+ * fog). `place` puts it in the world (NULL = as is). */
 void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_xf *place,
                     vp3d_mode mode);
 /* The same as vp3d_draw_mesh(..., VP3D_WIREFRAME). */
@@ -183,11 +198,14 @@ void vp3d_draw_mesh_wire(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, cons
  *   vp3d_scene_end(scene);                                  // cut, then draw
  *
  * Between begin and end, meshes and lines are collected (each with the color
- * current when it was added); vp3d_scene_end cuts every line by every SOLID
+ * current when it was added, or a mesh's face colors); vp3d_scene_end cuts every line by every SOLID
  * face nearer the camera, then draws the visible pieces, in the order they
  * were added. Order does not matter for hiding: add things in any order.
  *   SOLID meshes hide what is behind them, and themselves (a wing behind the
- *     body is hidden too).
+ *     body is hidden too). A face never hides a line between two of its own
+ *     corners (its edges, or a diagonal of a quad that is not quite flat),
+ *     nor one from a corner of it that runs within 5 degrees of its plane (a
+ *     slight fold between neighboring faces).
  *   WIREFRAME meshes and lines hide nothing; they are hidden by solids in
  *     front of them.
  * Faces are taken to be convex (exporters write triangles and quads). */

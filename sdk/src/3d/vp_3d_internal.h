@@ -4,6 +4,7 @@
 #include "../core/vp_internal.h"
 
 #include <cstdint>
+#include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -12,6 +13,10 @@ struct vp3d_mesh {
     std::vector<vp_vec3> verts;
     std::vector<std::vector<int>> faces;
     std::vector<std::pair<int, int>> lines;    // lone lines (OBJ "l", vp3d_mesh_line)
+    std::vector<int32_t> faceColor;            // per face: 0xRRGGBB, or -1 (the current color)
+    std::vector<int> faceMaterial;             // per face: index in materials, or -1
+    std::vector<std::string> materials;        // OBJ material names (usemtl)
+    bool hasColors = false;                    // some face has a color
     // Built by vp3d_mesh_finish:
     std::vector<std::pair<int, int>> edges;    // unique, low index first
     std::vector<std::vector<int>> strokes;     // vertex paths covering every edge once
@@ -32,6 +37,16 @@ struct vp3d_mesh {
     std::vector<int> triVerts;                 // faces as triangles (fans), 3 per triangle
     std::vector<int> triFace;                  // the face each triangle belongs to
 };
+
+// An edge's color: its first face's, else its second's; -1: the current color.
+inline int32_t vp3d_edge_color(const vp3d_mesh *m, int e)
+{
+    if (e < 0) return -1;
+    int f0 = m->edgeFace0[e], f1 = m->edgeFace1[e];
+    if (f0 >= 0 && m->faceColor[f0] >= 0) return m->faceColor[f0];
+    if (f1 >= 0 && m->faceColor[f1] >= 0) return m->faceColor[f1];
+    return -1;
+}
 
 inline uint64_t vp3d_edge_key(int a, int b)
 {

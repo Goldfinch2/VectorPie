@@ -13,8 +13,9 @@ struct vp_vec {
 };
 
 // `width` x `height` is the logical size (the board space is drawn onto it);
-// fullscreen fills the display and letterboxes to that shape.
-int  vp_window_open(const char *title, int width, int height, int fullscreen,
+// fullscreen fills the display and letterboxes to that shape; maximized opens
+// a normal window maximized.
+int  vp_window_open(const char *title, int width, int height, int fullscreen, int maximized,
                     int showBlanks, vp_window **out);
 void vp_window_close(vp_window *w);
 

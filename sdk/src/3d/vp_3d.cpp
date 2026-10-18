@@ -302,6 +302,23 @@ int vp3d_mesh_face(vp3d_mesh *m, const int *idx, int count)
         if (idx[i] < 0 || idx[i] >= (int)m->verts.size())
             return vp_fail(VP_ERR_INVALID, "vp3d_mesh_face: vertex %d does not exist", idx[i]);
     m->faces.push_back(std::vector<int>(idx, idx + count));
+    m->faceColor.push_back(-1);
+    m->faceMaterial.push_back(-1);
+    return VP_OK;
+}
+
+const char *vp3d_mesh_face_material(const vp3d_mesh *m, int face)
+{
+    if (!m || face < 0 || face >= (int)m->faces.size() || m->faceMaterial[face] < 0) return nullptr;
+    return m->materials[m->faceMaterial[face]].c_str();
+}
+
+int vp3d_mesh_face_color(vp3d_mesh *m, int face, uint8_t r, uint8_t g, uint8_t b)
+{
+    if (!m || face < 0 || face >= (int)m->faces.size())
+        return vp_fail(VP_ERR_INVALID, "vp3d_mesh_face_color: face %d does not exist", face);
+    m->faceColor[face] = (int32_t)r << 16 | (int32_t)g << 8 | b;
+    m->hasColors = true;
     return VP_OK;
 }
 
@@ -375,7 +392,9 @@ void vp3d_update_creases(vp3d_mesh *m)
     m->edgeCrease.assign(m->edges.size(), 0);
     for (size_t e = 0; e < m->edges.size(); e++) {
         int f0 = m->edgeFace0[e], f1 = m->edgeFace1[e];
-        if (f0 < 0 || f1 < 0 || m->edgeMany[e]) { m->edgeCrease[e] = 1; continue; }
+        // 0 degrees: every edge, also between faces in one plane (the
+        // pieces of a flat ring).
+        if (f0 < 0 || f1 < 0 || m->edgeMany[e] || m->creaseDeg <= 0.0f) { m->edgeCrease[e] = 1; continue; }
         // Faces meeting at a sharper angle than the crease angle keep the edge.
         m->edgeCrease[e] = vp_v3_dot(m->faceNormal[f0], m->faceNormal[f1]) < c;
     }
@@ -572,8 +591,15 @@ void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_
     vp_get_color(d, &r, &g, &bl);
     Lens l = lensOf(v);
     for (const std::vector<int> &s : *strokes)
-        for (size_t i = 1; i < s.size(); i++)
-            drawCameraSegment(d, v, l, cam[s[i - 1]], cam[s[i]], r, g, bl);
+        for (size_t i = 1; i < s.size(); i++) {
+            int32_t c = -1;
+            if (m->hasColors) {
+                auto it = m->edgeLookup.find(vp3d_edge_key(s[i - 1], s[i]));
+                c = vp3d_edge_color(m, it == m->edgeLookup.end() ? -1 : it->second);
+            }
+            if (c < 0) drawCameraSegment(d, v, l, cam[s[i - 1]], cam[s[i]], r, g, bl);
+            else       drawCameraSegment(d, v, l, cam[s[i - 1]], cam[s[i]], c >> 16 & 0xff, c >> 8 & 0xff, c & 0xff);
+        }
     vp_color(d, r, g, bl);
 }
 

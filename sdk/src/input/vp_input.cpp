@@ -52,6 +52,7 @@ const DefaultBinding DEFAULTS[] = {
     {"coin1",      "keyboard[0,5]"},
     {"coin2",      "keyboard[0,6]"},
     {"ui_cancel",  "keyboard[0,esc]"},
+    {"ui_pause",   "keyboard[0,p]"},
     {"p1_stickx",  "joystick[0,0,x]"},
     {"p1_sticky",  "joystick[0,0,y]"},
     {"p2_stickx",  "joystick[1,0,x]"},

@@ -39,6 +39,10 @@ int vp_sdl_video_init()
     if (!SDL_getenv("SDL_VIDEODRIVER") && !SDL_getenv("DISPLAY") && !SDL_getenv("WAYLAND_DISPLAY"))
         SDL_SetHint(SDL_HINT_VIDEODRIVER, "kmsdrm");
 #endif
+    // Windows: say the program handles high-DPI screens itself. Otherwise a
+    // monitor scaled to 150% or 200% (most 4K ones) gets a smaller pretend
+    // screen, upscaled by Windows: soft, thick lines. Ignored elsewhere.
+    SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) == 0)
         return VP_OK;
     return vp_fail(VP_ERR_NODEV, "SDL video init failed: %s", SDL_GetError());
@@ -49,7 +53,7 @@ void vp_sdl_video_quit()
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-int vp_window_open(const char *title, int width, int height, int fullscreen,
+int vp_window_open(const char *title, int width, int height, int fullscreen, int maximized,
                    int showBlanks, vp_window **out)
 {
     int r = vp_sdl_video_init();
@@ -61,7 +65,8 @@ int vp_window_open(const char *title, int width, int height, int fullscreen,
     if (driver && SDL_strcasecmp(driver, "KMSDRM") == 0)
         fullscreen = 1;
 
-    Uint32 flags = fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_RESIZABLE;
+    Uint32 flags = (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_RESIZABLE) | SDL_WINDOW_ALLOW_HIGHDPI;
+    if (!fullscreen && maximized) flags |= SDL_WINDOW_MAXIMIZED;
     SDL_Window *win = nullptr;
     SDL_Renderer *ren = nullptr;
 

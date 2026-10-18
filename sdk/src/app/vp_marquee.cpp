@@ -122,26 +122,6 @@ bool fileExists(const std::string &p)
     return (bool)f;
 }
 
-// game.ini's "marquee = file" (comments after ';' or '#'), or empty.
-std::string manifestMarquee()
-{
-    char path[1100];
-    std::ifstream f(vp_asset_path("game.ini", path, sizeof path));
-    std::string line;
-    while (std::getline(f, line)) {
-        size_t c = line.find_first_of(";#");
-        if (c != std::string::npos) line.erase(c);
-        size_t eq = line.find('=');
-        if (eq == std::string::npos) continue;
-        auto trim = [](std::string s) {
-            size_t b = s.find_first_not_of(" \t\r"), e = s.find_last_not_of(" \t\r");
-            return b == std::string::npos ? std::string() : s.substr(b, e - b + 1);
-        };
-        if (trim(line.substr(0, eq)) == "marquee") return trim(line.substr(eq + 1));
-    }
-    return {};
-}
-
 }  // namespace
 
 int vp_marquee_show(const char *png_path)
@@ -184,7 +164,7 @@ void vp_marquee_clear(void)
 // vp_run, when the output is the board: the package's marquee, if it has one.
 void vp_marquee_auto(void)
 {
-    std::string base = manifestMarquee();
+    std::string base = vp_manifest_value("marquee");
     if (base.empty()) base = "marquee.png";
     if (base.size() > 4 && strcasecmp(base.c_str() + base.size() - 4, ".png") == 0)
         base.erase(base.size() - 4);

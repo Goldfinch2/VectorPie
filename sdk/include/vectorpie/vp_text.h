@@ -45,6 +45,11 @@ vp_font vp_text_get_font(void);
 
 void  vp_text(vp_dvg *d, const char *s, float x, float y, float height, int align);
 
+/* The same, kept within `width` board units: a line that would be wider is
+ * drawn with narrower letters (the same height), not smaller ones; a shorter
+ * one as vp_text draws it. For text that must fill a given box (a re-created
+ * game's labels). width <= 0: no limit. */
+void  vp_text_fit(vp_dvg *d, const char *s, float x, float y, float height, float width, int align);
 /* How wide `s` is at `height`, in board units (letter spacing included). */
 float vp_text_width(const char *s, float height);
 

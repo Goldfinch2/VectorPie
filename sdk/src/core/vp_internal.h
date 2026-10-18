@@ -24,3 +24,9 @@ std::vector<vp_binding> vp_rc_parse_bindings(const std::string &value);
 // vp_run, when the output is the board: show the package's marquee on the
 // HDMI screen (vp_marquee.h), if it has one. Nothing elsewhere.
 void vp_marquee_auto(void);
+
+// The game package's game.ini: a key's value (comments after ';' or '#'
+// dropped, spaces trimmed), or empty when there is none. `section`: the
+// lines after "[section]" (one per board: dvg, beamforge), or NULL for the
+// lines before any section (id, name, marquee...).
+std::string vp_manifest_value(const char *key, const char *section = nullptr);

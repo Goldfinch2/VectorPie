@@ -24,11 +24,13 @@ const int   GRID = 32;                               // cells per axis
 const float CELL = (VP_DVG_COORD_MAX + 1) / (float)GRID;
 const float DEPTH_EPS = 1e-3f;                       // relative: lines on a face are not behind it
 const float MIN_PIECE = 1.5f;                        // board units: shorter pieces are dropped
+const float FOLD_SIN = 0.0872f;                      // sin 5 degrees: see addCorners
 
 struct Segment {
     vp_vec3 a, b;                                    // camera space
     uint8_t r, g, bl;
     int faceA, faceB;                                // global ids of the faces it lies on, or -1
+    int va, vb;                                      // global ids of its ends (mesh vertices), or -1
 };
 
 struct Tri {
@@ -48,6 +50,9 @@ struct vp3d_scene {
     std::vector<Segment> segs;
     std::vector<Tri> tris;
     int nextFace = 0;                                // global face ids, per scene
+    int nextVertex = 0;                              // global vertex ids, per scene
+    std::vector<int> cornerStart;                    // per mesh face (global id): its corners in corners
+    std::vector<int> corners;                        // global vertex ids
     std::vector<std::vector<int>> grid;              // triangle indices per cell
     std::vector<uint32_t> stamp;                     // per triangle: last segment that looked at it
     vp3d_scene_stats stats;
@@ -154,6 +159,9 @@ void vp3d_scene_begin(vp3d_scene *s, vp_dvg *d, const vp3d_view *v)
     s->segs.clear();
     s->tris.clear();
     s->nextFace = 0;
+    s->nextVertex = 0;
+    s->cornerStart.clear();
+    s->corners.clear();
     s->stats = vp3d_scene_stats();
 }
 
@@ -165,7 +173,29 @@ void vp3d_scene_line(vp3d_scene *s, vp_vec3 a, vp_vec3 b)
     seg.b = vp_xf_point(&s->view.world_to_camera, b);
     vp_get_color(s->d, &seg.r, &seg.g, &seg.bl);
     seg.faceA = seg.faceB = -1;
+    seg.va = seg.vb = -1;
     s->segs.push_back(seg);
+}
+
+// A face's corners, by global face id. A line between two corners of a face
+// lies on it (a diagonal of a quad not quite flat): that face never hides it.
+// A line from one of its corners, running within FOLD_SIN of its plane, is a
+// fold between neighboring faces (overlapping patches of a model, a quad
+// split in two triangles the other way), not something behind it.
+static void addCorners(vp3d_scene *s, int face, const int *verts, int count, int vertexBase)
+{
+    while ((int)s->cornerStart.size() < face) s->cornerStart.push_back((int)s->corners.size());
+    s->cornerStart.push_back((int)s->corners.size());
+    for (int i = 0; i < count; i++) s->corners.push_back(vertexBase + verts[i]);
+}
+
+static bool isCorner(const vp3d_scene *s, int face, int v)
+{
+    if (v < 0 || face < 0 || face >= (int)s->cornerStart.size()) return false;
+    int end = face + 1 < (int)s->cornerStart.size() ? s->cornerStart[face + 1] : (int)s->corners.size();
+    for (int i = s->cornerStart[face]; i < end; i++)
+        if (s->corners[i] == v) return true;
+    return false;
 }
 
 void vp3d_scene_mesh(vp3d_scene *s, const vp3d_mesh *m, const vp_xf *place, vp3d_mode mode)
@@ -182,6 +212,8 @@ void vp3d_scene_mesh(vp3d_scene *s, const vp3d_mesh *m, const vp_xf *place, vp3d
 
     const int faceBase = s->nextFace;
     s->nextFace += (int)m->faces.size();
+    const int vertexBase = s->nextVertex;
+    s->nextVertex += (int)m->verts.size();
 
     static thread_local std::vector<vp_vec3> cam;
     cam.resize(m->verts.size());
@@ -200,16 +232,22 @@ void vp3d_scene_mesh(vp3d_scene *s, const vp3d_mesh *m, const vp_xf *place, vp3d
             Segment seg;
             seg.a = cam[st[i - 1]];
             seg.b = cam[st[i]];
-            seg.r = r; seg.g = g; seg.bl = bl;
             auto it = m->edgeLookup.find(vp3d_edge_key(st[i - 1], st[i]));
             int e = it == m->edgeLookup.end() ? -1 : it->second;
+            int32_t c = m->hasColors ? vp3d_edge_color(m, e) : -1;
+            if (c < 0) { seg.r = r; seg.g = g; seg.bl = bl; }
+            else       { seg.r = c >> 16 & 0xff; seg.g = c >> 8 & 0xff; seg.bl = c & 0xff; }
             seg.faceA = (e >= 0 && m->edgeFace0[e] >= 0) ? faceBase + m->edgeFace0[e] : -1;
             seg.faceB = (e >= 0 && m->edgeFace1[e] >= 0) ? faceBase + m->edgeFace1[e] : -1;
+            seg.va = vertexBase + st[i - 1];
+            seg.vb = vertexBase + st[i];
             s->segs.push_back(seg);
         }
     }
 
     if (mode != VP3D_SOLID || m->faces.empty()) return;
+    for (size_t f = 0; f < m->faces.size(); f++)
+        addCorners(s, faceBase + (int)f, m->faces[f].data(), (int)m->faces[f].size(), vertexBase);
 
     // The faces turned to the camera hide what is behind them.
     const float near = v->near_z > 0.0f ? v->near_z : 0.1f;
@@ -247,6 +285,7 @@ void vp3d_scene_polygon(vp3d_scene *s, const vp_vec3 *pts, int count, unsigned e
         seg.r = r; seg.g = g; seg.bl = bl;
         seg.faceA = face;
         seg.faceB = -1;
+        seg.va = seg.vb = -1;
         s->segs.push_back(seg);
     }
 
@@ -308,6 +347,8 @@ void vp3d_scene_end(vp3d_scene *s)
                     s->stamp[ti] = segNo;
                     const Tri &t = s->tris[ti];
                     if (t.face == seg.faceA || t.face == seg.faceB) continue;   // its own faces
+                    const bool cornerA = isCorner(s, t.face, seg.va), cornerB = isCorner(s, t.face, seg.vb);
+                    if (cornerA && cornerB) continue;                           // on that face
                     if (t.maxX < minX || t.minX > maxX || t.maxY < minY || t.minY > maxY) continue;
 
                     // 1. where it projects inside the triangle, as segment parameters
@@ -320,6 +361,9 @@ void vp3d_scene_end(vp3d_scene *s)
                     float side = t.k > 0.0f ? -1.0f : 1.0f;                // the eye's side is positive
                     float g0 = (vp_v3_dot(t.n, a) - t.k) * side;
                     float g1 = (vp_v3_dot(t.n, b) - t.k) * side;
+                    if ((cornerA || cornerB) &&
+                        std::max(std::fabs(g0), std::fabs(g1)) < FOLD_SIN * vp_v3_length(vp_v3_sub(b, a)))
+                        continue;                                               // a fold at its corner
                     float eps = DEPTH_EPS * std::fabs(t.k);
                     float b0, b1;
                     if (g0 < -eps && g1 < -eps)      { b0 = 0.0f; b1 = 1.0f; }

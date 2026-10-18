@@ -43,7 +43,9 @@ and `shutdown`. `vp_game_user(g)` returns `desc.user`; `vp_game_time(g)` is
 the game time in seconds.
 
 For development, `vp_run` reads a few options (the menu passes none):
-`--dvg [PORT]`, `--window`, `--windowed`, `--vertical`.
+`--dvg [PORT]`, `--window`, `--windowed`, `--maximized` (a normal window,
+maximized: unlike the fullscreen `--window`, screen recorders capture it),
+`--vertical`.
 
 **`VP_STATS=1`** prints what a frame costs, once a second: the frame rate,
 then the average and the peak of the lines drawn, the blank moves, the
@@ -87,6 +89,7 @@ Where advmame.rc says `auto`, has no line for an action, or does not exist
 | `start1` `start2` | 1, 2 | |
 | `coin1` `coin2` | 5, 6 | |
 | `ui_cancel` | Esc | |
+| `ui_pause` | P | |
 | `p1_stickx` `p1_sticky` (analog) | | joystick 1, first stick |
 | `p2_stickx` `p2_sticky` (analog) | | joystick 2, first stick |
 | `p1_dialx`, `p1_trackballx` / `p1_trackbally` (relative) | | mouse x / y |

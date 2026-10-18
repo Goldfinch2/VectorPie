@@ -14,7 +14,7 @@
  * ACTIONS
  *   digital  p1_up p1_down p1_left p1_right p1_button1 .. p1_button6
  *            the same for p2_ (p2 defaults: R F D G, A S Q W, joystick 2)
- *            start1 start2 coin1 coin2 ui_cancel
+ *            start1 start2 coin1 coin2 ui_cancel ui_pause
  *   analog   p1_stickx p1_sticky p2_stickx p2_sticky (sticks, -1..1)
  *   relative p1_dialx p1_trackballx p1_trackbally (spinner / trackball counts)
  * Any other input_map action in advmame.rc works too, by its name.
