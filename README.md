@@ -11,7 +11,7 @@ VectorPie is a Raspberry Pi image for the USB-DVG vector generator board. It boo
 - **USB-DVG** — drives a real vector monitor; HDMI works without it
 - **One input mapping** — configured once in AdvanceMAME, used by the menu and every game
 - **High scores** — read from the MAME save files and shown in the hint bar
-- **Game packages** — games made with the VectorPie SDK install from the menu, from a USB drive or over the network
+- **App store** — games made with the VectorPie SDK install from the menu: online from the VectorPie app store, from a USB drive or over the network
 - **LED lighting** — each game lights its own controls in its own colors, with a voice-guided tour and beat-synced light shows
 - **Wi-Fi** — set up from the menu
 - **Remote access** — SSH and a Windows network share
@@ -302,7 +302,7 @@ Sections: DISPLAY, DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, GAMES, BACKUP, NE
 | LEDS     | CABINET COLORS | Colors for the coin, start and menu lamps. See [Cabinet colors](#cabinet-colors). |
 | LEDS     | GAME COLORS    | Recolor a game's controls. See [Game colors](#game-colors). |
 | LEDS     | LED SHOW...    | Light shows for the screensaver, startup, game launch and manufacturers. See [Light shows](#light-shows). |
-| GAMES    | INSTALL GAMES... | Install or update game packages. See [Game Packages](#game-packages). |
+| GAMES    | INSTALL GAMES... | Install or update game packages, from a USB drive, the network or online. See [Game Packages](#game-packages). |
 | GAMES    | REMOVE GAME... | Remove an installed game, keeping its high scores or not. |
 | BACKUP   | SAVE ⏏         | Save settings to a USB drive. See [Backup Save / Restore](#backup-save--restore). |
 | BACKUP   | RESTORE ⏏      | Restore them from the drive. |
@@ -448,9 +448,10 @@ Games made with the VectorPie SDK come as packages: one `.vpk` file per game.
 **Settings → GAMES → INSTALL GAMES...** installs them:
 
 1. If a USB drive is plugged in, its `.vpk` files (in its `games/` folder or top folder) are copied to `/persistent/games/packages/`. The drive can be pulled out right after.
-2. Packages of games already installed at the same or a newer version are deleted from that folder. The page offers the rest: new games, and updates of installed ones.
-3. **GAME** picks the game with Left/Right. Under it are its manufacturer, author, description, the installed version and the package's version. On HDMI, the game's marquee shows beside them.
-4. Select asks **INSTALL** (or **UPDATE**) with the game's name. **YES** installs it. An update keeps the game's high scores. The `.vpk` is deleted once installed.
+2. Packages of games already installed at the same or a newer version are deleted from that folder.
+3. With a network connection, the games available online are listed too (see [vectorpie-games](https://github.com/Goldfinch2/vectorpie-games)). Offline, the page shows the folder's packages alone.
+4. The page offers new games and updates of installed ones. **GAME** picks the game with Left/Right. Under it are its manufacturer, author, description, the installed version and the package's version (for an online game, **ONLINE** and its download size). On HDMI, the game's marquee shows beside them. Long values scroll on the vector monitor.
+5. Select asks **INSTALL** (or **UPDATE**) with the game's name. **YES** installs it; an online game is downloaded first, its progress shown, and checked before it is installed. An update keeps the game's high scores. The `.vpk` is deleted once installed.
 
 You can also copy `.vpk` files to `/persistent/games/packages/` yourself (network share or scp), no USB drive needed.
 

@@ -1,3 +1,14 @@
+### vectorpie-1.1.11
+
+
+● What's new
+
+  New VectorPie app store. Settings -> GAMES -> INSTALL GAMES... now lists the games available online next to those from a USB drive. Pick one and it is downloaded, verified and installed in one step. First games: Geometry Wars, Neverball and GLtron.
+
+  Small improvements and fixes: long names and descriptions scroll on the vector monitor in the GAMES pages, and some game packages INSTALL GAMES refused now install.
+
+
+
 ### vectorpie-1.1.10
 
 
