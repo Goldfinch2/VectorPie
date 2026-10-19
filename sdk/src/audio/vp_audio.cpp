@@ -5,7 +5,8 @@
 //                  device lock
 //   audio callback mixes the voices (SDL calls it with the device lock held)
 //   feeder thread  reads streamed WAV or Ogg Vorbis files into each stream's
-//                  ring buffer
+//                  ring buffer (a game's own stream, vp_stream_play, is
+//                  written by the game thread instead)
 //                  (single producer: feeder, single consumer: callback), and
 //                  frees streams whose voice has ended
 // The callback never touches a file or allocates.
@@ -159,6 +160,7 @@ struct Stream {
     std::atomic<uint32_t> readFrames{0};    // total frames consumed (callback)
     std::atomic<bool> eof{false};           // nothing more will be written
     bool     released = false;          // its voice is gone: free it (feeder)
+    bool     pushed = false;            // written by the game (vp_stream_write), not from a file
 };
 
 void closeStream(Stream *s)
@@ -208,7 +210,7 @@ void feedOgg(Stream *s)
 // the stream is visible to the callback).
 void feed(Stream *s)
 {
-    if (s->eof.load(std::memory_order_relaxed)) return;
+    if (s->pushed || s->eof.load(std::memory_order_relaxed)) return;
     if (s->ogg) { feedOgg(s); return; }
     static thread_local std::vector<uint8_t> raw;
     static thread_local std::vector<float> conv;
@@ -385,7 +387,8 @@ void SDLCALL mix(void *userdata, Uint8 *stream, int len)
                 uint32_t avail = s->writeFrames.load(std::memory_order_acquire) - rd;
                 if (avail < 3) {
                     if (s->eof.load(std::memory_order_acquire)) { endVoice(v); break; }
-                    a->underruns.fetch_add(1, std::memory_order_relaxed);
+                    // (a game's own stream running dry is the game's pace, not a disk too slow)
+                    if (!s->pushed) a->underruns.fetch_add(1, std::memory_order_relaxed);
                     break;      // silence for the rest of this buffer
                 }
                 // one frame back (still in the ring: the feeder keeps a
@@ -681,6 +684,78 @@ vp_voice vp_music_play(vp_audio *a, const char *path, float volume, int loop, fl
     }
     if (!h) closeStream(s);
     return h;
+}
+
+vp_voice vp_stream_play(vp_audio *a, int rate, float volume)
+{
+    if (!a || rate < 1000) return 0;
+    Stream *s = new (std::nothrow) Stream;
+    if (!s) { vp_fail(VP_ERR_NOMEM, "out of memory"); return 0; }
+    s->pushed = true;
+    s->wav.rate = rate;
+    s->wav.channels = 2;
+    s->ring.assign((size_t)RING_FRAMES * 2, 0.0f);
+
+    vp_voice h = 0;
+    {
+        std::lock_guard<std::mutex> lock(a->streamsMutex);
+        SDL_LockAudioDevice(a->dev);
+        int slot = freeSlot(a);
+        if (slot < 0) {
+            a->refused++;
+        } else {
+            Voice &v = a->voices[slot];
+            v = Voice();
+            v.active = true;
+            v.generation = a->nextGeneration++ & 0xffffff;
+            if (v.generation == 0) v.generation = a->nextGeneration++ & 0xffffff;
+            v.stream = s;
+            v.pitch = 1.0f;
+            v.step = (double)rate / a->rate;
+            v.vol = v.target = volume;
+            a->streams.push_back(s);
+            h = handleOf(slot, v.generation);
+        }
+        SDL_UnlockAudioDevice(a->dev);
+    }
+    if (!h) closeStream(s);
+    return h;
+}
+
+int vp_stream_write(vp_audio *a, vp_voice h, const float *frames, int count)
+{
+    if (!a || !frames || count <= 0) return 0;
+    int n = 0;
+    SDL_LockAudioDevice(a->dev);
+    Voice *v = voiceOf(a, h);
+    if (v && v->stream && v->stream->pushed && !v->finished) {
+        Stream *s = v->stream;
+        uint32_t w = s->writeFrames.load(std::memory_order_relaxed);
+        uint32_t r = s->readFrames.load(std::memory_order_acquire);
+        uint32_t space = RING_FRAMES - RING_GUARD - (w - r);
+        n = count < (int)space ? count : (int)space;
+        for (int i = 0; i < n; i++) {
+            uint32_t at = ((w + (uint32_t)i) & (RING_FRAMES - 1)) * 2;
+            s->ring[at] = frames[i * 2];
+            s->ring[at + 1] = frames[i * 2 + 1];
+        }
+        s->writeFrames.store(w + (uint32_t)n, std::memory_order_release);
+    }
+    SDL_UnlockAudioDevice(a->dev);
+    return n;
+}
+
+int vp_stream_queued(vp_audio *a, vp_voice h)
+{
+    if (!a) return 0;
+    int n = 0;
+    SDL_LockAudioDevice(a->dev);
+    Voice *v = voiceOf(a, h);
+    if (v && v->stream && v->stream->pushed)
+        n = (int)(v->stream->writeFrames.load(std::memory_order_relaxed) -
+                  v->stream->readFrames.load(std::memory_order_relaxed));
+    SDL_UnlockAudioDevice(a->dev);
+    return n;
 }
 
 void vp_voice_stop(vp_audio *a, vp_voice h, float fade_out_s)

@@ -69,6 +69,17 @@ vp_voice vp_sound_play(vp_audio *a, vp_sound *s, float volume, float pitch, int 
 vp_voice vp_music_play(vp_audio *a, const char *wav_path, float volume, int loop,
                        float fade_in_s);
 
+/* A game's own stream: samples the game makes as it runs (an emulated sound
+ * chip, a synthesizer), stereo float frames (-1..1, interleaved) at `rate`,
+ * resampled to the device. Returns its voice, or 0 (all voices busy). It plays
+ * what has been written and is silent when it runs dry; it ends with
+ * vp_voice_stop. Keep about 50-100 ms written ahead (vp_stream_queued). */
+vp_voice vp_stream_play(vp_audio *a, int rate, float volume);
+/* Frames written; returns how many fit (about a second can wait). */
+int vp_stream_write(vp_audio *a, vp_voice v, const float *frames, int count);
+/* Frames written and not played yet. */
+int vp_stream_queued(vp_audio *a, vp_voice v);
+
 /* Any voice ----------------------------------------------------------------- */
 
 /* fade_out_s 0 = stop now (after a few milliseconds, to avoid a click). */
