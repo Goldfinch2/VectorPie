@@ -6,7 +6,7 @@ Read in order the first time; each chapter is written to stand alone after that.
 |---|---|
 | [01 — The device layer](01-device-layer.md) | Drawing (color / moveto / lineto), where a frame goes (board or window), which board, the counters |
 | [02 — advmame.rc](02-advmame-rc.md) | Reading the cabinet's settings and control bindings |
-| [03 — The game layer](03-game-layer.md) | The game loop (`vp_run`), the controls (`vp_input`), text (`vp_text`) |
+| [03 — The game layer](03-game-layer.md) | The game loop (`vp_run`), the controls (`vp_input`), a game's own controls and its control menu (`vp_controls`), text (`vp_text`) |
 | [04 — Sound](04-audio.md) | Effects, streamed music, voices (`vp_audio`); where a game's files are (`vp_paths`) |
 | [05 — 3D](05-3d.md) | The view (camera, fog), placements, meshes and OBJ files, solid and wireframe drawing, scenes where objects hide each other (`vp_3d`) |
 | [06 — High scores and credits](06-hiscores.md) | The top-10 table the menu shows, entering initials, drawing the table (`vp_hiscore`); coins, credits, the START lamps (`vp_credits`) |

@@ -1,6 +1,6 @@
 # 03 — The game layer: loop, controls, text
 
-`#include <vectorpie/vp.h>` (`vp_app.h`, `vp_input.h`, `vp_text.h`)
+`#include <vectorpie/vp.h>` (`vp_app.h`, `vp_input.h`, `vp_controls.h`, `vp_text.h`)
 
 `examples/hello/main.c` is a complete small game built on this chapter:
 read it alongside.
@@ -72,8 +72,9 @@ int spin = vp_input_delta(in, "p1_dialx");            /* spinner counts */
 ```
 
 Each action's bindings come from the cabinet's **advmame.rc**, the same file
-AdvanceMAME reads and the menu edits. A game follows the owner's controls
-without a settings screen of its own.
+AdvanceMAME reads and the menu edits, so a game follows the owner's controls
+out of the box. A game may also name its own functions and let the player
+lay them out in its menu: see [A game's own controls](#a-games-own-controls).
 
 ### Defaults
 
@@ -114,6 +115,86 @@ Any other action listed in advmame.rc works too, by its name.
 Joysticks are matched as advmame.rc names them: by number (`0` is the
 first) or by name (`atari_controls`). Joysticks plugged in later are picked
 up.
+
+### A game's own controls: `vp_controls`
+
+A game names its functions and gives each a **standard**, usually the
+cabinet's actions, so it still follows the owner's setup until the player
+changes something:
+
+```c
+vp_input *in = vp_game_input(g);
+vp_input_define(in, "fire",  "p1_button1");
+vp_input_define(in, "smart", "p1_button2+key_Space");
+vp_input_load(in, NULL);                    /* the player's own: save/controls.ini */
+
+if (vp_input_pressed(in, "fire")) fire();   /* like any action */
+```
+
+**Controls as text**, `+` between them, at most `VP_CONTROLS_MAX` (4) of the
+player's own:
+
+| text | control |
+|---|---|
+| `key_Left_Ctrl` | a key: `key_` and SDL's name, `_` for spaces |
+| `joy1_button3` | a joystick's button (joysticks and buttons from 1) |
+| `yoke_button3` | the same on the yoke: the first joystick whose name says "yoke" |
+| `joy1_hat1_up` | a hat's way: `up`, `down`, `left`, `right` |
+| `joy1_axis2_neg` | an axis past half its travel: `neg` or `pos` |
+| `mouse_left` | a mouse button: `left`, `middle`, `right`, `x1`, `x2` |
+| `p1_button1` | an advmame.rc action: the controls the cabinet gives it |
+| `standard` | the function's standard |
+| `none` | no control |
+
+`vp_input_set(in, "fire", "joy1_button2")` sets a function (`NULL` or
+`"standard"`: back to its standard), `vp_input_controls` reads what it is
+set to, `vp_input_spelled` writes it for the screen (`LEFT CTRL + JOY1
+BUTTON 3`). `vp_input_save` / `vp_input_load` keep the player's choices,
+one `function = controls` line each, in `save/controls.ini` by default: the
+game's `save/` folder, which a VectorPie backup carries.
+
+**The menu.** A game's control menu never goes by what is laid out: it reads
+the fixed **menu controls**, `vp_input_menu_up` / `_down` / `_left` /
+`_right` / `_confirm` (the arrow keys, any joystick's hat or stick, START 1,
+Enter), so a player can never lock themselves out. **Laying out** a
+function is `vp_capture`, the same on every VectorPie game:
+
+* START 1 or Enter on a function's row (`vp_capture_begin`), then one
+  control: the first since the cursor came to the row replaces what the
+  function had, every further one on the row is added (the oldest goes past
+  four);
+* while laying out, START 1 / Enter leave it as it was, START 2 makes it
+  none, Delete (also the keypad's) its standard;
+* Left and right on the row switch between none and the standard
+  (`vp_capture_toggle`);
+* START, COIN, the way out, F2, Esc, Enter and Delete are never taken
+  (`vp_input_reserve_key` adds the game's own, such as the key that opens
+  its menu).
+
+```c
+static vp_capture cap;                       /* all zero */
+
+/* each step, on the row of function `name` */
+if (cap.capturing) {
+    if (vp_capture_step(&cap, in) == VP_CAPTURE_CHANGED) vp_input_save(in, NULL);
+} else if (vp_input_menu_confirm(in)) {
+    vp_capture_begin(&cap, in, name);
+} else if (vp_input_key_pressed(in, SDL_SCANCODE_DELETE)) {
+    vp_capture_standard(&cap, in, name);
+    vp_input_save(in, NULL);
+}
+/* moving to another row: vp_capture_moved(&cap) */
+```
+
+`vp_capture_help` gives the two help lines for the bottom of the screen,
+`vp_capture_said` a message to show under the rows (a reserved control
+pressed), `vp_capture_filter` keeps a control just laid out from also moving
+the cursor.
+
+For a game's own handling of a flight yoke or stick: `vp_input_yoke`,
+`vp_input_stick` (the first joystick that is not the yoke and has a stick
+resting in its middle, not pedals) and `vp_input_joy_axis` read the
+joysticks as they are.
 
 **Keyboard and the board output on a PC:** Windows only sends keys to a
 focused window. Driving a USB-DVG from the PC with no window, use a gamepad,

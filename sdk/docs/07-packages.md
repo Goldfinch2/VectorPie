@@ -123,6 +123,11 @@ To get it on the cabinet, either:
   drive in: INSTALL GAMES copies it to `/persistent/games/packages/` first;
 * or copy it straight to `/persistent/games/packages/` (scp, the network
   share), no USB drive needed.
+* or have it listed in the online games index
+  ([vectorpie-games](https://github.com/Goldfinch2/vectorpie-games)):
+  INSTALL GAMES lists those too, downloads the chosen one into
+  `/persistent/games/packages/` (its size and SHA-256 checked against the
+  index), then installs it like any other.
 
 INSTALL GAMES offers the `.vpk` files in that folder that are new games or
 newer versions of installed ones, and asks before installing; a file is

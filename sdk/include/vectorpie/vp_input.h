@@ -1,6 +1,8 @@
 /* vp_input.h — the cabinet's controls, as AdvanceMAME names them.
  *
- * A game asks for ACTIONS by their advmame.rc names, not for keys or buttons:
+ * A game asks for ACTIONS by their advmame.rc names, not for keys or buttons
+ * (or names its own functions and lets the player lay them out:
+ * vp_controls.h):
  *
  *   if (vp_input_pressed(in, "p1_button1")) fire();
  *   float steer = vp_input_axis(in, "p1_stickx");
