@@ -49,7 +49,7 @@ Two variants:
 | v3 or later (standalone) | Standalone |
 | v3 or later (on adapter card) | Arcade Control |
 
-> On VectorPie 1.1.2 or later the firmware is updated from the menu (Settings → DVG → DVG UPDATE...). The manual procedure below is for older versions only.
+> On VectorPie 1.1.2 or later the firmware is updated from the menu (Settings → DVG → UPDATE...). The manual procedure below is for older versions only.
 
 Flash with **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
 
@@ -264,28 +264,38 @@ The HDMI screensaver shows the current and next track titles, and that Player 2 
 
 **Tab** opens Settings; Tab or **Escape** closes it. Up/Down moves, Left/Right adjusts, Select toggles or opens. With a USB-DVG, Settings is mirrored on the vector display.
 
-Sections: DISPLAY, DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, GAMES, BACKUP, NETWORK, SYSTEM.
+Sections: GAMES, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MUSIC, EFFECTS, LEDS, NETWORK.
 
 | Section | Setting | Description |
 |---|---|---|
+| GAMES    | INSTALL GAMES... | Install or update game packages, from a USB drive, the network or online. See [Game Packages](#game-packages). |
+| GAMES    | REMOVE GAME... | Remove an installed game, keeping its high scores or not. |
+| BACKUP   | SAVE ⏏         | Save settings to a USB drive. See [Backup Save / Restore](#backup-save--restore). |
+| BACKUP   | RESTORE ⏏      | Restore them from the drive. |
+| SYSTEM   | VECTORPIE UPDATE... | The update page: checks online, shows the release notes, UPDATE applies. See [Software Updates](#software-updates). |
+| SYSTEM   | EXIT TO SHELL  | Leave the menu for a Linux prompt |
+| DVG      | DVG            | Vector board output on/off |
+| DVG      | HARDWARE       | The connected board, e.g. USB-DVG. OTHER is an unrecognized board: it gets no firmware updates. |
+| DVG      | DVG REFRESH    | Refresh rate, 30–60 Hz. Default 40. Applies as you adjust — raise for a steadier, brighter picture, lower if the display can't keep up. |
+| DVG      | FIRMWARE VARIANT | Firmware variant on the board: STANDARD or ARCADE CONTROL. Used by UPDATE... (below). Newer firmware reports it and this follows. |
+| DVG      | UPDATE...      | The firmware update page (for the FIRMWARE VARIANT): checks online, shows the release notes, UPDATE flashes. |
+| DVG      | SETTINGS...    | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. Needs firmware 1.14R2 or later. |
+| DVG      | CRT CALIBRATION | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
+| DVG      | OVERLAY        | Color overlays: DISABLED / COLORING / ARTWORK / BOTH (see below) |
+| DVG      | AUTOSTART GAME | Launch the board's default game at startup |
+| CONTROLS | ZERO DEADZONE  | Removes the joystick deadzone at the kernel level. Needed by some analog controllers (Alan-1 Star Wars yoke). |
+| CONTROLS | ADSTICK        | Which device drives analog-stick games: JOYSTICK or MOUSE. |
+| CONTROLS | CALIBRATE      | Left/Right picks the joystick, Select opens its calibration page. Move all axes to their extremes, let go, press Select — the resting position becomes center. Reapplied at every startup. Grayed with no joystick. |
+| CONTROLS | CONFIGURE INPUTS... | Rebind the AdvanceMAME controls from the menu. See [Rebinding from the menu](#rebinding-from-the-menu). |
+| AUDIO    | OUTPUT         | The audio device in use: `USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` |
+| AUDIO    | MASTER VOLUME  | System volume |
+| AUDIO    | MAME SOUND QUALITY | AdvanceMAME audio: **HIGH** (48 kHz), **MEDIUM** (22 kHz, smoother on demanding games), **LOW** (11 kHz, maximum performance; speech games sound muffled) |
 | DISPLAY  | MARQUEE        | Marquee scaling: FIT / STRETCH / ZOOM / FIT WIDTH / FIT HEIGHT |
 | DISPLAY  | MENU ON HDMI   | With a USB-DVG, also show the game menu on HDMI. Off: HDMI shows only the marquee (and hint bar). |
 | DISPLAY  | SHOW GAME PREVIEW | Play a game's preview video (`/usr/local/share/advance/video/<rom>.mp4`) over the marquee when you land on it. Default on. |
 | DISPLAY  | MENU FADE      | Fade-out time for the menu text: 1.0–15.0 s. Default 2.5 s. |
 | DISPLAY  | HINTS          | Control hints in the hint bar |
 | DISPLAY  | HIGH SCORES    | High scores in the hint bar |
-| DVG      | DVG            | Vector board output on/off |
-| DVG      | HARDWARE       | The connected board, e.g. USB-DVG. OTHER is an unrecognized board: it gets no firmware updates. |
-| DVG      | DVG REFRESH    | Refresh rate, 30–60 Hz. Default 40. Applies as you adjust — raise for a steadier, brighter picture, lower if the display can't keep up. |
-| DVG      | FIRMWARE VARIANT | Firmware variant on the board: STANDARD or ARCADE CONTROL. Used by DVG UPDATE. Newer firmware reports it and this follows. |
-| DVG      | DVG UPDATE...  | The firmware update page (for the FIRMWARE VARIANT): checks online, shows the release notes, UPDATE flashes. |
-| DVG      | DVG SETTINGS   | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. Needs firmware 1.14R2 or later. |
-| DVG      | CRT CALIBRATION | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
-| DVG      | OVERLAY        | Color overlays: DISABLED / COLORING / ARTWORK / BOTH (see below) |
-| DVG      | AUTOSTART GAME | Launch the board's default game at startup |
-| AUDIO    | OUTPUT         | The audio device in use: `USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` |
-| AUDIO    | MASTER VOLUME  | System volume |
-| AUDIO    | MAME SOUND QUALITY | AdvanceMAME audio: **HIGH** (48 kHz), **MEDIUM** (22 kHz, smoother on demanding games), **LOW** (11 kHz, maximum performance; speech games sound muffled) |
 | MUSIC    | VOLUME         | Music volume |
 | MUSIC    | TYPE           | **THEME** or **PLAYLIST** |
 | MUSIC    | THEME          | The looping theme track; previews as you cycle. Grayed with PLAYLIST. |
@@ -294,18 +304,10 @@ Sections: DISPLAY, DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, GAMES, BACKUP, NE
 | MUSIC    | GENERATE BEAT MAPS... | Make the beat maps the screensaver light show follows. Cancel stops and keeps what's done. See [Beat maps](#beat-maps). |
 | EFFECTS  | ENABLED        | Navigation and select sounds |
 | EFFECTS  | VOLUME         | Their volume |
-| CONTROLS | ZERO DEADZONE  | Removes the joystick deadzone at the kernel level. Needed by some analog controllers (Alan-1 Star Wars yoke). |
-| CONTROLS | ADSTICK        | Which device drives analog-stick games: JOYSTICK or MOUSE. |
-| CONTROLS | CALIBRATE      | Left/Right picks the joystick, Select opens its calibration page. Move all axes to their extremes, let go, press Select — the resting position becomes center. Reapplied at every startup. Grayed with no joystick. |
-| CONTROLS | CONFIGURE INPUTS... | Rebind the AdvanceMAME controls from the menu. See [Rebinding from the menu](#rebinding-from-the-menu). |
 | LEDS     | LED SETUP      | Wire the LED panel. See [LED Lighting](#led-lighting). |
 | LEDS     | CABINET COLORS | Colors for the coin, start and menu lamps. See [Cabinet colors](#cabinet-colors). |
 | LEDS     | GAME COLORS    | Recolor a game's controls. See [Game colors](#game-colors). |
 | LEDS     | LED SHOW...    | Light shows for the screensaver, startup, game launch and manufacturers. See [Light shows](#light-shows). |
-| GAMES    | INSTALL GAMES... | Install or update game packages, from a USB drive, the network or online. See [Game Packages](#game-packages). |
-| GAMES    | REMOVE GAME... | Remove an installed game, keeping its high scores or not. |
-| BACKUP   | SAVE ⏏         | Save settings to a USB drive. See [Backup Save / Restore](#backup-save--restore). |
-| BACKUP   | RESTORE ⏏      | Restore them from the drive. |
 | NETWORK  | ETHERNET       | Wired interface on/off. Off forces Wi-Fi even with a cable in. |
 | NETWORK  | WIFI           | Wi-Fi radio on/off. |
 | NETWORK  | HOSTNAME       | The Pi's name on the network, edited like the Wi-Fi password (lowercase, digits, hyphens). Applies live, including the `.local` name. |
@@ -314,8 +316,6 @@ Sections: DISPLAY, DVG, AUDIO, MUSIC, EFFECTS, CONTROLS, LEDS, GAMES, BACKUP, NE
 | NETWORK  | WIFI NETWORK   | Pick a network from the scan. |
 | NETWORK  | WIFI PASSWORD  | Its password. See [Wi-Fi Configuration](#wi-fi-configuration). |
 | NETWORK  | CONNECT        | Connect. Grayed when already on that network. |
-| SYSTEM   | VECTORPIE UPDATE... | The update page: checks online, shows the release notes, UPDATE applies. See [Software Updates](#software-updates). |
-| SYSTEM   | EXIT TO SHELL  | Leave the menu for a Linux prompt |
 
 Changes are saved when Settings closes.
 
@@ -369,14 +369,14 @@ VectorPie updates itself over the internet — no reflashing.
 ### How to update
 
 1. Connect to a network (see [Wi-Fi Configuration](#wi-fi-configuration))
-2. **SYSTEM → VECTORPIE UPDATE...** opens the update page, which checks online: **CHECKING**, then **UP TO DATE (*version*)**, **UPDATE AVAILABLE: *version***, or **OFFLINE**, with the latest version's release notes in a box below it (Up/Down scroll, Left/Right a page)
+2. **SYSTEM → VECTORPIE UPDATE...** opens the update page, which checks online: **CHECKING**, then **UP TO DATE (*version*)**, **UPDATE AVAILABLE: *version***, or **OFFLINE**, with the latest version's release notes in a box below it (Up/Down scroll, Left/Right a page). The cursor lands on **UPDATE** when there is one, else on **EXIT**
 3. **UPDATE** applies (grayed when you already run that version): **DOWNLOADING → VERIFYING → APPLYING**, then the Pi reboots into the new version. **EXIT** or CANCEL returns to Settings
 
 An update takes 10–15 minutes. Power loss during it is safe — the previous version stays until the new one boots — but let it finish.
 
 ### USB-DVG firmware updates
 
-**DVG → DVG UPDATE...** works the same way for the board's firmware (for the FIRMWARE VARIANT): the page checks, shows the release notes, and UPDATE downloads, verifies and flashes — the vector display goes dark during the flash — then reboot. Only newer firmware is offered, except that changing FIRMWARE VARIANT offers the other variant at the same version, so a board flashed with the wrong one can be corrected. A failed flash is recoverable: the Teensy bootloader is separate, so try again.
+**DVG → UPDATE...** works the same way for the board's firmware (for the FIRMWARE VARIANT): the page checks, shows the release notes, and UPDATE downloads, verifies and flashes. The page stays up through **DOWNLOADING → VERIFYING → FLASHING** (EXIT and Cancel wait until it is done); the vector display goes dark during the flash, then the Pi reboots. A failure shows on the page. Only newer firmware is offered, except that changing FIRMWARE VARIANT offers the other variant at the same version, so a board flashed with the wrong one can be corrected. A failed flash is recoverable: the Teensy bootloader is separate, so try again.
 
 ### What carries over
 

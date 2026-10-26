@@ -1,3 +1,16 @@
+### vectorpie-1.1.12
+
+
+● What's new
+
+  Reordered the Settings menu to have the most used items first.
+
+  New VectorPie logo on the vector screensaver.
+
+  Corrected UI issues.
+
+
+
 ### vectorpie-1.1.11
 
 
