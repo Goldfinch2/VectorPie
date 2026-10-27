@@ -32,7 +32,7 @@ Runs on the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ### VectorPie Image
 
-1. Download the image (about 2 GB): [VectorPie Image](https://https://drive.google.com/file/d/15ARW1dhCWu3Fsoz0ouSxmcckB_tTJref/view?usp=sharing)
+1. Download the image (about 2 GB): ([VectorPie Image](https://drive.google.com/file/d/15ARW1dhCWu3Fsoz0ouSxmcckB_tTJref/view?usp=sharing))
 2. Write it to the SD card with **balenaEtcher** ([download](https://etcher.balena.io/)): **Flash from file** → the `.img.gz` → **Select target** → **Flash!**
 3. Insert the card and power on. VectorPie boots into the game menu.
 
