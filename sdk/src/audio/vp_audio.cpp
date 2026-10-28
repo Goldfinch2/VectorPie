@@ -11,6 +11,7 @@
 //                  frees streams whose voice has ended
 // The callback never touches a file or allocates.
 
+#include <climits>
 #include "../core/vp_internal.h"
 
 #include <SDL.h>
@@ -161,6 +162,7 @@ struct Stream {
     std::atomic<bool> eof{false};           // nothing more will be written
     bool     released = false;          // its voice is gone: free it (feeder)
     bool     pushed = false;            // written by the game (vp_stream_write), not from a file
+    std::vector<unsigned char> mem;     // Ogg from memory (vp_music_play_mem): its own copy
 };
 
 void closeStream(Stream *s)
@@ -630,30 +632,10 @@ vp_voice vp_sound_play(vp_audio *a, vp_sound *s, float volume, float pitch, int 
     return h;
 }
 
-vp_voice vp_music_play(vp_audio *a, const char *path, float volume, int loop, float fade_in_s)
+// Start a stream opened by one of the play calls: it takes its voice, or is
+// closed.
+static vp_voice startStream(vp_audio *a, Stream *s, float volume, int loop, float fade_in_s)
 {
-    if (!a || !path) return 0;
-    Stream *s = new (std::nothrow) Stream;
-    if (!s) { vp_fail(VP_ERR_NOMEM, "out of memory"); return 0; }
-    if (isOgg(path)) {
-        int err = 0;
-        s->ogg = stb_vorbis_open_filename(path, &err, nullptr);
-        if (!s->ogg) {
-            delete s;
-            vp_fail(VP_ERR_INVALID, "%s: not a readable Ogg Vorbis file (error %d)", path, err);
-            return 0;
-        }
-        stb_vorbis_info info = stb_vorbis_get_info(s->ogg);
-        s->wav.rate = (int)info.sample_rate;
-        s->wav.channels = 2;
-        s->oggChannels = info.channels == 1 ? 1 : 2;
-    } else {
-        FILE *f = fopen(path, "rb");
-        if (!f) { delete s; vp_fail(VP_ERR_NOTFOUND, "cannot open %s", path); return 0; }
-        s->file = f;
-        if (readWavHeader(f, path, &s->wav) != VP_OK) { closeStream(s); return 0; }
-        s->bytesLeft = s->wav.dataBytes;
-    }
     s->loop = loop != 0;
     s->ring.assign((size_t)RING_FRAMES * 2, 0.0f);
     feed(s);    // fill the ring now, so it starts at once
@@ -684,6 +666,66 @@ vp_voice vp_music_play(vp_audio *a, const char *path, float volume, int loop, fl
     }
     if (!h) closeStream(s);
     return h;
+}
+
+static void oggInfo(Stream *s)
+{
+    stb_vorbis_info info = stb_vorbis_get_info(s->ogg);
+    s->wav.rate = (int)info.sample_rate;
+    s->wav.channels = 2;
+    s->oggChannels = info.channels == 1 ? 1 : 2;
+}
+
+vp_voice vp_music_play(vp_audio *a, const char *path, float volume, int loop, float fade_in_s)
+{
+    if (!a || !path) return 0;
+    Stream *s = new (std::nothrow) Stream;
+    if (!s) { vp_fail(VP_ERR_NOMEM, "out of memory"); return 0; }
+    if (isOgg(path)) {
+        int err = 0;
+        s->ogg = stb_vorbis_open_filename(path, &err, nullptr);
+        if (!s->ogg) {
+            delete s;
+            vp_fail(VP_ERR_INVALID, "%s: not a readable Ogg Vorbis file (error %d)", path, err);
+            return 0;
+        }
+        oggInfo(s);
+    } else {
+        FILE *f = fopen(path, "rb");
+        if (!f) { delete s; vp_fail(VP_ERR_NOTFOUND, "cannot open %s", path); return 0; }
+        s->file = f;
+        if (readWavHeader(f, path, &s->wav) != VP_OK) { closeStream(s); return 0; }
+        s->bytesLeft = s->wav.dataBytes;
+    }
+    return startStream(a, s, volume, loop, fade_in_s);
+}
+
+vp_voice vp_music_play_mem(vp_audio *a, const void *data, size_t size, float volume, int loop,
+                           float fade_in_s)
+{
+    if (!a || !data) return 0;
+    if (size < 4 || memcmp(data, "OggS", 4) != 0 || size > (size_t)INT_MAX) {
+        vp_fail(VP_ERR_INVALID, "music from memory: not Ogg Vorbis");
+        return 0;
+    }
+    Stream *s = new (std::nothrow) Stream;
+    if (!s) { vp_fail(VP_ERR_NOMEM, "out of memory"); return 0; }
+    try {
+        s->mem.assign((const unsigned char *)data, (const unsigned char *)data + size);
+    } catch (...) {
+        delete s;
+        vp_fail(VP_ERR_NOMEM, "out of memory");
+        return 0;
+    }
+    int err = 0;
+    s->ogg = stb_vorbis_open_memory(s->mem.data(), (int)size, &err, nullptr);
+    if (!s->ogg) {
+        delete s;
+        vp_fail(VP_ERR_INVALID, "music from memory: not readable Ogg Vorbis (error %d)", err);
+        return 0;
+    }
+    oggInfo(s);
+    return startStream(a, s, volume, loop, fade_in_s);
 }
 
 vp_voice vp_stream_play(vp_audio *a, int rate, float volume)

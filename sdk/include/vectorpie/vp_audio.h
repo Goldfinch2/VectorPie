@@ -30,6 +30,7 @@
 #ifndef VECTORPIE_VP_AUDIO_H
 #define VECTORPIE_VP_AUDIO_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include "vp_error.h"
 
@@ -68,6 +69,13 @@ vp_voice vp_sound_play(vp_audio *a, vp_sound *s, float volume, float pitch, int 
  * voices busy). */
 vp_voice vp_music_play(vp_audio *a, const char *wav_path, float volume, int loop,
                        float fade_in_s);
+
+/* The same, from an Ogg Vorbis file already in memory (unpacked from the
+ * game's own archive, say): the data is copied, so it may be freed at once.
+ * Ogg only; the copy stays in memory while it plays (an Ogg is about a
+ * tenth of the WAV). */
+vp_voice vp_music_play_mem(vp_audio *a, const void *data, size_t size, float volume, int loop,
+                           float fade_in_s);
 
 /* A game's own stream: samples the game makes as it runs (an emulated sound
  * chip, a synthesizer), stereo float frames (-1..1, interleaved) at `rate`,

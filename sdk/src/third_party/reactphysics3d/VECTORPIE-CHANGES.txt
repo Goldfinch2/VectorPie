@@ -1,0 +1,17 @@
+ReactPhysics3D 0.10.2 (https://github.com/DanielChappuis/reactphysics3d,
+tag v0.10.2), as used by the VectorPie SDK: its src/ and include/, LICENSE
+and VERSION, with these changes (marked "VectorPie:" in the code):
+
+- src/systems/SolveHingeJointSystem.cpp: the hinge motor's impulse sign.
+  The motor's velocity term is a1.(w1 - w2), but its impulse was applied to
+  body 1 as -lambda a1 (warm start and velocity solve): every pass pushed
+  the error further and the motor ran away (a 2 rad/s motor reached 200
+  rad/s). Now +lambda a1 to body 1 and -lambda a1 to body 2, as the slider
+  joint's motor does.
+
+- include/reactphysics3d/memory/DefaultAllocator.h: release() frees with
+  _aligned_free on every Windows build, as allocate() allocates with
+  _aligned_malloc on every Windows build. It used _aligned_free only with
+  Visual Studio, so a MinGW build freed aligned memory with std::free and
+  corrupted the heap (0xC0000374) as soon as a world was freed or a body
+  removed.

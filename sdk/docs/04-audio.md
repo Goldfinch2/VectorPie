@@ -24,6 +24,10 @@ vp_voice_stop(a, music, 1.5f);             /* 1.5 s fade out */
   play: a long track costs no memory. A background thread reads ahead about a
   second and a half; if it ever falls behind, the stream goes quiet briefly and
   `vp_audio_stats.underruns` counts it.
+* **Music from memory** (`vp_music_play_mem`): an Ogg Vorbis file the game
+  already holds, unpacked from its own archive, say, so its tracks are not
+  loose files a player can copy. The SDK keeps its own copy while it plays
+  (the caller may free its buffer at once), decoded as it streams.
 
 Files are **WAV** (PCM 8, 16, 24 or 32-bit, or 32-bit float; compressed WAV
 is refused with a message) or **Ogg Vorbis** (`.ogg`, about a tenth of the

@@ -579,10 +579,11 @@ void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_
 
     const std::vector<std::vector<int>> *strokes = &m->strokes;
     static thread_local std::vector<std::vector<int>> visibleStrokes;
-    if (mode == VP3D_SOLID && !m->faces.empty()) {
-        static thread_local std::vector<char> seen;
-        static thread_local std::vector<int> show;
+    static thread_local std::vector<char> seen;
+    static thread_local std::vector<int> show;
+    if ((mode == VP3D_SOLID || m->textured) && !m->faces.empty())
         vp3d_visible(m, toCam, mode, seen, show);
+    if (mode == VP3D_SOLID && !m->faces.empty()) {
         vp3d_build_strokes((int)m->verts.size(), m->edges, show, visibleStrokes);
         strokes = &visibleStrokes;
     }
@@ -600,6 +601,24 @@ void vp3d_draw_mesh(vp_dvg *d, const vp3d_view *v, const vp3d_mesh *m, const vp_
             if (c < 0) drawCameraSegment(d, v, l, cam[s[i - 1]], cam[s[i]], r, g, bl);
             else       drawCameraSegment(d, v, l, cam[s[i - 1]], cam[s[i]], c >> 16 & 0xff, c >> 8 & 0xff, c & 0xff);
         }
+    // Its textures, on the faces seen (all of them in wireframe).
+    if (m->textured) {
+        struct Emit { vp_dvg *d; const vp3d_view *v; Lens l; uint8_t r, g, bl; } e = { d, v, l, r, g, bl };
+        for (size_t f = 0; f < m->faces.size(); f++) {
+            if (f >= m->faceTexture.size() || !m->faceTexture[f]) continue;
+            if (mode == VP3D_SOLID && !seen[f]) continue;
+            int32_t fc = m->faceColor[f];
+            e.r = fc < 0 ? r : (uint8_t)(fc >> 16 & 0xff);
+            e.g = fc < 0 ? g : (uint8_t)(fc >> 8 & 0xff);
+            e.bl = fc < 0 ? bl : (uint8_t)(fc & 0xff);
+            vp3d_texture_segments(m, (int)f, place, cam.data(),
+                [](void *user, vp_vec3 a, vp_vec3 b, int32_t rgb, float dim) {
+                    Emit &e = *(Emit *)user;
+                    if (rgb >= 0) drawCameraSegment(e.d, e.v, e.l, a, b, rgb >> 16 & 0xff, rgb >> 8 & 0xff, rgb & 0xff);
+                    else drawCameraSegment(e.d, e.v, e.l, a, b, (uint8_t)(e.r * dim), (uint8_t)(e.g * dim), (uint8_t)(e.bl * dim));
+                }, &e);
+        }
+    }
     vp_color(d, r, g, bl);
 }
 

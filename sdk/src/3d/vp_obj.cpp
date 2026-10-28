@@ -24,6 +24,19 @@ bool parseIndex(const char *tok, int vertexCount, int *out)
     return true;
 }
 
+// The texture coordinate of a face corner: "12/3" and "12/3/7" have one
+// (3), "12" and "12//7" none (-1).
+int parseVt(const char *tok, int vtCount)
+{
+    const char *slash = strchr(tok, '/');
+    if (!slash || slash[1] == '/' || !slash[1]) return -1;
+    char *end = nullptr;
+    long i = strtol(slash + 1, &end, 10);
+    if (end == slash + 1 || i == 0) return -1;
+    long idx = i > 0 ? i - 1 : vtCount + i;
+    return (idx < 0 || idx >= vtCount) ? -1 : (int)idx;
+}
+
 // Whitespace-separated tokens, in place (strtok_r is not on every compiler).
 char *nextToken(char *start)
 {
@@ -108,6 +121,8 @@ int vp3d_mesh_load_obj(const char *path, const vp3d_obj_options *opt, vp3d_mesh 
     // positions are merged, or the faces on either side would not share an
     // edge and solid drawing would show it.
     std::vector<int> remap;                 // file vertex -> mesh vertex
+    std::vector<float> vts;                 // texture coordinates (vt): u, v
+    std::vector<int> vtIdx;                 // per corner of the face being read: its vt, or -1
     std::map<std::tuple<float, float, float>, int> byPosition;
     while (fgets(buf, sizeof(buf), f)) {
         lineNo++;
@@ -131,9 +146,15 @@ int vp3d_mesh_load_obj(const char *path, const vp3d_obj_options *opt, vp3d_mesh 
                 byPosition.emplace(key, i);
                 remap.push_back(i);
             }
+        } else if (p[0] == 'v' && p[1] == 't' && (p[2] == ' ' || p[2] == '\t')) {
+            float u = 0, v = 0;
+            sscanf(p + 3, "%f %f", &u, &v);
+            vts.push_back(u);
+            vts.push_back(v);
         } else if ((p[0] == 'f' || p[0] == 'l') && (p[1] == ' ' || p[1] == '\t')) {
             const bool face = p[0] == 'f';
             idx.clear();
+            vtIdx.clear();
             for (char *tok = nextToken(p + 2); tok; tok = nextToken(nullptr)) {
                 int i;
                 if (!parseIndex(tok, (int)remap.size(), &i)) {
@@ -141,16 +162,26 @@ int vp3d_mesh_load_obj(const char *path, const vp3d_obj_options *opt, vp3d_mesh 
                     return vp_fail(VP_ERR_INVALID, "%s:%d: bad vertex index \"%s\"", path, lineNo, tok);
                 }
                 idx.push_back(remap[i]);
+                vtIdx.push_back(parseVt(tok, (int)vts.size() / 2));
             }
             // Merged vertices can leave a corner repeated: drop the repeats.
-            std::vector<int> clean;
-            for (int i : idx)
-                if (clean.empty() || clean.back() != i) clean.push_back(i);
-            if (face && clean.size() > 1 && clean.front() == clean.back()) clean.pop_back();
+            std::vector<int> clean, cleanVt;
+            for (size_t k = 0; k < idx.size(); k++)
+                if (clean.empty() || clean.back() != idx[k]) { clean.push_back(idx[k]); cleanVt.push_back(vtIdx[k]); }
+            if (face && clean.size() > 1 && clean.front() == clean.back()) { clean.pop_back(); cleanVt.pop_back(); }
             idx.swap(clean);
+            vtIdx.swap(cleanVt);
             if (face) {
                 if (idx.size() >= 3 && vp3d_mesh_face(m, idx.data(), (int)idx.size()) == VP_OK) {
                     m->faceMaterial.back() = material;
+                    // its texture coordinates, when every corner has one
+                    bool all = true;
+                    for (int t : vtIdx) all = all && t >= 0;
+                    if (all) {
+                        std::vector<float> uv;
+                        for (int t : vtIdx) { uv.push_back(vts[t * 2]); uv.push_back(vts[t * 2 + 1]); }
+                        vp3d_mesh_face_uv(m, (int)m->faces.size() - 1, uv.data());
+                    }
                     if (color >= 0)
                         vp3d_mesh_face_color(m, (int)m->faces.size() - 1, color >> 16 & 0xff, color >> 8 & 0xff, color & 0xff);
                 }
@@ -170,7 +201,7 @@ int vp3d_mesh_load_obj(const char *path, const vp3d_obj_options *opt, vp3d_mesh 
             auto it = library.find(name);
             color = it == library.end() ? -1 : it->second;
         }
-        // Everything else (vt, vn, s, g, o, comments) is not needed.
+        // Everything else (vn, s, g, o, comments) is not needed.
     }
     fclose(f);
 

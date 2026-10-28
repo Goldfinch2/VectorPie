@@ -3,9 +3,9 @@
 #define VECTORPIE_VP_VERSION_H
 
 #define VP_VERSION_MAJOR 0
-#define VP_VERSION_MINOR 1
+#define VP_VERSION_MINOR 9
 #define VP_VERSION_PATCH 0
-#define VP_VERSION_STRING "0.1.0"
+#define VP_VERSION_STRING "0.9.0"
 
 #ifdef __cplusplus
 extern "C" {

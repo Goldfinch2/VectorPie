@@ -208,18 +208,37 @@ vp_text(d, "GAME OVER", 2048, 2000, 200, VP_TEXT_CENTER);
 float w = vp_text_width("SCORE 100", 120);
 ```
 
-Two stroke fonts, chosen with `vp_text_font` (it applies to the following
+Three stroke fonts, chosen with `vp_text_font` (it applies to the following
 `vp_text` and `vp_text_width` calls):
 
 | font | looks | strokes |
 |---|---|---|
 | `VP_FONT_HERSHEY` (default) | Hershey Simplex: round letters, upper and lower case, full punctuation | more per letter |
 | `VP_FONT_ASTEROIDS` | Atari's Asteroids lettering: capitals only (lower case is drawn as capitals), `<` and `>` as triangles | few per letter: cheap on the beam |
+| `VP_FONT_COMIC` | fat, rounded cartoon capitals (Titan One), each letter drawn as its outline: capitals, digits, `! ? ' - . : , + / ( ) & * = < > #` | many per letter: titles and big messages |
 
 ```c
 vp_text_font(VP_FONT_ASTEROIDS);
 vp_text(d, "SCORE 1500", 200, 3800, 120, VP_TEXT_LEFT);
 ```
+
+**The comic font** has two settings of its own, for the following calls:
+`vp_text_border(r, g, b)` draws a border round each letter in that color (the
+letters take the current color; 0, 0, 0 for none), and `vp_text_wobble(amount,
+time)` makes each letter bounce and tilt a little (0 still, 1 lively; pass
+the game time). Over a 3D scene, `vp3d_scene_text` makes the lettering hide
+what the scene draws behind it ([05 — 3D](05-3d.md)).
+
+```c
+vp_text_font(VP_FONT_COMIC);
+vp_text_border(255, 40, 170);                /* white letters, a pink border */
+vp_text_wobble(1.0f, vp_game_time(g));
+vp_color(d, 255, 255, 255);
+vp_text(d, "QUALIFIED!", 2048, 2600, 300, VP_TEXT_CENTER);
+```
+
+The letters come from `tools/make-comic-font` (Titan One, SIL Open Font
+License): another font can be made the same way.
 
 Printable ASCII. `height` is a capital
 letter's height in board units; `(x, y)` is on the baseline, at the left

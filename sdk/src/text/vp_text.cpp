@@ -1,5 +1,6 @@
-// Stroke text, drawn with vp_moveto / vp_lineto. Two fonts: Hershey Simplex
-// and Asteroids.
+// Stroke text, drawn with vp_moveto / vp_lineto. Three fonts: Hershey
+// Simplex, Asteroids and the comic capitals (outlined letters, a border,
+// a wobble; their shapes as triangles for vp3d_scene_text).
 
 #include "../core/vp_internal.h"
 
@@ -22,12 +23,71 @@ struct AsteroidsGlyph {
 
 #include "vp_font_asteroids.inc"
 
+#include "vp_font_comic.inc"
+
 // A capital letter's height and the advance, in each font's own units.
 const float HERSHEY_CAP = 21.0f;
 const float ASTEROIDS_CAP = 12.0f;
 const float ASTEROIDS_ADVANCE = 12.0f;   // 8 wide + 4 of spacing, as the firmware draws it
 
+// The comic font's units: em/1000, a capital 700 high; letters stand
+// SPACING apart (their borders stay apart), turning about ORIGIN across.
+const float COMIC_CAP = 700.0f;
+const float COMIC_SPACING = 180.0f;
+const float COMIC_SPACE = 300.0f;
+const float COMIC_ORIGIN = 300.0f;
+
 thread_local vp_font t_font = VP_FONT_HERSHEY;
+thread_local uint8_t t_border[3] = { 0, 0, 0 };
+thread_local float   t_wobble = 0.0f;
+thread_local double  t_wobble_time = 0.0;
+
+int comicIndex(char c)
+{
+    if (c >= 'a' && c <= 'z') c = (char)(c - 'a' + 'A');
+    for (int i = 0; i < (int)(sizeof COMIC_GLYPHS / sizeof COMIC_GLYPHS[0]); i++)
+        if (COMIC_GLYPHS[i].ch == c) return i;
+    return -1;
+}
+
+float comicAdvance(char c)
+{
+    int i = comicIndex(c);
+    return i < 0 ? COMIC_SPACE : COMIC_GLYPHS[i].advance + COMIC_SPACING;
+}
+
+// Where letter number i stands: its foot's middle at (ox, oy), scale k,
+// turned by (ca, sa), `squeeze` its width.
+struct ComicPlace { float ox, oy, k, ca, sa, squeeze; };
+
+ComicPlace comicPlace(float x, float y, float k, float squeeze, int i)
+{
+    const float t = (float)t_wobble_time;
+    const float a = t_wobble * 0.07f * std::sin(t * 4.0f + i * 1.3f);
+    const float lift = t_wobble * COMIC_CAP * k * 0.06f * std::sin(t * 5.0f + i * 0.9f);
+    return { x + COMIC_ORIGIN * k * squeeze, y + lift, k, std::cos(a), std::sin(a), squeeze };
+}
+
+void comicPoint(const ComicPlace &p, const short *q, float *sx, float *sy)
+{
+    const float x = (q[0] - COMIC_ORIGIN) * p.k * p.squeeze, y = q[1] * p.k;
+    *sx = p.ox + x * p.ca - y * p.sa;
+    *sy = p.oy + x * p.sa + y * p.ca;
+}
+
+void drawComic(vp_dvg *d, char c, int border, const ComicPlace &p)
+{
+    if (c >= 'a' && c <= 'z') c = (char)(c - 'a' + 'A');
+    for (const ComicContour &cc : COMIC_CONTOURS) {
+        if (cc.ch != c || cc.border != border) continue;
+        for (int j = 0; j <= cc.count; j++) {
+            float sx, sy;
+            comicPoint(p, COMIC_PTS[cc.first + j % cc.count], &sx, &sy);
+            if (j == 0) vp_moveto(d, (int)std::lround(sx), (int)std::lround(sy));
+            else        vp_lineto(d, (int)std::lround(sx), (int)std::lround(sy));
+        }
+    }
+}
 
 const vp_glyph &hersheyGlyph(char c)
 {
@@ -84,7 +144,20 @@ void drawAsteroids(vp_dvg *d, const AsteroidsGlyph &g, float x, float y, float s
 
 void vp_text_font(vp_font font)
 {
-    t_font = font == VP_FONT_ASTEROIDS ? VP_FONT_ASTEROIDS : VP_FONT_HERSHEY;
+    t_font = (font == VP_FONT_ASTEROIDS || font == VP_FONT_COMIC) ? font : VP_FONT_HERSHEY;
+}
+
+void vp_text_border(uint8_t r, uint8_t g, uint8_t b)
+{
+    t_border[0] = r;
+    t_border[1] = g;
+    t_border[2] = b;
+}
+
+void vp_text_wobble(float amount, double time)
+{
+    t_wobble = amount < 0.0f ? 0.0f : amount;
+    t_wobble_time = time;
 }
 
 vp_font vp_text_get_font(void)
@@ -96,6 +169,11 @@ float vp_text_width(const char *s, float height)
 {
     if (!s) return 0.0f;
     float units = 0.0f;
+    if (t_font == VP_FONT_COMIC) {
+        for (const char *p = s; *p; p++) units += comicAdvance(*p);
+        if (*s) units -= COMIC_SPACING;
+        return units * height / COMIC_CAP;
+    }
     if (t_font == VP_FONT_ASTEROIDS) {
         for (const char *p = s; *p; p++) units += ASTEROIDS_ADVANCE;
         return units * height / ASTEROIDS_CAP;
@@ -110,6 +188,26 @@ float vp_text_width(const char *s, float height)
 static void drawText(vp_dvg *d, const char *s, float x, float y, float height, float squeeze)
 {
     float cursor = x;
+    if (t_font == VP_FONT_COMIC) {
+        const float k = height / COMIC_CAP;
+        const bool border = t_border[0] || t_border[1] || t_border[2];
+        uint8_t r, g, b;
+        vp_get_color(d, &r, &g, &b);
+        // the letters, then their borders: one change of color, not one a
+        // letter (the beam's color settles after a change, smearing one
+        // outline's color into the other)
+        for (int pass = 0; pass < (border ? 2 : 1); pass++) {
+            if (pass) vp_color(d, t_border[0], t_border[1], t_border[2]);
+            float at = cursor;
+            int i = 0;
+            for (const char *p = s; *p; p++, i++) {
+                if (comicIndex(*p) >= 0) drawComic(d, *p, pass, comicPlace(at, y, k, squeeze, i));
+                at += comicAdvance(*p) * k * squeeze;
+            }
+        }
+        vp_color(d, r, g, b);
+        return;
+    }
     if (t_font == VP_FONT_ASTEROIDS) {
         const float scale = height / ASTEROIDS_CAP;
         for (const char *p = s; *p; p++) {
@@ -143,4 +241,32 @@ void vp_text_fit(vp_dvg *d, const char *s, float x, float y, float height, float
     if (align == VP_TEXT_CENTER)     x -= drawn * 0.5f;
     else if (align == VP_TEXT_RIGHT) x -= drawn;
     drawText(d, s, x, y, height, squeeze);
+}
+
+// The comic font's letters as board-space triangles (vp3d_scene_text): laid
+// out as vp_text lays them out; nothing for the other fonts.
+void vp_text_screens(const char *s, float x, float y, float height, int align,
+                     void (*triangle)(void *user, const float xy[6]), void *user)
+{
+    if (!s || !triangle || t_font != VP_FONT_COMIC) return;
+    if (align == VP_TEXT_CENTER)     x -= vp_text_width(s, height) * 0.5f;
+    else if (align == VP_TEXT_RIGHT) x -= vp_text_width(s, height);
+    const float k = height / COMIC_CAP;
+    int i = 0;
+    for (const char *p = s; *p; p++, i++) {
+        char c = *p;
+        if (c >= 'a' && c <= 'z') c = (char)(c - 'a' + 'A');
+        if (comicIndex(c) >= 0) {
+            const ComicPlace place = comicPlace(x, y, k, 1.0f, i);
+            for (const ComicTriangle &t : COMIC_TRIANGLES) {
+                if (t.ch != c) continue;
+                float xy[6];
+                comicPoint(place, COMIC_PTS[t.a], &xy[0], &xy[1]);
+                comicPoint(place, COMIC_PTS[t.b], &xy[2], &xy[3]);
+                comicPoint(place, COMIC_PTS[t.c], &xy[4], &xy[5]);
+                triangle(user, xy);
+            }
+        }
+        x += comicAdvance(*p) * k;
+    }
 }

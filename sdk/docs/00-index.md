@@ -11,6 +11,7 @@ Read in order the first time; each chapter is written to stand alone after that.
 | [05 — 3D](05-3d.md) | The view (camera, fog), placements, meshes and OBJ files, solid and wireframe drawing, scenes where objects hide each other (`vp_3d`) |
 | [06 — High scores and credits](06-hiscores.md) | The top-10 table the menu shows, entering initials, drawing the table (`vp_hiscore`); coins, credits, the START lamps (`vp_credits`) |
 | [07 — Game packages](07-packages.md) | The game's folder, `game.ini`, `VP_OUTPUT`, making a `.vpk` with `vp-pack`, installing from USB |
+| [08 — Physics](08-physics.md) | Bodies that fall, bounce, stack and tumble; joints with limits and motors; rays and contacts (`vp_physics`) |
 
 Coming next: installing games online (a signed catalog).
 
@@ -22,6 +23,7 @@ your game
   |  vp_run    the loop          vp_input  the controls     vp_text  text
   |  vp_audio  effects, music     vp_paths  the game's files
   |  vp_3d     3D: solid, wireframe, hidden lines
+  |  vp_physics  rigid bodies, joints, rays (ReactPhysics3D inside)
   |  vp_hiscore  high scores, initials   vp_credits  coins, START lamps
   |  game packages: game.ini, vp-pack, installed from USB by the menu
   v

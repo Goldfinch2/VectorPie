@@ -30,3 +30,9 @@ void vp_marquee_auto(void);
 // lines after "[section]" (one per board: dvg, beamforge), or NULL for the
 // lines before any section (id, name, marquee...).
 std::string vp_manifest_value(const char *key, const char *section = nullptr);
+
+// The current font's letters as board-space triangles, laid out as vp_text
+// lays them out (VP_FONT_COMIC; nothing for the other fonts): what
+// vp3d_scene_text puts in a scene to hide what is behind the text.
+void vp_text_screens(const char *s, float x, float y, float height, int align,
+                     void (*triangle)(void *user, const float xy[6]), void *user);

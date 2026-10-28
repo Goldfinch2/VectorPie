@@ -3,12 +3,20 @@
  *   vp_color(d, 255, 255, 0);
  *   vp_text(d, "GAME OVER", 2048, 2000, 200, VP_TEXT_CENTER);
  *
- * Two fonts (vp_text_font):
+ * Three fonts (vp_text_font):
  *   VP_FONT_HERSHEY    Hershey Simplex: upper and lower case, punctuation,
  *                      round letters (the default)
  *   VP_FONT_ASTEROIDS  Atari's Asteroids lettering: capitals only (lowercase
  *                      is drawn as capitals), few strokes per letter, the
  *                      classic arcade look
+ *   VP_FONT_COMIC      fat, rounded cartoon capitals (Titan One), each letter
+ *                      drawn as its outline, with a border round it if
+ *                      vp_text_border sets one, bouncing if vp_text_wobble
+ *                      says so: titles and big messages. Capitals, digits and
+ *                      ! ? ' - . : , + / ( ) & * = < > # (lowercase is drawn
+ *                      as capitals). Many
+ *                      strokes per letter: keep it big and short. In a 3D
+ *                      scene, vp3d_scene_text makes it hide what is behind it.
  *
  * Text is drawn with the current color through vp_moveto / vp_lineto, each
  * letter in an order chosen to keep the beam's invisible moves short.
@@ -36,12 +44,22 @@ enum {
 
 typedef enum vp_font {
     VP_FONT_HERSHEY = 0,
-    VP_FONT_ASTEROIDS
+    VP_FONT_ASTEROIDS,
+    VP_FONT_COMIC
 } vp_font;
 
 /* The font the following vp_text / vp_text_width calls use (this thread). */
 void    vp_text_font(vp_font font);
 vp_font vp_text_get_font(void);
+
+/* VP_FONT_COMIC: a border round each letter, in this color (the letters
+ * themselves take the current color). 0, 0, 0: none  (the default). This
+ * thread's following calls. */
+void vp_text_border(uint8_t r, uint8_t g, uint8_t b);
+/* VP_FONT_COMIC: each letter bounces and tilts a little, `amount` 0 (still,
+ * the default) to 1 (lively), moving with `time` (seconds: pass the game
+ * time). This thread's following calls. */
+void vp_text_wobble(float amount, double time);
 
 void  vp_text(vp_dvg *d, const char *s, float x, float y, float height, int align);
 

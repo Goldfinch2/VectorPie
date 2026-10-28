@@ -4,12 +4,12 @@ Write vector games for **VectorPie**: a Raspberry Pi driving a real vector
 monitor through a **USB-DVG** (or the coming **BeamForge**) board. Develop
 and test on your PC, in a window; run the same code on the cabinet.
 
-> Status: **0.1.0, in development**: the device layer (frames to the board or
+> Status: **0.9.0, in development**: the device layer (frames to the board or
 > to a window), the three drawing calls, the advmame.rc reader, the game loop,
-> the controls, text, sound, 3D (solid with hidden lines, and wireframe),
-> high scores, credits and START lamps, `vp-test`, and four examples (`poc`,
-> `hello`, `models`, `lamps`). Game
-> packages come next.
+> the controls, text (three fonts, one of them fat comic capitals), sound,
+> 3D (solid with hidden lines, and wireframe), physics (rigid bodies, joints,
+> rays), high scores, credits and START lamps, game packages, `vp-test`, and
+> five examples (`poc`, `hello`, `models`, `lamps`, `physics`).
 
 ## Set up (once)
 
@@ -67,8 +67,9 @@ vp_program(mygame)                             # links VectorPie::vectorpie (+ S
 with presets setting `CMAKE_PREFIX_PATH` to `~/VectorPie/dist/pc` or
 `/pi`, and the toolchain file from `lib/cmake/VectorPie/`. The library is
 static: a game's executable carries its SDK, and a cabinet needs nothing
-installed besides SDL2. The `0.1` asks for the 0.1 series (a 0.x minor
-version may change the API).
+installed besides SDL2. The `0.1` asks for 0.1 or newer: within 0.x the
+SDK only adds, so a game asking for an older 0.x builds with a newer one
+(1.0 may change the API).
 
 GLtron, Neverball and Torus Trooper are built this way: after changing the
 SDK, install it again, then rebuild the game. (A game can also build the SDK
@@ -85,6 +86,7 @@ build-pc/poc.exe --dvg COM5          # on a USB-DVG plugged into the PC
 build-pc/hello.exe --windowed        # a small game: arrows, Left Ctrl, 1 to start, Esc
 build-pc/models.exe --windowed       # 3D wireframe; add .obj files to look at them
 build-pc/lamps.exe --windowed        # START lamps: patterns, coins and credits (lamps light on the Pi)
+build-pc/physics.exe --windowed      # physics: crates, a seesaw, a chain; buttons 1 and 2 drop more
 build-pc/vp-test.exe --windowed      # the test pattern
 ```
 
@@ -127,4 +129,9 @@ MIT, see [LICENSE](LICENSE).
 Third-party code, under its own license: [LodePNG](src/third_party/lodepng/)
 (Lode Vandevenne, zlib license, in its header), which reads the marquee
 PNG; [stb_vorbis](src/third_party/stb/) (Sean Barrett, public domain or MIT,
-at its end), which plays Ogg Vorbis sounds and music.
+at its end), which plays Ogg Vorbis sounds and music;
+[ReactPhysics3D](src/third_party/reactphysics3d/) 0.10.2 (Daniel Chappuis,
+zlib license, its LICENSE; one change, listed in its VECTORPIE-CHANGES.txt),
+the physics engine under `vp_physics`. The comic font's letters are made
+from [Titan One](tools/make-comic-font/fonts/) (SIL Open Font License, its
+OFL.txt).

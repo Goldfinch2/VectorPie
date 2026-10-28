@@ -173,6 +173,52 @@ float vp3d_mesh_radius(const vp3d_mesh *m);
 /* The mesh's bounding box (to stand a model on the floor, center it...). */
 void  vp3d_mesh_bounds(const vp3d_mesh *m, vp_vec3 *min, vp_vec3 *max);
 
+/* ---- textures: line drawings on faces ----------------------------------------------
+ * A texture is a small vector drawing in its own square (u across, v up,
+ * 0..1): lines and paths. On a face it is laid by the face's texture
+ * coordinates (an OBJ file's vt, or vp3d_mesh_face_uv), or by world mapping
+ * (vp3d_mesh_texture_world); coordinates beyond 0..1 tile it. Its strokes are
+ * clipped to each face, drawn on the faces seen (all of them in wireframe),
+ * hidden in a scene like any line, never by their own face. A stroke takes
+ * its own color, else its face's (or the current color) at the texture's dim.
+ *   vp3d_texture *grid;
+ *   vp3d_texture_create(&grid);
+ *   vp3d_texture_line(grid, 0, 0, 1, 0);           // a tile's bottom and left side:
+ *   vp3d_texture_line(grid, 0, 0, 0, 1);           // tiled, a grid
+ *   vp3d_mesh_face_texture(floor, -1, grid);       // every face
+ *   vp3d_mesh_texture_world(floor, 2.0f);          // 2 m squares, whatever the box's size
+ * Faces are taken to be flat and their coordinates affine (exporters write
+ * them so): the first three corners set the mapping. */
+typedef struct vp3d_texture vp3d_texture;
+
+int  vp3d_texture_create(vp3d_texture **out);
+void vp3d_texture_free(vp3d_texture *t);          /* not while a mesh still uses it */
+int  vp3d_texture_line(vp3d_texture *t, float u0, float v0, float u1, float v1);
+/* `count` points (u, v pairs) joined; closed: back to the first. */
+int  vp3d_texture_path(vp3d_texture *t, const float *uv, int count, int closed);
+/* The strokes added from now on in this color (0xRRGGBB), or -1: the face's
+ * own color, at the texture's dim (vp3d_texture_set_dim, default 0.5). */
+int  vp3d_texture_color(vp3d_texture *t, int32_t rgb);
+void vp3d_texture_set_dim(vp3d_texture *t, float dim);
+int  vp3d_texture_stroke_count(const vp3d_texture *t);
+/* A texture file, one command a line ('#' starts a comment):
+ *   l u0 v0 u1 v1    a line          p u v u v ...   a path
+ *   q u v u v ...    a closed shape  c RRGGBB | c -  own color, or the face's
+ *   d 0.5            the face-colored strokes' brightness */
+int  vp3d_texture_load(const char *path, vp3d_texture **out);
+
+/* A face's texture coordinates: a u, v pair per corner, in its corners'
+ * order (an OBJ file's vt give them too). */
+int  vp3d_mesh_face_uv(vp3d_mesh *m, int face, const float *uv);
+/* The texture on a face (face -1: every face; t NULL: none). The mesh keeps
+ * a pointer: the texture must outlive it. */
+int  vp3d_mesh_face_texture(vp3d_mesh *m, int face, const vp3d_texture *t);
+/* World mapping: instead of the faces' coordinates, the texture laid flat
+ * on each face (on its main axis), one tile `tile` world units across, by
+ * the mesh's size as placed (a box scaled to a long platform gets more
+ * tiles, not stretched ones), moving with it. 0: the faces' coordinates. */
+void vp3d_mesh_texture_world(vp3d_mesh *m, float tile);
+
 typedef enum vp3d_mode {
     VP3D_SOLID = 0,         /* outline and sharp creases: an object */
     VP3D_WIREFRAME          /* every edge, see-through */
@@ -232,7 +278,19 @@ void vp3d_scene_line(vp3d_scene *s, vp_vec3 a, vp_vec3 b);
  * points. */
 #define VP3D_ALL_EDGES 0xffffu
 void vp3d_scene_polygon(vp3d_scene *s, const vp_vec3 *pts, int count, unsigned edge_mask);
+/* Text on the screen that hides what the scene draws behind it: the current
+ * font's letters (vp_text_font; VP_FONT_COMIC only, with its wobble: the
+ * other fonts' strokes have no inside) as invisible screens just in front of
+ * the camera. Same arguments as vp_text, whose call draws the letters
+ * themselves (before or after the scene). */
+void vp3d_scene_text(vp3d_scene *s, const char *text, float x, float y, float height, int align);
 void vp3d_scene_end(vp3d_scene *s);
+/* Things resting on a surface sink into it a little (a body on the floor in
+ * a physics world, a model placed by eye): their lowest lines then count as
+ * behind it and are cut. A line less than `tolerance` world units behind a
+ * face is not hidden by it. Default 0; a few centimeters suits a game in
+ * meters. */
+void vp3d_scene_set_contact(vp3d_scene *s, float tolerance);
 void vp3d_scene_get_stats(const vp3d_scene *s, vp3d_scene_stats *stats);
 
 #ifdef __cplusplus

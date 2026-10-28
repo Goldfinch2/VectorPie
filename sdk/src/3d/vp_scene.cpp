@@ -11,6 +11,7 @@
 // keeps each segment to the triangles near it.
 
 #include "vp_3d_internal.h"
+#include "../core/vp_internal.h"
 
 #include <algorithm>
 #include <cmath>
@@ -49,6 +50,7 @@ struct vp3d_scene {
     Lens lens;
     std::vector<Segment> segs;
     std::vector<Tri> tris;
+    float contact = 0.0f;                            // world units: lines this close behind a face are not hidden
     int nextFace = 0;                                // global face ids, per scene
     int nextVertex = 0;                              // global vertex ids, per scene
     std::vector<int> cornerStart;                    // per mesh face (global id): its corners in corners
@@ -245,6 +247,35 @@ void vp3d_scene_mesh(vp3d_scene *s, const vp3d_mesh *m, const vp_xf *place, vp3d
         }
     }
 
+    // Its textures: strokes on the faces seen, lying on them (their own face
+    // never hides them; the others do, as any line).
+    if (m->textured) {
+        struct Emit { vp3d_scene *s; int face; uint8_t r, g, bl; } e;
+        e.s = s;
+        for (size_t f = 0; f < m->faces.size(); f++) {
+            if (f >= m->faceTexture.size() || !m->faceTexture[f]) continue;
+            if (mode == VP3D_SOLID && !seen[f]) continue;
+            int32_t fc = m->faceColor[f];
+            e.face = faceBase + (int)f;
+            e.r = fc < 0 ? r : (uint8_t)(fc >> 16 & 0xff);
+            e.g = fc < 0 ? g : (uint8_t)(fc >> 8 & 0xff);
+            e.bl = fc < 0 ? bl : (uint8_t)(fc & 0xff);
+            vp3d_texture_segments(m, (int)f, place, cam.data(),
+                [](void *user, vp_vec3 a, vp_vec3 b, int32_t rgb, float dim) {
+                    Emit &e = *(Emit *)user;
+                    Segment seg;
+                    seg.a = a;
+                    seg.b = b;
+                    if (rgb >= 0) { seg.r = rgb >> 16 & 0xff; seg.g = rgb >> 8 & 0xff; seg.bl = rgb & 0xff; }
+                    else { seg.r = (uint8_t)(e.r * dim); seg.g = (uint8_t)(e.g * dim); seg.bl = (uint8_t)(e.bl * dim); }
+                    seg.faceA = e.face;
+                    seg.faceB = -1;
+                    seg.va = seg.vb = -1;
+                    e.s->segs.push_back(seg);
+                }, &e);
+        }
+    }
+
     if (mode != VP3D_SOLID || m->faces.empty()) return;
     for (size_t f = 0; f < m->faces.size(); f++)
         addCorners(s, faceBase + (int)f, m->faces[f].data(), (int)m->faces[f].size(), vertexBase);
@@ -264,6 +295,11 @@ void vp3d_scene_mesh(vp3d_scene *s, const vp3d_mesh *m, const vp_xf *place, vp3d
         for (size_t i = 1; i + 1 < poly.size(); i++)
             addTri(s, poly[0], poly[i], poly[i + 1], n, k, faceBase + f);
     }
+}
+
+void vp3d_scene_set_contact(vp3d_scene *s, float tolerance)
+{
+    if (s) s->contact = tolerance > 0.0f ? tolerance : 0.0f;
 }
 
 void vp3d_scene_polygon(vp3d_scene *s, const vp_vec3 *pts, int count, unsigned edge_mask)
@@ -364,7 +400,7 @@ void vp3d_scene_end(vp3d_scene *s)
                     if ((cornerA || cornerB) &&
                         std::max(std::fabs(g0), std::fabs(g1)) < FOLD_SIN * vp_v3_length(vp_v3_sub(b, a)))
                         continue;                                               // a fold at its corner
-                    float eps = DEPTH_EPS * std::fabs(t.k);
+                    float eps = std::max(DEPTH_EPS * std::fabs(t.k), s->contact);
                     float b0, b1;
                     if (g0 < -eps && g1 < -eps)      { b0 = 0.0f; b1 = 1.0f; }
                     else if (g0 >= -eps && g1 >= -eps) continue;
@@ -415,4 +451,42 @@ void vp3d_scene_get_stats(const vp3d_scene *s, vp3d_scene_stats *stats)
 {
     if (!stats) return;
     *stats = s ? s->stats : vp3d_scene_stats();
+}
+
+// ---------------------------------------------------------------------------
+// Text that hides what is behind it
+// ---------------------------------------------------------------------------
+
+namespace {
+
+struct SceneText {
+    vp3d_scene *scene;
+    Lens        lens;
+    vp_xf       to_world;
+    float       z;
+};
+
+void sceneTextTriangle(void *user, const float xy[6])
+{
+    const SceneText &t = *(const SceneText *)user;
+    vp_vec3 pts[3];
+    for (int i = 0; i < 3; i++) {
+        const vp_vec3 c = vp_v3((xy[i * 2] - t.lens.cx) / t.lens.fx * t.z,
+                                (xy[i * 2 + 1] - t.lens.cy) / t.lens.fy * t.z, t.z);
+        pts[i] = vp_xf_point(&t.to_world, c);
+    }
+    vp3d_scene_polygon(t.scene, pts, 3, 0);
+}
+
+}  // namespace
+
+void vp3d_scene_text(vp3d_scene *s, const char *text, float x, float y, float height, int align)
+{
+    if (!s || !s->d || !text) return;
+    SceneText t;
+    t.scene = s;
+    t.lens = lensOf(&s->view);
+    t.to_world = vp_xf_inverse(s->view.world_to_camera);
+    t.z = (s->view.near_z > 0.0f ? s->view.near_z : 0.1f) * 3.0f;   // just past the near plane
+    vp_text_screens(text, x, y, height, align, sceneTextTriangle, &t);
 }
