@@ -287,6 +287,9 @@ struct vp_audio {
     std::vector<Stream *> streams;
     std::thread feeder;
     std::atomic<bool> stopFeeder{false};
+
+    float recent[VP_AUDIO_RECENT][2] = {};      // the last frames mixed, left and right (vp_audio_recent)
+    std::atomic<uint32_t> recentPos{0};         // frames written so far
 };
 
 namespace {
@@ -419,11 +422,16 @@ void SDLCALL mix(void *userdata, Uint8 *stream, int len)
     // The master volume, then clipped at full scale: keep the voices'
     // volumes such that they do not add up past it (clipping is heard as a
     // pop or a burst of noise).
+    uint32_t pos = a->recentPos.load(std::memory_order_relaxed);
     for (int i = 0; i < frames; i++) {
         float l = out[i * 2] * a->master, r = out[i * 2 + 1] * a->master;
         out[i * 2]     = l > 1.0f ? 1.0f : (l < -1.0f ? -1.0f : l);
         out[i * 2 + 1] = r > 1.0f ? 1.0f : (r < -1.0f ? -1.0f : r);
+        float *keep = a->recent[(pos + (uint32_t)i) % VP_AUDIO_RECENT];
+        keep[0] = out[i * 2];
+        keep[1] = out[i * 2 + 1];
     }
+    a->recentPos.store(pos + (uint32_t)frames, std::memory_order_release);
 }
 
 // ---------------------------------------------------------------------------
@@ -877,4 +885,29 @@ void vp_audio_get_stats(vp_audio *a, vp_audio_stats *st)
     SDL_UnlockAudioDevice(a->dev);
     st->underruns = a->underruns.load();
     st->sample_rate = a->rate;
+}
+
+int vp_audio_recent(vp_audio *a, float *mono, int count)
+{
+    if (!a || !mono || count <= 0) return 0;
+    if (count > VP_AUDIO_RECENT) count = VP_AUDIO_RECENT;
+    uint32_t end = a->recentPos.load(std::memory_order_acquire);
+    for (int i = 0; i < count; i++) {
+        const float *f = a->recent[(end - (uint32_t)count + (uint32_t)i) % VP_AUDIO_RECENT];
+        mono[i] = (f[0] + f[1]) * 0.5f;
+    }
+    return a->rate;
+}
+
+int vp_audio_recent_stereo(vp_audio *a, float *left, float *right, int count)
+{
+    if (!a || !left || !right || count <= 0) return 0;
+    if (count > VP_AUDIO_RECENT) count = VP_AUDIO_RECENT;
+    uint32_t end = a->recentPos.load(std::memory_order_acquire);
+    for (int i = 0; i < count; i++) {
+        const float *f = a->recent[(end - (uint32_t)count + (uint32_t)i) % VP_AUDIO_RECENT];
+        left[i] = f[0];
+        right[i] = f[1];
+    }
+    return a->rate;
 }

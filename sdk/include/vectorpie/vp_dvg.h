@@ -155,6 +155,12 @@ int vp_dvg_window_closed(vp_dvg *dvg);
 void vp_dvg_set_clip(vp_dvg *dvg, int x0, int y0, int x1, int y1);
 void vp_dvg_reset_clip(vp_dvg *dvg);
 
+/* The whole picture, from here on, shrunk by `scale` about the middle of the
+ * screen and moved by (dx, dy) board units, after clipping (scale 1, 0, 0:
+ * as drawn). A screensaver's picture wanders this way under vp_run, so no
+ * line stays on the same spot of the tube. */
+void vp_dvg_set_view(vp_dvg *dvg, float scale, float dx, float dy);
+
 void vp_dvg_begin_frame(vp_dvg *dvg);
 
 void vp_color(vp_dvg *dvg, uint8_t r, uint8_t g, uint8_t b);

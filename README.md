@@ -445,7 +445,7 @@ Games with native color (Tempest, Major Havoc, Star Wars, Gravitar, Black Widow,
 
 Games made with the VectorPie SDK come as packages: one `.vpk` file per game.
 
-**Settings → GAMES → INSTALL GAMES...** installs them:
+**Settings → GAMES → INSTALL...** installs them:
 
 1. If a USB drive is plugged in, its `.vpk` files (in its `games/` folder or top folder) are copied to `/persistent/games/packages/`. The drive can be pulled out right after.
 2. Packages of games already installed at the same or a newer version are deleted from that folder.
@@ -459,7 +459,7 @@ An installed game shows in the menu under its manufacturer, with its marquee and
 
 An installed game lights its controls in its own colors, and holding select on it in the menu plays its voice control guide, like any other game (see [LED Lighting](#led-lighting)).
 
-**Settings → GAMES → REMOVE GAME...** removes one: **GAME** picks it with Left/Right (its details and marquee show the same way), Select asks **REMOVE** with its name, and **YES** removes the game and its high scores.
+**Settings → GAMES → REMOVE...** removes one: **GAME** picks it with Left/Right (its details and marquee show the same way), Select asks **REMOVE** with its name, and **YES** removes the game and its high scores.
 
 Installed games live in `/persistent/games`, which updates don't touch. A USB backup also saves their high scores.
 

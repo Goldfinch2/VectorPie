@@ -1,13 +1,16 @@
 #!/bin/sh
-# vp-pack — make a VectorPie game package (.vpk) from a folder.
+# vp-pack — make a VectorPie game package (.vpk), or a screensaver package
+# (.vps: game.ini says kind = screensaver), from a folder.
 #
 #   vp-pack <folder> [<output dir>]
 #
 # The folder holds the game as it will be installed: game.ini, the
 # executable it names, and whatever else the game reads (data/, sounds/,
 # marquee.png ...). Writes <id>-<version>.vpk (a .tar.gz of one <id>/
-# folder) in the output dir (default: the current one). A save/ folder is
-# left out: the cabinet keeps its own.
+# folder) in the output dir (default: the current one); <id>-<version>.vps
+# for a screensaver, which the cabinet installs apart from its games and
+# offers in its SCREENSAVER setting. A save/ folder is left out: the cabinet
+# keeps its own.
 #
 # Checks: game.ini has id (a-z 0-9 _), name, manufacturer, executable and
 # version; no value holds ':' or '|'; the executable exists and is a 64-bit
@@ -36,6 +39,12 @@ name=$(field name)
 manufacturer=$(field manufacturer)
 executable=$(field executable)
 version=$(field version)
+kind=$(field kind)
+case "${kind:-game}" in
+    game)        ext=vpk ;;
+    screensaver) ext=vps ;;
+    *)           die "game.ini: kind must be game or screensaver (got '$kind')" ;;
+esac
 
 echo "$id" | grep -Eq '^[a-z0-9_]{1,32}$' || die "game.ini: id must be a-z 0-9 _ (got '$id')"
 [ -n "$name" ]         || die "game.ini: no name"
@@ -83,6 +92,6 @@ mkdir "$tmp/$id"
 (cd "$src" && tar -cf - --exclude=./save --exclude=./launch.log .) | (cd "$tmp/$id" && tar -xf -)
 chmod +x "$tmp/$id/$executable"
 
-vpk="$out/$id-$version.vpk"
+vpk="$out/$id-$version.$ext"
 tar -czf "$vpk" --owner=0 --group=0 --sort=name -C "$tmp" "$id"
 echo "vp-pack: $vpk ($name $version, $(du -h "$vpk" | cut -f1))"

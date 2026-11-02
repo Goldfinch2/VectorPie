@@ -68,6 +68,9 @@ struct vp_dvg {
 
     int32_t       clipL, clipB, clipR, clipT;
 
+    // The whole picture shrunk about the middle and moved (vp_dvg_set_view).
+    float         viewScale, viewX, viewY;
+
     // The drawing state the game sees.
     int32_t       penX, penY;
     uint8_t       penR, penG, penB;
@@ -333,6 +336,7 @@ static vp_dvg *allocHandle()
     d->clipR = VP_DVG_COORD_MAX; d->clipT = VP_DVG_COORD_MAX;
     d->penR = d->penG = d->penB = 255;
     d->lastR = d->lastG = d->lastB = -1;
+    d->viewScale = 1.0f;
     return d;
 }
 
@@ -472,6 +476,13 @@ void vp_dvg_reset_clip(vp_dvg *d)
     d->clipR = VP_DVG_COORD_MAX; d->clipT = VP_DVG_COORD_MAX;
 }
 
+void vp_dvg_set_view(vp_dvg *d, float scale, float dx, float dy)
+{
+    d->viewScale = scale > 0 ? scale : 1.0f;
+    d->viewX = dx;
+    d->viewY = dy;
+}
+
 void vp_dvg_begin_frame(vp_dvg *d)
 {
     d->vecCnt = 0;
@@ -515,6 +526,15 @@ void vp_lineto(vp_dvg *d, int x, int y)
     if (d->vecCnt >= VP_DVG_MAX_VECTORS) {
         d->stats.dropped++;
         return;
+    }
+    if (d->viewScale != 1.0f || d->viewX != 0 || d->viewY != 0) {
+        const float mid = VP_DVG_COORD_MAX / 2.0f, s = d->viewScale;
+        auto place = [&](int32_t &c, float by) {
+            long p = lroundf(mid + ((float)c - mid) * s + by);
+            c = (int32_t)(p < 0 ? 0 : p > VP_DVG_COORD_MAX ? VP_DVG_COORD_MAX : p);
+        };
+        place(x0, d->viewX); place(y0, d->viewY);
+        place(x1, d->viewX); place(y1, d->viewY);
     }
     vp_vec &v = d->vecs[d->vecCnt++];
     v.x0 = x0; v.y0 = y0; v.x1 = x1; v.y1 = y1;

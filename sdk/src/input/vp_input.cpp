@@ -200,6 +200,7 @@ struct vp_input {
     std::vector<SDL_Joystick *> joysticks;
     std::vector<std::string> joystickNames;    // normalized, per open joystick
     int   sdlJoystickCount = -1;
+    bool  video = false;                        // the keyboard (SDL video) is open
     float deadzone = 0.15f;
     int   mouseDx = 0, mouseDy = 0;
     bool  wantGrab = false;     // vp_input_grab_mouse: relative mouse mode wanted
@@ -282,20 +283,25 @@ int vp_input_open(vp_input **out)
     // Joysticks must keep reporting when no window has the focus (a board
     // output has no window at all).
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-    int r = vp_sdl_video_init();     // the keyboard comes through video
-    if (r != VP_OK) return r;
+    // The keyboard comes through video. A screensaver may go without it:
+    // under the cabinet's menu the menu keeps the screen (and so the video),
+    // reads the controls itself and wakes the cabinet.
+    int r = vp_sdl_video_init();
+    const bool video = r == VP_OK;
+    if (!video && !vp_saver_active()) return r;
     if (SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_EVENTS) != 0) {
         r = vp_fail(VP_ERR_NODEV, "SDL joystick init failed: %s", SDL_GetError());
-        vp_sdl_video_quit();
+        if (video) vp_sdl_video_quit();
         return r;
     }
 
     vp_input *in = new (std::nothrow) vp_input;
     if (!in) {
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_EVENTS);
-        vp_sdl_video_quit();
+        if (video) vp_sdl_video_quit();
         return vp_fail(VP_ERR_NOMEM, "out of memory");
     }
+    in->video = video;
 
     // Defaults first, then advmame.rc on top: an action it binds replaces the
     // default; "auto" and missing actions keep it.
@@ -329,9 +335,10 @@ void vp_input_close(vp_input *in)
     // can keep the keyboard from the next program (the menu).
     if (in->wantGrab) SDL_SetRelativeMouseMode(SDL_FALSE);
     closeJoysticks(in);
+    const bool video = in->video;
     delete in;
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_EVENTS);
-    vp_sdl_video_quit();
+    if (video) vp_sdl_video_quit();
 }
 
 void vp_input_update(vp_input *in)

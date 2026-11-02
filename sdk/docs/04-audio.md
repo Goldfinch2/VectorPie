@@ -36,6 +36,17 @@ their names. Mono or stereo (Ogg surround is folded to stereo), any sample
 rate (converted as it plays). An effect loaded from Ogg is decoded once, at
 load; Ogg music is decoded as it streams, on the feeder thread.
 
+## What was just heard
+
+`vp_audio_recent(audio, mono, count)` copies the latest `count` frames of
+the mix (up to `VP_AUDIO_RECENT`, 4096), after the master volume, as mono
+samples -1..1, oldest first, and returns the device's sample rate. For
+pictures of the sound: a spectrum, a scope, a pulse on the bass.
+`vp_audio_recent_stereo(audio, left, right, count)` copies the same with
+left and right apart: VU meters, an XY scope.
+`vp_music_feed.h` has a ready spectrum analysis to run on them
+(`vp_music_analyze`, from left and right).
+
 ## Voices
 
 Every play returns a **voice** (`vp_voice`). With it: `vp_voice_stop` (with a

@@ -34,6 +34,7 @@ description  = ...             ; optional: one line, shown by the menu's GAMES p
 marquee      = marquee.png     ; optional (marquee.<screen height>.png too)
 hiscores     = yes             ; yes = save/highscores.txt (vp_hiscore), shown in
                                ; the menu's hint bar; or a relative path; or no
+kind         = game            ; optional: game (the default), or screensaver
 
 [dvg]                          ; optional: settings for the USB-DVG
 frame_hz     = 30              ; frames a second on it
@@ -49,6 +50,11 @@ not changed.
 
 No value may hold `:` or `|` (the menu's own separators). `;` or `#`
 starts a comment.
+
+**`kind = screensaver`** makes a screensaver app, not a game: `vp-pack` then
+writes a **`.vps`** instead of a `.vpk`, which the cabinet installs apart
+from its games and offers in its SCREENSAVER setting. See
+[09 — Screensavers](09-screensavers.md).
 
 ## Running
 

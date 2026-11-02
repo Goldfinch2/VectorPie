@@ -36,3 +36,8 @@ std::string vp_manifest_value(const char *key, const char *section = nullptr);
 // vp3d_scene_text puts in a scene to hide what is behind the text.
 void vp_text_screens(const char *s, float x, float y, float height, int align,
                      void (*triangle)(void *user, const float xy[6]), void *user);
+
+// vp_run: the screensaver module's audio (for its stand-in feed on a PC) and
+// the game's music argument (its first non-option argument); at the end, off.
+void vp_saver_attach(vp_audio *audio, const char *music_arg);
+void vp_saver_detach(void);

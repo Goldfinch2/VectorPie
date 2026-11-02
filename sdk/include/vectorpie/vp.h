@@ -18,5 +18,6 @@
 #include "vp_credits.h"
 #include "vp_marquee.h"
 #include "vp_app.h"
+#include "vp_saver.h"
 
 #endif /* VECTORPIE_VP_H */

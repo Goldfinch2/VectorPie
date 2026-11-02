@@ -1,3 +1,16 @@
+### vectorpie-1.1.13
+
+
+● What's new
+
+  VectorPie supports custom screensaver apps in the app store.
+
+  Changes to the Settings menu.
+
+  New SERVICE and UI SELECT mappings in GAME CONTROLS.
+
+
+
 ### vectorpie-1.1.12
 
 

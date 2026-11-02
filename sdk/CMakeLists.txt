@@ -90,6 +90,7 @@ if(VP_WITH_SDL2)
         src/app/vp_initials.cpp
         src/app/vp_credits.cpp
         src/app/vp_marquee.cpp
+        src/app/vp_saver.cpp
         src/third_party/lodepng/lodepng.cpp
         src/third_party/stb/stb_vorbis.c)
     # lodepng (zlib license, see its header): third-party code, kept as is.
@@ -143,6 +144,24 @@ if(VP_BUILD_EXAMPLES)
         vp_program(lamps)
         add_executable(physics examples/physics/main.c)
         vp_program(physics)
+        # The screensavers, and their packages for the cabinet (Settings ->
+        # SCREENSAVERS -> INSTALL): `--target vps` in the Pi build makes
+        # saver_<name>-<version>.vps from each one's game.ini.
+        add_custom_target(vps)
+        foreach(name spectrum pulse vu)
+            add_executable(saver-${name} examples/saver-${name}/main.c)
+            vp_program(saver-${name})
+            set(stage ${CMAKE_BINARY_DIR}/vps/saver_${name})
+            add_custom_target(vps-${name}
+                COMMAND ${CMAKE_COMMAND} -E rm -rf ${stage}
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${stage}
+                COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:saver-${name}> ${stage}/saver_${name}
+                COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/examples/saver-${name}/game.ini ${stage}/
+                COMMAND sh ${VECTORPIE_PACK} ${stage} ${CMAKE_BINARY_DIR}
+                VERBATIM)
+            add_dependencies(vps-${name} saver-${name})
+            add_dependencies(vps vps-${name})
+        endforeach()
         # Optional local sounds (see examples/hello/README.md): copied next to
         # the executable, where vp_asset_path finds them.
         if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples/hello/assets)

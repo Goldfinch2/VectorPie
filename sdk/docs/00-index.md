@@ -12,6 +12,7 @@ Read in order the first time; each chapter is written to stand alone after that.
 | [06 — High scores and credits](06-hiscores.md) | The top-10 table the menu shows, entering initials, drawing the table (`vp_hiscore`); coins, credits, the START lamps (`vp_credits`) |
 | [07 — Game packages](07-packages.md) | The game's folder, `game.ini`, `VP_OUTPUT`, making a `.vpk` with `vp-pack`, installing from USB |
 | [08 — Physics](08-physics.md) | Bodies that fall, bounce, stack and tumble; joints with limits and motors; rays and contacts (`vp_physics`) |
+| [09 — Screensavers](09-screensavers.md) | Apps the cabinet runs as its screensaver, drawing to its music: the track, its beats, a spectrum (`vp_saver`) |
 
 Coming next: installing games online (a signed catalog).
 

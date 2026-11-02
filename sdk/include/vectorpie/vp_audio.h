@@ -107,6 +107,15 @@ typedef struct vp_audio_stats {
 } vp_audio_stats;
 void vp_audio_get_stats(vp_audio *a, vp_audio_stats *stats);
 
+/* What was just heard: the latest `count` frames of the mix (after the
+ * master volume), as mono samples -1..1, oldest first, into mono (up to
+ * VP_AUDIO_RECENT). Returns the device's sample rate, or 0 (no audio). For
+ * pictures of the sound: a spectrum, a scope, a pulse on the bass. */
+#define VP_AUDIO_RECENT 4096
+int vp_audio_recent(vp_audio *a, float *mono, int count);
+/* The same, left and right apart: for VU meters, an XY scope. */
+int vp_audio_recent_stereo(vp_audio *a, float *left, float *right, int count);
+
 #ifdef __cplusplus
 }
 #endif
