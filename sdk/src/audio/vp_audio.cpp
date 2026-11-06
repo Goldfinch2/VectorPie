@@ -277,6 +277,7 @@ struct vp_audio {
     SDL_AudioDeviceID dev = 0;
     int    rate = DEVICE_RATE;
     float  master = 1.0f;
+    float  musicGain = 1.0f, effectsGain = 1.0f;    // the menu's MUSIC / SOUND VOLUME (menuVolumes)
     Voice  voices[VP_AUDIO_VOICES];
     uint32_t nextGeneration = 1;
     uint32_t refused = 0;
@@ -291,6 +292,9 @@ struct vp_audio {
     float recent[VP_AUDIO_RECENT][2] = {};      // the last frames mixed, left and right (vp_audio_recent)
     std::atomic<uint32_t> recentPos{0};         // frames written so far
 };
+
+// The VectorPie menu's settings, on the cabinet.
+#define VP_MENU_CONFIG "/home/pi/vectorpiemenu/vector_pie_menu.cfg"
 
 namespace {
 
@@ -414,8 +418,9 @@ void SDLCALL mix(void *userdata, Uint8 *stream, int len)
                     s->readFrames.store(rd + whole, std::memory_order_release);
                 }
             }
-            out[i * 2]     += l * v.vol;
-            out[i * 2 + 1] += r * v.vol;
+            const float gain = v.vol * (v.sound ? a->effectsGain : a->musicGain);   // the cabinet's levels
+            out[i * 2]     += l * gain;
+            out[i * 2 + 1] += r * gain;
         }
     }
 
@@ -479,6 +484,26 @@ void feederLoop(vp_audio *a)
 // Public API
 // ---------------------------------------------------------------------------
 
+// The cabinet's volumes, as set in the VectorPie menu (its vector_pie_menu.cfg,
+// [audio] music_volume and effects_volume, 0-100): every game's music (its
+// streams) and effects (its sounds) are at those levels, as the menu's own.
+// No menu (a PC): both full.
+static void menuVolumes(vp_audio *a)
+{
+    FILE *f = fopen(VP_MENU_CONFIG, "r");
+    if (!f) return;
+    char line[256];
+    bool audio = false;
+    while (fgets(line, sizeof line, f)) {
+        if (line[0] == '[') { audio = strncmp(line, "[audio]", 7) == 0; continue; }
+        int v = 0;
+        if (!audio) continue;
+        if (sscanf(line, " music_volume %d", &v) == 1) a->musicGain = (v < 0 ? 0 : v > 100 ? 100 : v) / 100.0f;
+        if (sscanf(line, " effects_volume %d", &v) == 1) a->effectsGain = (v < 0 ? 0 : v > 100 ? 100 : v) / 100.0f;
+    }
+    fclose(f);
+}
+
 int vp_audio_open(vp_audio **out)
 {
     if (!out) return vp_fail(VP_ERR_INVALID, "vp_audio_open: NULL argument");
@@ -508,6 +533,7 @@ int vp_audio_open(vp_audio **out)
         return r;
     }
     a->rate = have.freq;
+    menuVolumes(a);
     a->feeder = std::thread(feederLoop, a);
     SDL_PauseAudioDevice(a->dev, 0);
     *out = a;

@@ -552,7 +552,12 @@ int vp_dvg_end_frame(vp_dvg *d, int monochrome)
     int32_t bx = d->beamX, by = d->beamY;
     for (uint32_t i = 0; i < d->vecCnt; i++) {
         const vp_vec &v = d->vecs[i];
-        if (bx != v.x0 || by != v.y0) {
+        // The first line of a frame always starts with a dark move, even when
+        // the last frame ended there: the board draws its own rectangle after
+        // each frame (against the spot killer), so the beam is never where
+        // the frame left it — a lit first point would be a line across the
+        // screen.
+        if (i == 0 || bx != v.x0 || by != v.y0) {
             cmdAddPoint(d, v.x0, v.y0, 0, 0, 0);
             blanks++;
             blankLen += segLength(bx, by, v.x0, v.y0);
