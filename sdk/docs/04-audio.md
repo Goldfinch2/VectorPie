@@ -40,7 +40,7 @@ load; Ogg music is decoded as it streams, on the feeder thread.
 
 On the cabinet, the menu's MUSIC VOLUME and SOUND VOLUME apply to every SDK
 game too: the SDK reads them from the menu's settings
-(`/home/pi/vectorpiemenu/vector_pie_menu.cfg`, `[audio]` `music_volume` and
+(`/usr/local/share/advance/vector_pie_menu.cfg`, `[audio]` `music_volume` and
 `effects_volume`) when audio opens, and mixes music (`vp_music_play`, the
 streams) and effects (`vp_sound_play`) at those levels, on top of the volumes
 the game asks for. Its MASTER VOLUME is the system's own. On a PC (no menu)

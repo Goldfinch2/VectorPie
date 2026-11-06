@@ -294,7 +294,7 @@ struct vp_audio {
 };
 
 // The VectorPie menu's settings, on the cabinet.
-#define VP_MENU_CONFIG "/home/pi/vectorpiemenu/vector_pie_menu.cfg"
+#define VP_MENU_CONFIG "/usr/local/share/advance/vector_pie_menu.cfg"
 
 namespace {
 
