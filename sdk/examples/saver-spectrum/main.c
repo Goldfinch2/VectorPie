@@ -3,9 +3,10 @@
  * Thirty-two bars, low notes on the left, mirrored above and below a line,
  * with caps that hang at each bar's peak and drift down. Each beat (from the
  * track's beat map, or a hit heard when it has none) bumps it all: taller
- * at once, a little wider, then springing back; more on the downbeat, which
+ * at once (never wider), then springing back; more on the downbeat, which
  * also flashes a frame round the screen. The track's title scrolls along
- * the bottom.
+ * the bottom. The picture stands still: it does not wander round the
+ * screen like other screensavers' (vp_dvg_set_view at each frame).
  *
  * On the cabinet: chosen in SETTINGS -> SCREENSAVERS -> SELECT once installed (its
  * game.ini says kind = screensaver; vp-pack makes a .vps). Any control wakes
@@ -91,9 +92,10 @@ static void scroll_title(vp_dvg *d, const char *title, float scroll, float y, fl
 static void draw(vp_game *g, vp_dvg *d)
 {
     (void)g;
-    const float k = bump_now();                 /* taller by k, wider by a third of it */
+    vp_dvg_set_view(d, 1, 0, 0);                /* standing still: no wander */
+    const float k = bump_now();                 /* taller by k, never wider */
     const float mid = W * 0.55f, half = W * 0.36f * (1 + k);
-    const float span = W * 0.88f * (1 + k * 0.3f);
+    const float span = W * 0.88f;
     const float x0 = (W - span) / 2, step = span / VP_MUSIC_BANDS, bar = step * 0.62f;
     if (!G.have) {
         vp_color(d, 120, 120, 140);
