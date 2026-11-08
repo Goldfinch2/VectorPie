@@ -28,7 +28,8 @@ Runs on the **Raspberry Pi 4** and **Raspberry Pi 5**.
 VectorPie runs on a Raspberry Pi. To play on a real vector monitor, the Pi connects to it through a vector board: BeamForge or USB-DVG. Without one, the menu and games show on an HDMI monitor.
 
 - Raspberry Pi 4 or 5, 1 GB or more. Raspberry Pi 5 recommended for better performance.
-- 32 GB SD card or larger. (Pi 5) M.2 NVMe HAT and M.2 NVMe SSD recommended for performance and reliability.
+- **An SSD, strongly recommended:** on a Pi 5, an M.2 NVMe SSD on an M.2 NVMe HAT. An SSD is much more reliable than an SD card for a cabinet that runs for hours every day, and faster too. Choose a drive known to work with the Raspberry Pi 5: not every NVMe SSD does.
+- Or a 32 GB SD card or larger.
 
 Installation guides:
 
@@ -40,13 +41,13 @@ Installation guides:
 
 ## Download & Installation
 
-VectorPie comes as one image file: write it to an SD card or SSD, put it in the Pi, and the cabinet boots into the game menu. After that, VectorPie and the vector board's firmware are updated from the menu, with no reflashing.
+VectorPie comes as one image file: write it to an SSD (recommended) or an SD card, put it in the Pi, and the cabinet boots into the game menu. After that, VectorPie and the vector board's firmware are updated from the menu, with no reflashing.
 
 ### VectorPie Image
 
 1. Download the image (about 2 GB): ([VectorPie Image](https://drive.google.com/file/d/1MTDPK5mUQjhhaaRrVNwTPDbsvIzAS67E/view?usp=sharing))
-2. Write it to the SD card with **balenaEtcher** ([download](https://etcher.balena.io/)): **Flash from file** → the `.img.gz` → **Select target** → **Flash!**
-3. Insert the card and power on. VectorPie boots into the game menu.
+2. Write it to the SSD (connected to your PC with a USB adapter) or to the SD card with **balenaEtcher** ([download](https://etcher.balena.io/)): **Flash from file** → the `.img.gz` → **Select target** → **Flash!**
+3. Install the SSD or insert the SD card, and power on. VectorPie boots into the game menu.
 
 ### Firmware
 
@@ -353,7 +354,7 @@ Changes are saved when Settings closes.
 
 ## Backup Save / Restore
 
-VectorPie can save your whole setup to a USB drive: controls, settings, game list, LED panel, high scores, Wi-Fi and more. Restore it on a fresh image, and everything is back as it was. Reflashing the SD card loses your settings, so save them first.
+VectorPie can save your whole setup to a USB drive: controls, settings, game list, LED panel, high scores, Wi-Fi and more. Restore it on a fresh image, and everything is back as it was. Reflashing the SSD or SD card loses your settings, so save them first.
 
 ### What is backed up
 
@@ -513,7 +514,7 @@ Launching a game is one press, and leaving it brings you right back to the menu.
 
 ## Troubleshooting
 
-**Don't read or write the SD card from a PC or Mac**
+**Don't read or write the SSD or SD card from a PC or Mac**
 
 Even if the computer can mount the Pi's Linux partitions, don't. Files written with the wrong ownership can break the menu or game launches. Use the supported paths instead:
 
@@ -537,7 +538,7 @@ Analog-stick games use the joystick by default. Set **CONTROLS → ADSTICK** to 
 
 **The Pi sometimes shows the Network Install screen instead of booting**
 
-On Raspberry Pi OS Trixie Lite the red/white Network Install screen can appear at power-on even with a valid SD card. Disable it in the EEPROM:
+On Raspberry Pi OS Trixie Lite the red/white Network Install screen can appear at power-on even with a valid SSD or SD card. Disable it in the EEPROM:
 
 ```
 sudo rpi-eeprom-config --edit
