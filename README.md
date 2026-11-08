@@ -9,7 +9,7 @@ VectorPie is a Raspberry Pi image for the BeamForge and USB-DVG vector generator
 - **Headless** — VectorPie starts at power-on, straight into the game menu: no monitor, keyboard or desktop needed on the Pi.
 - **Marquee display** — VectorPie turns an HDMI screen into a live marquee, showing the artwork of the game you're on.
 - **BeamForge and USB-DVG** — VectorPie drives a real vector monitor. With BeamForge, games draw about 20 million points a second for a richer, steadier picture.
-- **Board setup from the menu** — VectorPie can update and configure your BeamForge or USB-DVG straight from the menu: its firmware, its own settings, CRT calibration. No need to reach for the buttons on the board.
+- **Board setup from the menu** — VectorPie allows the user to update and configure the BeamForge or USB-DVG from the settings menu. No need to push buttons on a board.
 - **High scores** — VectorPie shows each game's high scores right in the menu, so you know the score to beat.
 - **App store** — VectorPie can install new games with a few presses, online from the VectorPie app store or from a USB drive.
 - **LED lighting** — VectorPie can light each game's controls in its own colors, walk you through them with a voice guide, and play light shows to the beat of the music.
