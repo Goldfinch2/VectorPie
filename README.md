@@ -145,7 +145,14 @@ AdvanceMAME maps the connected hardware to each game's control types:
 
 ## LED Lighting
 
-VectorPie drives the control-panel LEDs itself: a game lights the controls it uses, in its own colors, and a voice guide tours them. Boards: **PacLED64**, **NanoLed**, **PacDrive**, **I-PAC Ultimate I/O**, **LED-Wiz 32** — several at once if needed. Setup is done once, on the cabinet.
+VectorPie can control the LEDs of your control panel's buttons and joysticks:
+
+- **Show the controls each game uses.** When you pick a game, only its buttons and joysticks light up, each in that game's own color. The launch button blinks to show what starts the game.
+- **Tell you what each control does.** Hold the launch button and a voice guide tours the panel: each control lights in turn while a voice says what it does (FIRE, THRUST, SHIELD...).
+- **Animate the panel.** Light shows play when the menu starts, when a game launches and while you browse a manufacturer.
+- **Dance to the music.** During the screensaver, the panel animates on the beat of the music.
+
+Supported boards: **PacLED64**, **NanoLed**, **PacDrive**, **I-PAC Ultimate I/O** and **LED-Wiz 32**, several at once if needed. Setup is done once, from the menu on the cabinet (Settings → LEDS).
 
 ### Connecting the board
 
