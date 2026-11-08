@@ -152,7 +152,7 @@ VectorPie can control the LEDs of your control panel's buttons and joysticks:
 - **Animate the panel.** Light shows play when the menu starts, when a game launches and while you browse a manufacturer.
 - **Dance to the music.** During the screensaver, the panel animates on the beat of the music.
 
-Supported boards: **PacLED64**, **NanoLed**, **PacDrive**, **I-PAC Ultimate I/O** and **LED-Wiz 32**, several at once if needed. Setup is done once, from the menu on the cabinet (Settings → LEDS).
+Supported boards: **PacLED64**, **NanoLed**, **PacDrive** and **I-PAC Ultimate I/O**, several at once if needed. Setup is done once, from the menu on the cabinet (Settings → LEDS).
 
 ### Connecting the board
 
