@@ -114,31 +114,30 @@ Controls are mapped **once, in AdvanceMAME**, and used everywhere: the menu, eve
 
 Nothing is written until **SAVE AND EXIT**; leaving with unsaved changes asks first. The bindings go to the AdvanceMAME configuration, so they apply everywhere.
 
-The menu and the native Pi games read these actions. **Read by** shows who honors each — the menu and Geometry Wars (`opengw`):
+The menu reads these actions:
 
-| AdvanceMAME Action | Menu Function | Default Key | Read by |
-|---|---|---|---|
-| `ui_up` | Up | Up Arrow | menu |
-| `ui_down` | Down | Down Arrow | menu |
-| `ui_left` | Left / previous manufacturer | Left Arrow | menu |
-| `ui_right` | Right / next manufacturer | Right Arrow | menu |
-| `ui_select` | Launch | 1, Enter, or Left Ctrl | menu |
-| `ui_configure` | Settings | Tab | menu |
-| `ui_pause` | (not used by menu) | P | opengw (pause) |
-| `ui_cancel` | Quit / exit | Escape | menu, opengw |
-| `p2_start` | Next track | 2 | menu |
+| AdvanceMAME Action | Menu Function | Default Key |
+|---|---|---|
+| `ui_up` | Up | Up Arrow |
+| `ui_down` | Down | Down Arrow |
+| `ui_left` | Left / previous manufacturer | Left Arrow |
+| `ui_right` | Right / next manufacturer | Right Arrow |
+| `ui_select` | Launch | 1, Enter, or Left Ctrl |
+| `ui_configure` | Settings | Tab |
+| `ui_cancel` | Quit / exit | Escape |
+| `p2_start` | Next track | 2 |
 
 ### Game Controls
 
-AdvanceMAME maps the connected hardware to each game's control types. **Read by** shows which native Pi games honor each action; AdvanceMAME games read all of them.
+AdvanceMAME maps the connected hardware to each game's control types:
 
-| Control Type | AdvanceMAME Action | Typical Input | Read by |
-|---|---|---|---|
-| Directional movement | `p1_up/down/left/right` | Joystick, arrows | opengw (move) |
-| Twin-stick aim | `p2_up/down/left/right` | Second joystick, R/F/D/G | opengw (aim) |
-| Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button | opengw |
-| Player 1 start | `start1` | 1 | opengw |
-| Insert coin | `coin1` | 5 | menu, opengw |
+| Control Type | AdvanceMAME Action | Typical Input |
+|---|---|---|
+| Directional movement | `p1_up/down/left/right` | Joystick, arrows |
+| Twin-stick aim | `p2_up/down/left/right` | Second joystick, R/F/D/G |
+| Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button |
+| Player 1 start | `start1` | 1 |
+| Insert coin | `coin1` | 5 |
 
 > A mouse and an analog joystick can both be connected. For analog-stick games (Star Wars, Empire Strikes Back, Lunar Lander, Tail Gunner, Red Baron), **CONTROLS → ADSTICK** picks which drives the control — JOYSTICK or MOUSE. Spinners and trackballs are unaffected.
 
@@ -334,7 +333,7 @@ Reflashing the SD card loses your settings. Save them to a USB drive first, then
 - **gamelist.ini** — your game list
 - **LED settings** — panel wiring, cabinet colors, game colors, light shows
 - **Theme tracks** you've added
-- **High scores** — `.hi` and NVRAM files, Geometry Wars saves, and those of installed game packages
+- **High scores** — `.hi` and NVRAM files, and those of installed game packages
 - **Wi-Fi connections**
 - **Hostname** — reapplied live, so the `.local` and share names carry over
 - **SSH host keys** — so SSH clients don't complain after reflashing
