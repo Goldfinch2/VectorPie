@@ -4,7 +4,7 @@
 
 ## Overview
 
-VectorPie is a Raspberry Pi image for the BeamForge and USB-DVG vector generator boards. It boots straight into a game menu driven entirely from the arcade controls — no keyboard, mouse, or desktop. It also works without a vector board, on an HDMI monitor.
+VectorPie is a Raspberry Pi image for the BeamForge and USB-DVG vector generator boards. It boots straight into a game menu driven entirely from the arcade controls — no keyboard, mouse, or desktop.
 
 - **Headless** — VectorPie starts at power-on, straight into the game menu: no monitor, keyboard or desktop needed on the Pi.
 - **Marquee display** — VectorPie turns an HDMI screen into a live marquee, showing the artwork of the game you're on.
@@ -25,7 +25,7 @@ Runs on the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
 ## Supported Hardware
 
-VectorPie runs on a Raspberry Pi 4 or 5 and drives a vector monitor through a BeamForge or USB-DVG board. Without a vector board, it runs on an HDMI monitor.
+VectorPie runs on a Raspberry Pi 4 or 5 and drives a vector monitor through a BeamForge or USB-DVG board.
 
 - Raspberry Pi 4 or 5, 1 GB or more. Raspberry Pi 5 recommended for better performance.
 - **An SSD, strongly recommended:** on a Pi 5, an M.2 NVMe SSD on an M.2 NVMe HAT. An SSD is much more reliable than an SD card for a cabinet that runs for hours every day, and faster too. Choose a drive known to work with the Raspberry Pi 5: not every NVMe SSD does.
