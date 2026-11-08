@@ -13,6 +13,8 @@ VectorPie is a Raspberry Pi image for the BeamForge and USB-DVG vector generator
 - **High scores** — read from the MAME save files and shown in the hint bar
 - **App store** — games made with the VectorPie SDK install from the menu: online from the VectorPie app store, from a USB drive or over the network
 - **LED lighting** — each game lights its own controls in its own colors, with a voice-guided tour and beat-synced light shows
+- **Background music** — a theme or your own playlist while you browse, with DJ breaks between tracks
+- **Screensavers** — the built-in one, or screensaver apps from the app store that react to the music
 - **Wi-Fi** — set up from the menu
 - **Remote access** — SSH and a Windows network share
 - **Updates from the menu** — with automatic rollback if the new version fails to boot
@@ -22,6 +24,8 @@ Runs on the **Raspberry Pi 4** and **Raspberry Pi 5**.
 ---
 
 ## Supported Hardware
+
+VectorPie runs on a Raspberry Pi. To play on a real vector monitor, the Pi connects to it through a vector board: BeamForge or USB-DVG. Without one, the menu and games show on an HDMI monitor.
 
 - Raspberry Pi 4 or 5, 1 GB or more. Raspberry Pi 5 recommended for better performance.
 - 32 GB SD card or larger. (Pi 5) M.2 NVMe HAT and M.2 NVMe SSD recommended for performance and reliability.
@@ -35,6 +39,8 @@ Installation guides:
 ---
 
 ## Download & Installation
+
+VectorPie comes as one image file: write it to an SD card or SSD, put it in the Pi, and the cabinet boots into the game menu. After that, VectorPie and the vector board's firmware are updated from the menu, with no reflashing.
 
 ### VectorPie Image
 
@@ -63,7 +69,7 @@ Both boards are updated from the menu: **Settings → DVG → UPDATE...** (see [
 
 ## Menu Navigation
 
-Keyboard or arcade controls, as mapped in AdvanceMAME. The hint bar at the bottom scrolls the available controls and the selected game's high scores.
+The whole cabinet is used from its arcade controls: browse the games, launch one, change the music, open the settings. A keyboard works too. The controls are the ones mapped in AdvanceMAME. The hint bar at the bottom scrolls the available controls and the selected game's high scores.
 
 > A keyboard may be needed once, to map the arcade controls inside AdvanceMAME.
 
@@ -82,7 +88,7 @@ Keyboard or arcade controls, as mapped in AdvanceMAME. The hint bar at the botto
 
 ## Menu Layout
 
-Games are listed by manufacturer:
+The menu groups the games by manufacturer, the way an arcade collection is usually sorted. Revisions of the same game (regions, prototypes) are grouped under one entry, so the list stays short:
 
 - The **manufacturer header** is the top entry; Left/Right on it switches manufacturer.
 - **Games** are listed below it. A game with several ROM variants shows arrows; Left/Right cycles them.
@@ -92,13 +98,13 @@ Games are listed by manufacturer:
 
 ## Marquee Display
 
-The HDMI output shows the highlighted game's marquee, or the manufacturer's logo on a header. A game without artwork gets a default image. Scaling (Fit, Stretch, Zoom) is set in Settings → DISPLAY.
+An HDMI screen in the marquee area of the cabinet becomes a live marquee. The HDMI output shows the highlighted game's marquee, or the manufacturer's logo on a header. A game without artwork gets a default image. Scaling (Fit, Stretch, Zoom) is set in Settings → DISPLAY. When a game has a preview video, it plays over the marquee when you land on it.
 
 ---
 
 ## Input Mapping
 
-Controls are mapped **once, in AdvanceMAME**, and used everywhere: the menu, every AdvanceMAME game, and the games built natively for the Pi. To remap, launch any AdvanceMAME game and use its input configuration menu; the change applies on the next launch.
+You set up your controls once, and they work everywhere. Controls are mapped **once, in AdvanceMAME**, and used everywhere: the menu, every AdvanceMAME game, and the games built natively for the Pi. To remap, launch any AdvanceMAME game and use its input configuration menu; the change applies on the next launch.
 
 > With a vector board (BeamForge or USB-DVG), AdvanceMAME's in-game menus — including input configuration — are mirrored on the vector display, so you can rebind while watching the monitor. Bindings show there in short form (`J:BTN1`, `LCTRL`, `P:1` = keypad 1); HDMI shows the full names.
 
@@ -211,6 +217,8 @@ Nothing is written until **SAVE AND EXIT**; leaving with unsaved changes asks fi
 
 ## Wi-Fi Configuration
 
+VectorPie connects to Wi-Fi from the menu, with the arcade controls; no keyboard needed. A network connection gives you the app store, software and firmware updates, and access to the Pi from a PC. A network cable works without any setup.
+
 1. Open Settings and go to **NETWORK** — networks are scanned in the background
 2. Left/Right on **WIFI NETWORK** picks yours
 3. Select on **WIFI PASSWORD** to edit: **Up/Down** cycles the character under the cursor (the last choice, **DEL**, deletes it), **Left/Right** moves along (Right past the end adds a character), **Select** confirms it, **Cancel** saves
@@ -221,6 +229,8 @@ Connection status and IP address are shown at the top of the section.
 ---
 
 ## Background Music
+
+VectorPie turns your cabinet into a jukebox. Your own music plays while you browse the games, with DJ breaks between tracks like a radio station, and steps aside while you play. When the cabinet sits idle, the LED panel and the screensaver move to the beat.
 
 **Settings → MUSIC → TYPE** picks the mode:
 
@@ -259,6 +269,8 @@ The drive can carry a `vectorpie_backup.tar.gz` too. The row reports `ADDED 23/4
 
 ## Idle Dimming & Screensaver
 
+When nobody plays, the cabinet takes care of itself: the menu fades out of the way, then a screensaver starts, protects the tube, and keeps the music and lights going. Any control brings the menu back.
+
 | Timeout | Behavior |
 |---|---|
 | Stop pressing keys | Menu text fades over the MENU FADE time (default 2.5 s); the marquee brightens; hints disappear |
@@ -266,18 +278,28 @@ The drive can carry a `vectorpie_backup.tar.gz` too. The row reports `ADDED 23/4
 
 The HDMI screensaver shows the current and next track titles, and that Player 2 Start skips. The vector board (BeamForge or USB-DVG) shows drifting asteroids and a bouncing VectorPie logo. With an LED panel, the SCREENSAVER light show plays (see [Light shows](#light-shows)). Any control other than Player 2 Start returns to the menu.
 
+### Screensaver apps
+
+Screensaver apps replace the built-in screensaver on the vector monitor. They react to the music: Spectrum shows it as a spectrum analyzer that bumps on every beat, Pulse as a star of the spectrum with rings on every beat, VU Meters on two analog meters, left and right. The music, DJ breaks and light show go on as usual, and HDMI shows the app's marquee.
+
+- **Settings → SCREENSAVERS → INSTALL...** installs them, online from the app store or from a USB drive, like games (see [Game Packages](#game-packages)). **REMOVE...** removes one.
+- **SCREENSAVERS → SELECT** picks the screensaver: **VECTORPIE** (the built-in one), an installed app, or **RANDOM** (a different one each time).
+
 ---
 
 ## Settings Menu
 
-**Tab** opens Settings; Tab or **Escape** closes it. Up/Down moves, Left/Right adjusts, Select toggles or opens. With a vector board (BeamForge or USB-DVG), Settings is mirrored on the vector display.
+Everything in VectorPie is set from one Settings menu, with the arcade controls: games and screensavers, backups, updates, the vector board, controls, sound, display, music, LEDs and network. **Tab** opens Settings; Tab or **Escape** closes it. Up/Down moves, Left/Right adjusts, Select toggles or opens. With a vector board (BeamForge or USB-DVG), Settings is mirrored on the vector display.
 
-Sections: GAMES, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MUSIC, EFFECTS, LEDS, NETWORK.
+Sections: GAMES, SCREENSAVERS, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MUSIC, EFFECTS, LEDS, NETWORK.
 
 | Section | Setting | Description |
 |---|---|---|
 | GAMES    | INSTALL GAMES... | Install or update game packages, from a USB drive, the network or online. See [Game Packages](#game-packages). |
 | GAMES    | REMOVE GAME... | Remove an installed game, keeping its high scores or not. |
+| SCREENSAVERS | INSTALL...  | Install or update screensaver apps. See [Screensaver apps](#screensaver-apps). |
+| SCREENSAVERS | REMOVE...   | Remove an installed screensaver app. |
+| SCREENSAVERS | SELECT      | The screensaver: VECTORPIE (built-in), an installed app, or RANDOM. |
 | BACKUP   | SAVE ⏏         | Save settings to a USB drive. See [Backup Save / Restore](#backup-save--restore). |
 | BACKUP   | RESTORE ⏏      | Restore them from the drive. |
 | SYSTEM   | VECTORPIE UPDATE... | The update page: checks online, shows the release notes, UPDATE applies. See [Software Updates](#software-updates). |
@@ -331,7 +353,7 @@ Changes are saved when Settings closes.
 
 ## Backup Save / Restore
 
-Reflashing the SD card loses your settings. Save them to a USB drive first, then restore on the new image.
+VectorPie can save your whole setup to a USB drive: controls, settings, game list, LED panel, high scores, Wi-Fi and more. Restore it on a fresh image, and everything is back as it was. Reflashing the SD card loses your settings, so save them first.
 
 ### What is backed up
 
@@ -372,7 +394,7 @@ Any mounted USB drive works. The row reports the result.
 
 ## Software Updates
 
-VectorPie updates itself over the internet — no reflashing.
+VectorPie updates itself over the internet, from the menu, with no reflashing and no PC. It shows what's new before you update, keeps your settings, and goes back to the previous version by itself if the new one fails to start. The vector board's firmware is updated the same way.
 
 ### How to update
 
@@ -402,7 +424,7 @@ VectorPie keeps two copies of itself. If the new one fails to boot, the Pi rever
 
 ## BeamForge and USB-DVG Support
 
-The vector board — BeamForge or USB-DVG — renders the menu as vector text on a real vector monitor, with manufacturer logos and an asteroids screensaver, alongside the marquee on HDMI. It is detected automatically and can be turned off in Settings. It can also name a default game to launch at startup.
+With a vector board, VectorPie plays on a real vector monitor: the arcade games through AdvanceMAME, the app store games, and the menu itself. The vector board — BeamForge or USB-DVG — renders the menu as vector text on a real vector monitor, with manufacturer logos and an asteroids screensaver, alongside the marquee on HDMI. It is detected automatically and can be turned off in Settings. It can also name a default game to launch at startup.
 
 BeamForge is the next-generation board: about 20 million points a second against the USB-DVG's 3 million. Games draw more on it, at higher frame rates.
 
@@ -453,7 +475,9 @@ Games with native color (Tempest, Major Havoc, Star Wars, Gravitar, Black Widow,
 
 ## Game Packages
 
-Games made with the VectorPie SDK come as packages: one `.vpk` file per game.
+Beyond the arcade classics, VectorPie installs new games made for the vector monitor, from the VectorPie app store, with a few presses. They show in the menu like any other game, with their marquee, high scores, LED colors and voice control guide, and the app store offers their updates.
+
+Games made with the VectorPie SDK come as packages: one `.vpk` file per game. Screensaver apps install the same way (`.vps` files, see [Screensaver apps](#screensaver-apps)).
 
 **Settings → GAMES → INSTALL...** installs them:
 
@@ -477,13 +501,13 @@ Installed games live in `/persistent/games`, which updates don't touch. A USB ba
 
 ## High Scores
 
-The hint bar shows the selected game's high scores, read from its MAME `.hi` and `.nv` save files (or a game package's own high-score file): the label in gold, ranks and scores in cyan, names in white, alternating with the control hints in gray. Both can be turned off in Settings → DISPLAY.
+VectorPie shows each game's high scores right in the menu, so you know the score to beat before you play. The hint bar shows the selected game's high scores, read from its MAME `.hi` and `.nv` save files (or a game package's own high-score file): the label in gold, ranks and scores in cyan, names in white, alternating with the control hints in gray. Both can be turned off in Settings → DISPLAY.
 
 ---
 
 ## Launching Games
 
-Select fades the music, hands over the display, and launches the game. When it exits the menu resumes, and a playlist track picks up where it was. Mappings or settings changed inside AdvanceMAME apply at once.
+Launching a game is one press, and leaving it brings you right back to the menu. Select fades the music, hands over the display, and launches the game. When it exits the menu resumes, and a playlist track picks up where it was. Mappings or settings changed inside AdvanceMAME apply at once.
 
 ---
 
