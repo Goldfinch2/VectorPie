@@ -238,10 +238,13 @@ Connection status and IP address are shown at the top of the section.
 
 VectorPie plays music while you browse the games: a looping theme, or your own playlist with DJ breaks between tracks. The music pauses during a game and resumes after it. With beat maps, the LED light show and the screensaver apps follow the beat.
 
-**Settings → MUSIC → TYPE** picks the mode:
+**Settings → MENU MUSIC & SOUNDS → TYPE** picks the mode:
 
-- **THEME** — one looping track from the themes directory, chosen with **MUSIC → THEME**; it previews as you cycle.
+- **THEME** — one looping track from the themes directory, chosen with **THEME**; it previews as you cycle.
 - **PLAYLIST** — every track in the playlist directory, in alphabetical or shuffled order (**PLAYLIST SHUFFLE**). The next track starts when one ends, even with Settings open.
+- **NONE** — no background music.
+
+**MENU MUSIC** sets the menu's music volume, **GAME MUSIC** (in AUDIO) the app store games'.
 
 A launched game pauses the playlist; it resumes where it was when the game exits. The current and next titles show on the screensaver.
 
@@ -249,13 +252,13 @@ A launched game pauses the playlist; it resumes where it was when the game exits
 
 ### Beat maps
 
-The screensaver light show follows the beat once each track has a **beat map**. **Settings → MUSIC → GENERATE BEAT MAPS...** makes them, about half a minute per track; **Cancel** stops it and a later run picks up where it left off. A track without a map gets the breathing show.
+The screensaver light show follows the beat once each track has a **beat map**. **Settings → MENU MUSIC & SOUNDS → GENERATE BEAT MAPS...** makes them, about half a minute per track; **Cancel** stops it and a later run picks up where it left off. A track without a map gets the breathing show.
 
 A map is a `.beats` file beside its track. Importing from USB copies any already on the drive.
 
 ### Importing from USB
 
-**Settings → MUSIC → IMPORT ⏏** copies `.mp3` / `.ogg` tracks from a drive's `playlist/` folder into the playlist, its `themes/` folder into the themes, and its `radio/` folder (DJ announcements) into `/persistent/vector_pie_menu_dir/radio`; a missing folder is skipped. Left/Right picks **ADD** (keep what's there, add the rest) or **REPLACE** (empty the destination first). REPLACE asks for a second press.
+**Settings → MENU MUSIC & SOUNDS → IMPORT ⏏** copies `.mp3` / `.ogg` tracks from a drive's `playlist/` folder into the playlist, its `themes/` folder into the themes, and its `radio/` folder (DJ announcements) into `/persistent/vector_pie_menu_dir/radio`; a missing folder is skipped. Left/Right picks **ADD** (keep what's there, add the rest) or **REPLACE** (empty the destination first). REPLACE asks for a second press.
 
 Prepare the drive:
 
@@ -297,15 +300,20 @@ Screensaver apps replace the built-in screensaver on the vector monitor. They re
 
 VectorPie is configured from its settings menu, with the cabinet controls: games and screensavers, backups, updates, the vector board, controls, audio, display, music, LEDs and network. **Tab** opens Settings; Tab or **Escape** closes it. Up/Down moves, Left/Right adjusts, Select toggles or opens. With a vector board (BeamForge or USB-DVG), Settings is mirrored on the vector display.
 
-Sections: GAMES, SCREENSAVERS, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MUSIC, EFFECTS, LEDS, NETWORK.
+Sections: GAMES, SCREENSAVERS, AUDIO, BACKUP, SYSTEM, DVG, CONTROLS, DISPLAY, MENU MUSIC & SOUNDS, LEDS, NETWORK.
 
 | Section | Setting | Description |
 |---|---|---|
-| GAMES    | INSTALL GAMES... | Install or update game packages, from a USB drive, the network or online. See [Game Packages](#game-packages). |
-| GAMES    | REMOVE GAME... | Remove an installed game, keeping its high scores or not. |
+| GAMES    | INSTALL...     | Install or update game packages, from a USB drive, the network or online. See [Game Packages](#game-packages). |
+| GAMES    | REMOVE...      | Remove an installed game, keeping its high scores or not. |
 | SCREENSAVERS | INSTALL...  | Install or update screensaver apps. See [Screensaver apps](#screensaver-apps). |
 | SCREENSAVERS | REMOVE...   | Remove an installed screensaver app. |
 | SCREENSAVERS | SELECT      | The screensaver: VECTORPIE (built-in), an installed app, or RANDOM. |
+| AUDIO    | MASTER         | System volume. A ding plays at the new level. |
+| AUDIO    | GAME MUSIC     | Music volume of the app store games. |
+| AUDIO    | GAME EFFECTS   | Sound effects volume of the app store games. |
+| AUDIO    | OUTPUT         | The audio device in use: `USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` |
+| AUDIO    | MAME SOUND QUALITY | MAME audio: **HIGH** (48 kHz), **MEDIUM** (22 kHz, smoother on demanding games), **LOW** (11 kHz, maximum performance; speech games sound muffled) |
 | BACKUP   | SAVE ⏏         | Save settings to a USB drive. See [Backup Save / Restore](#backup-save--restore). |
 | BACKUP   | RESTORE ⏏      | Restore them from the drive. |
 | SYSTEM   | VECTORPIE UPDATE... | The update page: checks online, shows the release notes, UPDATE applies. See [Software Updates](#software-updates). |
@@ -316,30 +324,28 @@ Sections: GAMES, SCREENSAVERS, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MU
 | DVG      | FIRMWARE VARIANT | USB-DVG only: firmware variant on the board, STANDARD or ARCADE CONTROL (BeamForge has none). Used by UPDATE... (below). Newer firmware reports it and this follows. |
 | DVG      | UPDATE...      | The firmware update page (for the FIRMWARE VARIANT): checks online, shows the release notes, UPDATE flashes. |
 | DVG      | SETTINGS...    | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. |
-| DVG      | CRT CALIBRATION | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
+| DVG      | CRT CALIBRATION... | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
 | DVG      | OVERLAY        | Color overlays: DISABLED / COLORING / ARTWORK / BOTH (see below) |
 | DVG      | AUTOSTART GAME | Launch the board's default game at startup |
 | CONTROLS | ZERO DEADZONE  | Removes the joystick deadzone at the kernel level. Needed by some analog controllers (Alan-1 Star Wars yoke). |
 | CONTROLS | ADSTICK        | Which device drives analog-stick games: JOYSTICK or MOUSE. |
-| CONTROLS | CALIBRATE      | Left/Right picks the joystick, Select opens its calibration page. Move all axes to their extremes, let go, press Select — the resting position becomes center. Reapplied at every startup. Grayed with no joystick. |
+| CONTROLS | CALIBRATE...   | Left/Right picks the joystick, Select opens its calibration page. Move all axes to their extremes, let go, press Select — the resting position becomes center. Reapplied at every startup. Grayed with no joystick. |
 | CONTROLS | CONFIGURE INPUTS... | Rebind the MAME controls from the menu. See [Rebinding from the menu](#rebinding-from-the-menu). |
-| AUDIO    | OUTPUT         | The audio device in use: `USB`, `HEADPHONE`, `SOUND HAT`, or `DEFAULT` |
-| AUDIO    | MASTER VOLUME  | System volume |
-| AUDIO    | MAME SOUND QUALITY | MAME audio: **HIGH** (48 kHz), **MEDIUM** (22 kHz, smoother on demanding games), **LOW** (11 kHz, maximum performance; speech games sound muffled) |
 | DISPLAY  | MARQUEE        | Marquee scaling: FIT / STRETCH / ZOOM / FIT WIDTH / FIT HEIGHT |
 | DISPLAY  | MENU ON HDMI   | With a vector board (BeamForge or USB-DVG), also show the game menu on HDMI. Off: HDMI shows only the marquee (and hint bar). |
 | DISPLAY  | SHOW GAME PREVIEW | Play a game's preview video (`/usr/local/share/advance/video/<rom>.mp4`) over the marquee when you land on it. Default on. |
 | DISPLAY  | MENU FADE      | Fade-out time for the menu text: 1.0–15.0 s. Default 2.5 s. |
 | DISPLAY  | HINTS          | Control hints in the hint bar |
 | DISPLAY  | HIGH SCORES    | High scores in the hint bar |
-| MUSIC    | VOLUME         | Music volume |
-| MUSIC    | TYPE           | **THEME** or **PLAYLIST** |
-| MUSIC    | THEME          | The looping theme track; previews as you cycle. Grayed with PLAYLIST. |
-| MUSIC    | PLAYLIST SHUFFLE | Random or alphabetical order. Grayed with THEME. |
-| MUSIC    | IMPORT ⏏       | Copy tracks from a USB drive — `playlist/`, `themes/`, and `radio/` folders. Left/Right: **ADD** or **REPLACE**; REPLACE asks twice. |
-| MUSIC    | GENERATE BEAT MAPS... | Make the beat maps the screensaver light show follows. Cancel stops and keeps what's done. See [Beat maps](#beat-maps). |
-| EFFECTS  | ENABLED        | Navigation and select sounds |
-| EFFECTS  | VOLUME         | Their volume |
+| MENU MUSIC & SOUNDS | MENU MUSIC | Volume of the menu's music. A ding plays at the new level. |
+| MENU MUSIC & SOUNDS | TYPE   | **THEME**, **PLAYLIST** or **NONE** (no music) |
+| MENU MUSIC & SOUNDS | THEME  | The looping theme track; previews as you cycle. Grayed with PLAYLIST and NONE. |
+| MENU MUSIC & SOUNDS | PLAYLIST SHUFFLE | Random or alphabetical order. Grayed with THEME and NONE. |
+| MENU MUSIC & SOUNDS | IMPORT ⏏ | Copy tracks from a USB drive — `playlist/`, `themes/`, and `radio/` folders. Left/Right: **ADD** or **REPLACE**; REPLACE asks twice. |
+| MENU MUSIC & SOUNDS | GENERATE BEAT MAPS... | Make the beat maps the screensaver light show follows. Cancel stops and keeps what's done. See [Beat maps](#beat-maps). |
+| MENU MUSIC & SOUNDS | SOUND EFFECTS | The menu's navigation and select sounds on/off |
+| MENU MUSIC & SOUNDS | MENU EFFECTS | Their volume. A ding plays at the new level. Grayed with SOUND EFFECTS off. |
+| LEDS     | LED EFFECTS    | Light each game's controls when it launches. |
 | LEDS     | LED SETUP      | Wire the LED panel. See [LED Lighting](#led-lighting). |
 | LEDS     | CABINET COLORS | Colors for the coin, start and menu lamps. See [Cabinet colors](#cabinet-colors). |
 | LEDS     | GAME COLORS    | Recolor a game's controls. See [Game colors](#game-colors). |
@@ -348,6 +354,7 @@ Sections: GAMES, SCREENSAVERS, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MU
 | NETWORK  | WIFI           | Wi-Fi radio on/off. |
 | NETWORK  | HOSTNAME       | The Pi's name on the network, edited like the Wi-Fi password (lowercase, digits, hyphens). Applies live, including the `.local` name. |
 | NETWORK  | CONNECTION     | Current connection and SSID |
+| NETWORK  | STRENGTH       | The Wi-Fi signal, 1 to 4 bars |
 | NETWORK  | IP ADDRESS     | Current IP address |
 | NETWORK  | WIFI NETWORK   | Pick a network from the scan. |
 | NETWORK  | WIFI PASSWORD  | Its password. See [Wi-Fi Configuration](#wi-fi-configuration). |
@@ -521,7 +528,7 @@ Even if the computer can mount the Pi's Linux partitions, don't. Files written w
 
 - **Network share** — `\\<pi-ip-address>\pi` (see [Accessing the Pi from a Windows PC](#accessing-the-pi-from-a-windows-pc))
 - **SSH** — `ssh pi@<pi-ip-address>`
-- **USB drive** — music through **MUSIC → IMPORT ⏏**, settings through **BACKUP → SAVE ⏏ / RESTORE ⏏**
+- **USB drive** — music through **MENU MUSIC & SOUNDS → IMPORT ⏏**, settings through **BACKUP → SAVE ⏏ / RESTORE ⏏**
 
 ---
 

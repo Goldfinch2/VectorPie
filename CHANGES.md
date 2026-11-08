@@ -1,3 +1,30 @@
+### vectorpie-1.1.14
+
+
+● What's new
+
+  Menu and firmware updates now show the download progress in percent.
+
+  Importing music from a USB drive now shows the copy progress in percent.
+
+  GENERATE BEAT MAPS now shows its progress on the vector monitor too.
+
+  Restoring a backup no longer brings back the high scores of games that are not installed.
+
+  Settings reorganized: AUDIO is near the top with all the game volumes, and MUSIC and EFFECTS are now one section, MENU MUSIC & SOUNDS.
+
+  The menu's music and sound effects have their own volumes, MENU MUSIC and MENU EFFECTS. GAME MUSIC and GAME EFFECTS set the app store games' volumes.
+
+  Volume sliders play a ding at the new level.
+
+  New NONE choice for the menu music TYPE: no background music.
+
+  New STRENGTH row in Settings -> NETWORK: the Wi-Fi signal in bars.
+
+  The PRESS TO PLAY hint no longer shows once a game has been played.
+
+
+
 ### vectorpie-1.1.13
 
 
