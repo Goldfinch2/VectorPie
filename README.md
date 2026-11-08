@@ -9,6 +9,7 @@ VectorPie is a Raspberry Pi image for the BeamForge and USB-DVG vector generator
 - **Headless** — VectorPie starts at power-on, straight into the game menu: no monitor, keyboard or desktop needed on the Pi.
 - **Marquee display** — VectorPie turns an HDMI screen into a live marquee, showing the artwork of the game you're on.
 - **BeamForge and USB-DVG** — VectorPie drives a real vector monitor. With BeamForge, games draw about 20 million points a second for a richer, steadier picture.
+- **Board setup from the menu** — VectorPie can update and configure your BeamForge or USB-DVG straight from the menu: its firmware, its own settings, CRT calibration. No need to reach for the buttons on the board.
 - **High scores** — VectorPie shows each game's high scores right in the menu, so you know the score to beat.
 - **App store** — VectorPie can install new games with a few presses, online from the VectorPie app store or from a USB drive.
 - **LED lighting** — VectorPie can light each game's controls in its own colors, walk you through them with a voice guide, and play light shows to the beat of the music.
@@ -309,7 +310,7 @@ Sections: GAMES, SCREENSAVERS, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MU
 | DVG      | DVG REFRESH    | Refresh rate, 30–60 Hz. Default 40. Applies as you adjust — raise for a steadier, brighter picture, lower if the display can't keep up. |
 | DVG      | FIRMWARE VARIANT | USB-DVG only: firmware variant on the board, STANDARD or ARCADE CONTROL (BeamForge has none). Used by UPDATE... (below). Newer firmware reports it and this follows. |
 | DVG      | UPDATE...      | The firmware update page (for the FIRMWARE VARIANT): checks online, shows the release notes, UPDATE flashes. |
-| DVG      | SETTINGS...    | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. Needs firmware 1.14R2 or later. |
+| DVG      | SETTINGS...    | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. |
 | DVG      | CRT CALIBRATION | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
 | DVG      | OVERLAY        | Color overlays: DISABLED / COLORING / ARTWORK / BOTH (see below) |
 | DVG      | AUTOSTART GAME | Launch the board's default game at startup |
@@ -424,7 +425,7 @@ VectorPie keeps two copies of itself. If the new one fails to boot, the Pi rever
 
 ## BeamForge and USB-DVG Support
 
-VectorPie drives a real vector monitor through a BeamForge or USB-DVG board: the menu, the MAME games and the app store games. The board renders the menu as vector text on a real vector monitor, with manufacturer logos and an asteroids screensaver, alongside the marquee on HDMI. It is detected automatically and can be turned off in Settings. It can also name a default game to launch at startup.
+VectorPie drives a real vector monitor through a BeamForge or USB-DVG board: the menu, the MAME games and the app store games. VectorPie allows the user to update and configure the board from the settings menu. No need to push buttons on a board. The board renders the menu as vector text on a real vector monitor, with manufacturer logos and an asteroids screensaver, alongside the marquee on HDMI. It is detected automatically and can be turned off in Settings. It can also name a default game to launch at startup.
 
 BeamForge is the next-generation board: about 20 million points a second against the USB-DVG's 3 million. Games draw more on it, at higher frame rates.
 
