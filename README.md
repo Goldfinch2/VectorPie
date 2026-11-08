@@ -107,8 +107,6 @@ VectorPie shows the selected game's marquee on an HDMI screen, or the manufactur
 
 VectorPie shares its control mappings with MAME: the menu, every MAME game and the app store games use the same mappings. They can be remapped in the settings menu (see [Rebinding from the menu](#rebinding-from-the-menu)) or in any MAME game's input configuration menu; the change applies on the next launch.
 
-> With a vector board (BeamForge or USB-DVG), MAME's in-game menus — including input configuration — are mirrored on the vector display, so you can rebind while watching the monitor. Bindings show there in short form (`J:BTN1`, `LCTRL`, `P:1` = keypad 1); HDMI shows the full names.
-
 ### Rebinding from the menu
 
 **Settings → CONTROLS → CONFIGURE INPUTS...** rebinds the common controls without a keyboard or a game: UI CONFIG and UI CANCEL first, then the player controls (P1/P2 directions, fire, start, coin, pause), each with its binding.
