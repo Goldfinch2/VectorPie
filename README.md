@@ -109,7 +109,7 @@ VectorPie shares its control mappings with MAME: the menu, every MAME game and t
 
 ### Rebinding from the menu
 
-**Settings → CONTROLS → CONFIGURE INPUTS...** rebinds the common controls without a keyboard or a game: UI CONFIG and UI CANCEL first, then the player controls (P1/P2 directions, fire, start, coin, pause), each with its binding.
+**Settings → CONTROLS → CONFIGURE INPUTS...** rebinds the common controls without a keyboard or a game: UI CONFIG, UI CANCEL and UI SELECT first, then the player controls (P1/P2 directions, buttons 1 and 2, start, coin), UI PAUSE and SERVICE, each with its binding.
 
 - Highlight a control, press **Select**, then press the key, button, or stick direction. The binding builds up live (`p` then `6` gives `p or 6`).
 - Press several inputs for "or" alternatives.
@@ -129,6 +129,7 @@ The menu reads these actions:
 | `ui_right` | Right / next manufacturer | Right Arrow |
 | `ui_select` | Launch | 1, Enter, or Left Ctrl |
 | `ui_configure` | Settings | Tab |
+| `service` | Settings (also) | F2 |
 | `ui_cancel` | Quit / exit | Escape |
 | `p2_start` | Next track | 2 |
 
@@ -143,6 +144,9 @@ MAME maps the connected hardware to each game's control types:
 | Fire / action | `p1_button1` | Left Ctrl, mouse button, joystick button |
 | Player 1 start | `start1` | 1 |
 | Insert coin | `coin1` | 5 |
+| Service menu | `service` | F2 |
+
+The service button opens a game's service menu: the test and settings mode of a MAME game, the settings or controls page of an app store game that has one. In the VectorPie menu it opens Settings.
 
 > A mouse and an analog joystick can both be connected. For analog-stick games (Star Wars, Empire Strikes Back, Lunar Lander, Tail Gunner, Red Baron), **CONTROLS → ADSTICK** picks which drives the control — JOYSTICK or MOUSE. Spinners and trackballs are unaffected.
 
