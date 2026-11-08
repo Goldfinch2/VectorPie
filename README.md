@@ -14,6 +14,7 @@ VectorPie is a Raspberry Pi image for the BeamForge and USB-DVG vector generator
 - **App store** — VectorPie can install new games with a few presses, online from the VectorPie app store or from a USB drive.
 - **LED lighting** — VectorPie can light each game's controls in its own colors, walk you through them with a voice guide, and play light shows to the beat of the music.
 - **Background music** — VectorPie can play a theme or your own playlist while you browse the games, with DJ breaks between tracks.
+- **Beat maps** — VectorPie can analyze your music tracks and find their beats and downbeats, so the light shows and the screensaver apps move right on the rhythm of the music.
 - **Screensavers** — VectorPie can protect the tube with its own screensaver, or with screensaver apps that dance to the music.
 - **Wi-Fi** — VectorPie connects to Wi-Fi from the menu, with the cabinet controls.
 - **Remote access** — VectorPie lets you reach the Pi from a PC, with SSH and a Windows network share.
