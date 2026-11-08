@@ -4,11 +4,11 @@
 
 ## Overview
 
-VectorPie is a Raspberry Pi image for the USB-DVG vector generator board. It boots straight into a game menu driven entirely from the arcade controls — no keyboard, mouse, or desktop. It also works without a USB-DVG, on an HDMI monitor.
+VectorPie is a Raspberry Pi image for the BeamForge and USB-DVG vector generator boards. It boots straight into a game menu driven entirely from the arcade controls — no keyboard, mouse, or desktop. It also works without a vector board, on an HDMI monitor.
 
 - **Headless** — runs at boot, no monitor or desktop needed on the Pi
 - **Marquee display** — the HDMI output shows the artwork for the highlighted game
-- **USB-DVG** — drives a real vector monitor; HDMI works without it
+- **BeamForge and USB-DVG** — drive a real vector monitor; HDMI works without them. BeamForge is the much faster board: about 20 million points a second
 - **One input mapping** — configured once in AdvanceMAME, used by the menu and every game
 - **High scores** — read from the MAME save files and shown in the hint bar
 - **App store** — games made with the VectorPie SDK install from the menu: online from the VectorPie app store, from a USB drive or over the network
@@ -42,9 +42,13 @@ Installation guides:
 2. Write it to the SD card with **balenaEtcher** ([download](https://etcher.balena.io/)): **Flash from file** → the `.img.gz` → **Select target** → **Flash!**
 3. Insert the card and power on. VectorPie boots into the game menu.
 
-### USB-DVG Firmware
+### Firmware
 
-Two variants:
+Both boards are updated from the menu: **Settings → DVG → UPDATE...** (see [Firmware updates](#firmware-updates)).
+
+**BeamForge** has one firmware for every board.
+
+**USB-DVG** has two variants:
 
 - **Standalone** — any cabinet or custom controls
 - **Arcade Control** — for the adapter card that connects to the original harness of an Asteroids, Asteroids Deluxe, Space Duel, Tempest, or Black Widow cabinet, so its buttons, CRT and coin inputs work natively
@@ -54,14 +58,6 @@ Two variants:
 | v1 / v2 | Standalone only |
 | v3 or later (standalone) | Standalone |
 | v3 or later (on adapter card) | Arcade Control |
-
-> On VectorPie 1.1.2 or later the firmware is updated from the menu (Settings → DVG → UPDATE...). The manual procedure below is for older versions only.
-
-Flash with **Teensy Loader** ([download](https://www.pjrc.com/teensy/loader.html)):
-
-1. Download the `.hex`: [Standalone 1.14R1](https://drive.google.com/file/d/1goWkwykACHfnLVW0sk0REXXBPuLQ8ldB/view?usp=drive_link) or [Arcade Control 1.14R1](https://drive.google.com/file/d/1tx1JvYTLceOkbxAkWTCNXsJ22BJQq2xp/view?usp=drive_link)
-2. **File → Open HEX File** in Teensy Loader
-3. Press the reset button on the Teensy; it flashes and resets
 
 ---
 
@@ -104,7 +100,7 @@ The HDMI output shows the highlighted game's marquee, or the manufacturer's logo
 
 Controls are mapped **once, in AdvanceMAME**, and used everywhere: the menu, every AdvanceMAME game, and the games built natively for the Pi. To remap, launch any AdvanceMAME game and use its input configuration menu; the change applies on the next launch.
 
-> With a USB-DVG, AdvanceMAME's in-game menus — including input configuration — are mirrored on the vector display, so you can rebind while watching the monitor. Bindings show there in short form (`J:BTN1`, `LCTRL`, `P:1` = keypad 1); HDMI shows the full names.
+> With a vector board (BeamForge or USB-DVG), AdvanceMAME's in-game menus — including input configuration — are mirrored on the vector display, so you can rebind while watching the monitor. Bindings show there in short form (`J:BTN1`, `LCTRL`, `P:1` = keypad 1); HDMI shows the full names.
 
 ### Rebinding from the menu
 
@@ -155,7 +151,7 @@ VectorPie drives the control-panel LEDs itself: a game lights the controls it us
 ### Connecting the board
 
 1. Wire each lamp to the board. An RGB lamp uses three consecutive outputs, n, n+1, n+2. On an Ultimate I/O the connectors from output 49 up are rotated, so their pins run B, G, R; plug the lamp in pin for pin on either side and the menu sorts the colors out. (The PacLED64 is R, G, B throughout.)
-2. Plug the board into a USB 2.0 port (black; the blue ones are for the USB-DVG).
+2. Plug the board into a USB 2.0 port (black; the blue ones are for the vector board).
 3. The board is detected automatically and LED SETUP lists it. No drivers, no service.
 
 ### Configuring each output
@@ -262,13 +258,13 @@ The drive can carry a `vectorpie_backup.tar.gz` too. The row reports `ADDED 23/4
 | Stop pressing keys | Menu text fades over the MENU FADE time (default 2.5 s); the marquee brightens; hints disappear |
 | 60 seconds idle | Screensaver: a short attract video, then the screensaver video loops |
 
-The HDMI screensaver shows the current and next track titles, and that Player 2 Start skips. The USB-DVG shows drifting asteroids and a bouncing VectorPie logo. With an LED panel, the SCREENSAVER light show plays (see [Light shows](#light-shows)). Any control other than Player 2 Start returns to the menu.
+The HDMI screensaver shows the current and next track titles, and that Player 2 Start skips. The vector board (BeamForge or USB-DVG) shows drifting asteroids and a bouncing VectorPie logo. With an LED panel, the SCREENSAVER light show plays (see [Light shows](#light-shows)). Any control other than Player 2 Start returns to the menu.
 
 ---
 
 ## Settings Menu
 
-**Tab** opens Settings; Tab or **Escape** closes it. Up/Down moves, Left/Right adjusts, Select toggles or opens. With a USB-DVG, Settings is mirrored on the vector display.
+**Tab** opens Settings; Tab or **Escape** closes it. Up/Down moves, Left/Right adjusts, Select toggles or opens. With a vector board (BeamForge or USB-DVG), Settings is mirrored on the vector display.
 
 Sections: GAMES, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MUSIC, EFFECTS, LEDS, NETWORK.
 
@@ -281,9 +277,9 @@ Sections: GAMES, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MUSIC, EFFECTS, 
 | SYSTEM   | VECTORPIE UPDATE... | The update page: checks online, shows the release notes, UPDATE applies. See [Software Updates](#software-updates). |
 | SYSTEM   | EXIT TO SHELL  | Leave the menu for a Linux prompt |
 | DVG      | DVG            | Vector board output on/off |
-| DVG      | HARDWARE       | The connected board, e.g. USB-DVG. OTHER is an unrecognized board: it gets no firmware updates. |
+| DVG      | HARDWARE       | The connected board: BEAMFORGE or USB-DVG. OTHER is an unrecognized board: it gets no firmware updates. |
 | DVG      | DVG REFRESH    | Refresh rate, 30–60 Hz. Default 40. Applies as you adjust — raise for a steadier, brighter picture, lower if the display can't keep up. |
-| DVG      | FIRMWARE VARIANT | Firmware variant on the board: STANDARD or ARCADE CONTROL. Used by UPDATE... (below). Newer firmware reports it and this follows. |
+| DVG      | FIRMWARE VARIANT | USB-DVG only: firmware variant on the board, STANDARD or ARCADE CONTROL (BeamForge has none). Used by UPDATE... (below). Newer firmware reports it and this follows. |
 | DVG      | UPDATE...      | The firmware update page (for the FIRMWARE VARIANT): checks online, shows the release notes, UPDATE flashes. |
 | DVG      | SETTINGS...    | The board's own settings menu on the vector display: Up/Down/Left/Right navigate, Select confirms, Cancel goes back (at the top level, closes and saves), Config closes and saves from anywhere. Closes by itself after 30 s without a press. Needs firmware 1.14R2 or later. |
 | DVG      | CRT CALIBRATION | Alignment patterns on the vector display: Left/Right cycles them, Cancel exits. |
@@ -297,7 +293,7 @@ Sections: GAMES, BACKUP, SYSTEM, DVG, CONTROLS, AUDIO, DISPLAY, MUSIC, EFFECTS, 
 | AUDIO    | MASTER VOLUME  | System volume |
 | AUDIO    | MAME SOUND QUALITY | AdvanceMAME audio: **HIGH** (48 kHz), **MEDIUM** (22 kHz, smoother on demanding games), **LOW** (11 kHz, maximum performance; speech games sound muffled) |
 | DISPLAY  | MARQUEE        | Marquee scaling: FIT / STRETCH / ZOOM / FIT WIDTH / FIT HEIGHT |
-| DISPLAY  | MENU ON HDMI   | With a USB-DVG, also show the game menu on HDMI. Off: HDMI shows only the marquee (and hint bar). |
+| DISPLAY  | MENU ON HDMI   | With a vector board (BeamForge or USB-DVG), also show the game menu on HDMI. Off: HDMI shows only the marquee (and hint bar). |
 | DISPLAY  | SHOW GAME PREVIEW | Play a game's preview video (`/usr/local/share/advance/video/<rom>.mp4`) over the marquee when you land on it. Default on. |
 | DISPLAY  | MENU FADE      | Fade-out time for the menu text: 1.0–15.0 s. Default 2.5 s. |
 | DISPLAY  | HINTS          | Control hints in the hint bar |
@@ -380,9 +376,9 @@ VectorPie updates itself over the internet — no reflashing.
 
 An update takes 10–15 minutes. Power loss during it is safe — the previous version stays until the new one boots — but let it finish.
 
-### USB-DVG firmware updates
+### Firmware updates
 
-**DVG → UPDATE...** works the same way for the board's firmware (for the FIRMWARE VARIANT): the page checks, shows the release notes, and UPDATE downloads, verifies and flashes. The page stays up through **DOWNLOADING → VERIFYING → FLASHING** (EXIT and Cancel wait until it is done); the vector display goes dark during the flash, then the Pi reboots. A failure shows on the page. Only newer firmware is offered, except that changing FIRMWARE VARIANT offers the other variant at the same version, so a board flashed with the wrong one can be corrected. A failed flash is recoverable: the Teensy bootloader is separate, so try again.
+**DVG → UPDATE...** works the same way for the board's firmware, BeamForge or USB-DVG (on a USB-DVG, for its FIRMWARE VARIANT): the page checks, shows the release notes, and UPDATE downloads, verifies and flashes. The page stays up through **DOWNLOADING → VERIFYING → FLASHING** (EXIT and Cancel wait until it is done); the vector display goes dark during the flash, then the Pi reboots. A failure shows on the page. Only newer firmware is offered, except that on a USB-DVG changing FIRMWARE VARIANT offers the other variant at the same version, so a board flashed with the wrong one can be corrected. A failed flash is recoverable: the board's bootloader is separate, so try again.
 
 ### What carries over
 
@@ -398,15 +394,17 @@ VectorPie keeps two copies of itself. If the new one fails to boot, the Pi rever
 
 ---
 
-## USB-DVG Support
+## BeamForge and USB-DVG Support
 
-The USB-DVG renders the menu as vector text on a real vector monitor, with manufacturer logos and an asteroids screensaver, alongside the marquee on HDMI. It is detected automatically and can be turned off in Settings. It can also name a default game to launch at startup.
+The vector board — BeamForge or USB-DVG — renders the menu as vector text on a real vector monitor, with manufacturer logos and an asteroids screensaver, alongside the marquee on HDMI. It is detected automatically and can be turned off in Settings. It can also name a default game to launch at startup.
 
-> Firmware 1.14R0 or later is required.
+BeamForge is the next-generation board: about 20 million points a second against the USB-DVG's 3 million. Games draw more on it, at higher frame rates.
 
-### Connecting the USB-DVG
+> USB-DVG: firmware 1.14R0 or later is required.
 
-Plug it into a **USB 3.0 port** (blue). Leave the other USB 3.0 port empty. On a **Pi 5**, a USB audio device goes in a USB 2.0 port (black). Joysticks, keyboards, mice and encoders go in the remaining USB 2.0 port, through a hub if needed.
+### Connecting the board
+
+Plug the BeamForge or USB-DVG into a **USB 3.0 port** (blue). Leave the other USB 3.0 port empty. On a **Pi 5**, a USB audio device goes in a USB 2.0 port (black). Joysticks, keyboards, mice and encoders go in the remaining USB 2.0 port, through a hub if needed.
 
 ### Color Overlays
 
@@ -497,7 +495,7 @@ Even if the computer can mount the Pi's Linux partitions, don't. Files written w
 
 **DVG, OVERLAY, AUTOSTART GAME and MENU ON HDMI are grayed out**
 
-The USB-DVG isn't detected. Check its USB connection.
+The vector board (BeamForge or USB-DVG) isn't detected. Check its USB connection.
 
 ---
 
