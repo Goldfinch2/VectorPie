@@ -6,18 +6,17 @@
 
 VectorPie is a Raspberry Pi image for the BeamForge and USB-DVG vector generator boards. It boots straight into a game menu driven entirely from the arcade controls — no keyboard, mouse, or desktop. It also works without a vector board, on an HDMI monitor.
 
-- **Headless** — runs at boot, no monitor or desktop needed on the Pi
-- **Marquee display** — the HDMI output shows the artwork for the highlighted game
-- **BeamForge and USB-DVG** — drive a real vector monitor; HDMI works without them. BeamForge is the much faster board: about 20 million points a second
-- **One input mapping** — shared by the menu, MAME and every game, remapped from the menu or MAME
-- **High scores** — read from the MAME save files and shown in the hint bar
-- **App store** — new games install from the menu: online from the VectorPie app store, from a USB drive or over the network
-- **LED lighting** — each game lights its own controls in its own colors, with a voice-guided tour and beat-synced light shows
-- **Background music** — a theme or your own playlist while you browse, with DJ breaks between tracks
-- **Screensavers** — the built-in one, or screensaver apps from the app store that react to the music
-- **Wi-Fi** — set up from the menu
-- **Remote access** — SSH and a Windows network share
-- **Updates from the menu** — with automatic rollback if the new version fails to boot
+- **Headless** — VectorPie starts at power-on, straight into the game menu: no monitor, keyboard or desktop needed on the Pi.
+- **Marquee display** — VectorPie turns an HDMI screen into a live marquee, showing the artwork of the game you're on.
+- **BeamForge and USB-DVG** — VectorPie drives a real vector monitor. With BeamForge, games draw about 20 million points a second for a richer, steadier picture.
+- **High scores** — VectorPie shows each game's high scores right in the menu, so you know the score to beat.
+- **App store** — VectorPie can install new games with a few presses, online from the VectorPie app store or from a USB drive.
+- **LED lighting** — VectorPie can light each game's controls in its own colors, walk you through them with a voice guide, and play light shows to the beat of the music.
+- **Background music** — VectorPie can play a theme or your own playlist while you browse the games, with DJ breaks between tracks.
+- **Screensavers** — VectorPie can protect the tube with its own screensaver, or with screensaver apps that dance to the music.
+- **Wi-Fi** — VectorPie connects to Wi-Fi from the menu, with the cabinet controls.
+- **Remote access** — VectorPie lets you reach the Pi from a PC, with SSH and a Windows network share.
+- **Updates from the menu** — VectorPie updates itself over the internet, and goes back to the previous version if the new one fails to boot.
 
 Runs on the **Raspberry Pi 4** and **Raspberry Pi 5**.
 
