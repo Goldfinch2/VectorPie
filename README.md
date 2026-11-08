@@ -26,6 +26,12 @@ Runs on the **Raspberry Pi 4** and **Raspberry Pi 5**.
 - Raspberry Pi 4 or 5, 1 GB or more. Raspberry Pi 5 recommended for better performance.
 - 32 GB SD card or larger. (Pi 5) M.2 NVMe HAT and M.2 NVMe SSD recommended for performance and reliability.
 
+Installation guides:
+
+- [BeamForge](docs/beamforge-installation.md)
+- [Space Duel adapter board](docs/space-duel-adapter-installation.md)
+- [Asteroids adapter board](docs/asteroids-adapter-installation.md)
+
 ---
 
 ## Download & Installation
