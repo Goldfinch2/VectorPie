@@ -87,6 +87,9 @@ typedef struct vp3d_view {
      * length (drawn in up to 12 steps). fog_end <= fog_start: no fog (the
      * default). */
     float fog_start, fog_end, fog_floor;
+    /* 1: a line crossing far_z is cut there, so nothing past it is drawn
+     * (a draw distance). 0 (the default): it is drawn whole. */
+    int   far_cut;
 } vp3d_view;
 
 /* Defaults, with this field of view; the camera at the origin looking along +z. */

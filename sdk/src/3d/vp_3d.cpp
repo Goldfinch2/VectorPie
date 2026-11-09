@@ -136,6 +136,7 @@ void vp3d_view_init(vp3d_view *v, float fov_deg)
     v->aspect = 4.0f / 3.0f;
     v->fog_start = v->fog_end = 0.0f;
     v->fog_floor = 0.0f;
+    v->far_cut = 0;
 }
 
 int vp3d_look_at(vp3d_view *v, vp_vec3 eye, vp_vec3 target, vp_vec3 up)
@@ -227,6 +228,12 @@ void drawCameraSegment(vp_dvg *d, const vp3d_view *v, const Lens &l, vp_vec3 a, 
     // Cut at the near plane.
     if (a.z < n) { float t = (n - a.z) / (b.z - a.z); a = vp_v3_add(a, vp_v3_scale(vp_v3_sub(b, a), t)); a.z = n; }
     if (b.z < n) { float t = (n - b.z) / (a.z - b.z); b = vp_v3_add(b, vp_v3_scale(vp_v3_sub(a, b), t)); b.z = n; }
+    // ... and at the far plane, for a view that asks for it (far_cut).
+    if (v->far_cut) {
+        const float f = v->far_z;
+        if (a.z > f) { float t = (a.z - f) / (a.z - b.z); a = vp_v3_add(a, vp_v3_scale(vp_v3_sub(b, a), t)); a.z = f; }
+        if (b.z > f) { float t = (b.z - f) / (b.z - a.z); b = vp_v3_add(b, vp_v3_scale(vp_v3_sub(a, b), t)); b.z = f; }
+    }
 
     // Fog: a line whose ends differ in brightness is drawn in steps (about a
     // twelfth of full brightness each), so a long line fades along its length.
