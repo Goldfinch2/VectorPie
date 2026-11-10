@@ -2,7 +2,11 @@
 
 This adapter connects VectorPie to an **Asteroids or Asteroids Deluxe cabinet** using its existing harness, vector monitor, and audio amplifier. It provides regulated **5.1 V** power for the Pi and a power connection for PACLED64.
 
-The drawings show a **BeamForge assembly** — BeamForge above a Raspberry Pi 5 with active cooler — plus an **Ultimarc I-PAC2** for the original controls and an **Ultimarc PACLED64** for the original button LEDs. The two Ultimarc boards are optional if those cabinet functions are not needed or are handled separately.
+[![Exploded Asteroids adapter assembly with I-PAC2, PACLED64, and the complete BeamForge and Pi assembly](images/assembly/asteroids-assembly-exploded.png)](images/assembly/asteroids-assembly-exploded.png)
+
+*Select any drawing for the full-size image. Dotted lines show mounting alignment, not the installed gap.*
+
+The drawing above shows a **BeamForge assembly** — BeamForge above a Raspberry Pi 5 with active cooler — plus an **Ultimarc I-PAC2** for the original controls and an **Ultimarc PACLED64** for the original button LEDs. The two Ultimarc boards are optional if those cabinet functions are not needed or are handled separately.
 
 ## Included with the adapter
 
@@ -34,10 +38,6 @@ Standoff body lengths exclude the threaded stud. For both Ultimarc boards, the t
 ## Mount the boards
 
 Turn off and unplug the cabinet before fitting boards or changing wiring. Leave the monitor's high-voltage connections alone; a CRT can retain dangerous voltages even when unplugged.
-
-[![Exploded Asteroids adapter assembly with I-PAC2, PACLED64, and the complete BeamForge and Pi assembly](images/assembly/asteroids-assembly-exploded.png)](images/assembly/asteroids-assembly-exploded.png)
-
-*Select any drawing for the full-size image. Dotted lines show mounting alignment, not the installed gap.*
 
 1. Build the Pi / BeamForge stack following the [BeamForge assembly instructions](beamforge-installation.md#assemble-beamforge-and-the-pi).
 2. Remove the four nuts underneath the Pi. Screw the **female ends of the four 10 mm M2.5 standoffs** onto the exposed studs of the existing 20 mm standoffs. The Pi is held between the upper and lower standoffs.
