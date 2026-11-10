@@ -34,9 +34,11 @@ VectorPie runs on a Raspberry Pi 4 or 5 and drives a vector monitor through a Be
 
 Installation guides:
 
-- [BeamForge](docs/beamforge-installation.md)
-- [Space Duel adapter board](docs/space-duel-adapter-installation.md)
-- [Asteroids adapter board](docs/asteroids-adapter-installation.md)
+- [BeamForge assembly and installation](docs/beamforge-installation.md)
+- [Space Duel / Gravitar / Black Widow adapter](docs/space-duel-adapter-installation.md)
+- [Asteroids / Asteroids Deluxe adapter](docs/asteroids-adapter-installation.md)
+
+The guides include exploded assembly drawings, mounting hardware, cable connections, and cabinet control/LED pinouts.
 
 ---
 
@@ -436,7 +438,7 @@ BeamForge is the next-generation board: about 20 million points a second against
 
 ### Connecting the board
 
-Plug the BeamForge or USB-DVG into a **USB 3.0 port** (blue). Leave the other USB 3.0 port empty. On a **Pi 5**, a USB audio device goes in a USB 2.0 port (black). Joysticks, keyboards, mice and encoders go in the remaining USB 2.0 port, through a hub if needed.
+Plug the BeamForge or USB-DVG into a **USB 3.0 port** (blue). The Pi 5 adapter assembly uses the **upper blue socket for the vector board** and the **lower blue socket for a USB audio dongle**. Upper means farther from the Pi PCB; lower means closer to it. Connect the **I-PAC2 and PACLED64 to the black USB 2.0 sockets**. Additional controls or a keyboard can use a USB hub if needed. See the [illustrated installation guides](#supported-hardware) for the complete wiring.
 
 ### Color Overlays
 
