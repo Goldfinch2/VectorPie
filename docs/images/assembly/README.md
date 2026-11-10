@@ -5,6 +5,7 @@ These drawings accompany the [BeamForge](../../beamforge-installation.md), [Aste
 | Image | View |
 |---|---|
 | [beamforge-pi5-technical.png](beamforge-pi5-technical.png) | Pi 5, active cooler, GPIO extender, and BeamForge assembly order |
+| [beamforge-pi5-installed.png](beamforge-pi5-installed.png) | Assembled Pi 5 and BeamForge with the included USB data cable connected |
 | [asteroids-assembly-exploded.png](asteroids-assembly-exploded.png) | Module mounting on the Asteroids adapter |
 | [asteroids-assembly-installed.png](asteroids-assembly-installed.png) | Asteroids adapter cable connections |
 | [spaceduel-assembly-exploded.png](spaceduel-assembly-exploded.png) | Module mounting on the Space Duel adapter |

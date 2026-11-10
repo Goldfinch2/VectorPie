@@ -36,6 +36,8 @@ The supplied **20 mm standoffs and GPIO extender** are sized for the Pi 5 with a
 
 ## Connect USB and power
 
+[![Assembled BeamForge on a Raspberry Pi 5 with active cooler and the USB data cable connected from the Pi's upper USB 3 port to BeamForge's USB-C socket J4](images/assembly/beamforge-pi5-installed.png)](images/assembly/beamforge-pi5-installed.png)
+
 With the Pi PCB horizontal, **upper** means the USB socket farther from the PCB.
 
 | Connection | Cable / destination |
