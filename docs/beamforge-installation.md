@@ -22,7 +22,7 @@ These dimensions are for the illustrated Pi 5 and active cooler assembly. A diff
 - A Raspberry Pi 5 with the active cooler installed and its fan connected.
 - Storage with the [VectorPie image installed](../README.md#download--installation).
 - A compatible cabinet adapter and vector cable, or a correctly wired harness for your monitor.
-- A suitable Pi power source. With either adapter above, the adapter supplies the Pi through a separate cable to its USB-C power socket.
+- A suitable Pi power source. Either adapter above includes a USB power cable from its J1 output to the Pi's USB-C power socket; this is separate from BeamForge's included USB data cable.
 
 ## Assemble BeamForge and the Pi
 

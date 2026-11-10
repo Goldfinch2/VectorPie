@@ -4,19 +4,24 @@ This adapter connects VectorPie to a **Space Duel, Gravitar, or Black Widow cabi
 
 The drawings show a **BeamForge assembly** — BeamForge above a Raspberry Pi 5 with active cooler — plus an **Ultimarc I-PAC2** for the original controls and an **Ultimarc PACLED64** for the original button LEDs. The two Ultimarc boards are optional if those cabinet functions are not needed or are handled separately.
 
-## Parts and cables
+## Included with the adapter
 
 - Space Duel / Gravitar / Black Widow adapter board.
-- [BeamForge assembly](beamforge-installation.md), with VectorPie installed on the Pi's storage.
+- **10 mm mounting spacers**; see the sizes in the hardware table below.
+- **VGA-style vector cable**: fully wired, straight-through male-to-male DE-15, approximately 6 in / 15 cm.
+- **USB power cable**: USB-A to USB-C, approximately 6 in / 15 cm, from adapter J1 to the Pi's power socket.
+- **Audio cable**: 3.5 mm stereo TRS male-to-male, from the audio source to adapter J3.
+
+## Other installation parts
+
+- [BeamForge assembly](beamforge-installation.md), with VectorPie installed on the Pi's storage. BeamForge includes the separate short **USB data cable** between the Pi and BeamForge.
 - Optional Ultimarc I-PAC2 and PACLED64, with their USB cables and control/LED wiring.
-- Two short USB-A to USB-C cables: the **data cable included with BeamForge**, plus a separate cable for **Pi power**. The drawings use approximately 6 in / 15 cm cables; the power cable must suit the Pi's load.
-- Fully wired, straight-through **male-to-male DE-15 vector cable**, approximately 6 in / 15 cm for this layout.
-- For audio: a Pi-compatible **USB audio dongle** with a 3.5 mm output, and a **3.5 mm stereo TRS male-to-male cable**. The drawing uses compact right-angle audio plugs.
+- For Pi 5 audio: a Pi-compatible **USB audio dongle** with a 3.5 mm output, used with the included audio cable.
 - If using PACLED64: a two-wire **5.5 × 2.1 mm DC barrel-plug lead** for LED power.
 
 ### Additional mounting hardware
 
-BeamForge includes its 20 mm standoffs, screws, nuts, and GPIO extender. The additional hardware below mounts that assembly and the optional Ultimarc boards on the adapter.
+The adapter includes the 10 mm spacers listed below. BeamForge includes its own 20 mm standoffs, screws, nuts, and GPIO extender. This table gives the spacer sizes and fasteners used to mount each module on the adapter.
 
 | Module | Standoffs | Fasteners |
 |---|---|---|
