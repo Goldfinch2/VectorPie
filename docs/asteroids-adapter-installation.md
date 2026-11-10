@@ -74,6 +74,8 @@ At **J2**, **pin 1 / +5.1 V goes to the barrel plug's center contact**; **pin 2 
 
 ## Original cabinet controls: J4
 
+**Optional: complete this step only if you want to use the original cabinet controls.**
+
 Wire the used **J4 IPAC2-IN** terminals to I-PAC2 inputs, and connect GND to I-PAC2 GND. Use the printed **ASTEROIDS** or **ASTEROIDS DELUXE** column for your cabinet; several signals change position. There is no cabinet-selector switch.
 
 | J4 pin | Asteroids | Asteroids Deluxe |
