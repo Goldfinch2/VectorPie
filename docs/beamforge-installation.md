@@ -56,13 +56,5 @@ To simplify connection to an existing cabinet, we offer adapter boards for [Aste
 1. Check GPIO alignment, mounting clearance, the USB data cable, Pi power, and the vector cable before switching on.
 2. Boot VectorPie. Open **Settings → DVG → HARDWARE** and confirm that it reports **BEAMFORGE**. A keyboard can be used for initial setup; **Tab** opens Settings.
 3. Open **Settings → DVG → SETTINGS...** to configure BeamForge for the connected monitor.
-4. Use **Settings → DVG → CRT CALIBRATION** to check centering, size, and orientation. Start with a modest image size and brightness. If the image collapses to a bright stationary point or line, switch the monitor off and correct the cause before continuing.
-5. Configure controls, audio, and optional LEDs using the [VectorPie manual](../README.md).
-
-## Firmware updates
-
-Connect VectorPie to the network, then open **Settings → DVG → UPDATE...**. Read the release notes and select **UPDATE**. Keep power connected until the update and reboot finish. The vector display goes dark during flashing.
-
-BeamForge uses one firmware for all boards. Updates and board settings are available from VectorPie; there is no need to reach the buttons on the mounted board. See [Firmware updates](../README.md#firmware-updates).
 
 [Back to the VectorPie manual](../README.md)
