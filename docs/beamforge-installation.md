@@ -13,8 +13,6 @@ BeamForge connects a Raspberry Pi running VectorPie to an arcade vector monitor.
 | 1 | GPIO stacking extender: **2 × 20 pins, 2.54 mm pitch, 8.4 mm socket body, 6 mm exposed pins** |
 | 1 | Short USB-A to USB-C **data cable**, approximately 6 in / 15 cm, for the Pi-to-BeamForge connection |
 
-These dimensions are for the illustrated Pi 5 and active cooler assembly. A different header or cooler can change the required spacing. VectorPie also supports the Pi 4; check physical clearances before using a different stack.
-
 ## You also need
 
 - A Raspberry Pi 5 with the active cooler installed and its fan connected.
@@ -29,6 +27,8 @@ Turn off and unplug the cabinet before installing or reconnecting anything. Hand
 [![Exploded BeamForge assembly: nuts, Pi 5 with active cooler, GPIO extender, 20 mm standoffs, BeamForge, and screws](images/assembly/beamforge-pi5-technical.png)](images/assembly/beamforge-pi5-technical.png)
 
 *Select the drawing to open it at full size. The exploded gaps show assembly order, not installed spacing.*
+
+The supplied **20 mm standoffs and GPIO extender** are sized for the Pi 5 with active cooler shown above. A different header or cooler can change the required spacing. VectorPie also supports the Pi 4; check physical clearances before using a different stack.
 
 1. Fit the four **20 mm M2.5 standoffs** above the Pi. Their male studs pass down through the Pi's mounting holes. Secure them with the four nuts underneath.
 2. Seat the GPIO extender on the Pi's 40-pin header, **socket side down and exposed pins up**. Align both rows and all 40 positions; do not offset it by a row or a pin.
