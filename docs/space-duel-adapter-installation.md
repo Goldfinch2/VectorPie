@@ -10,7 +10,7 @@ The drawing above shows a **BeamForge assembly** — BeamForge above a Raspberry
 
 - Space Duel / Gravitar / Black Widow adapter board.
 - **4 × M2.5 male-female mounting spacers, 10 mm body**, for the Pi / BeamForge assembly.
-- **VGA-style vector cable**: fully wired, straight-through male-to-male DE-15, approximately 6 in / 15 cm.
+- **VGA-style vector cable**: fully wired, straight-through male-to-male DE-15, 30 cm.
 - **USB power cable**: USB-A to USB-C, approximately 6 in / 15 cm, from adapter J1 to the Pi's power socket.
 - **Audio cable**: 3.5 mm stereo TRS male-to-male, from the audio source to adapter J3.
 
