@@ -40,9 +40,8 @@ Turn off and unplug the cabinet before fitting boards or changing wiring. Leave 
 1. Build the Pi / BeamForge stack following the [BeamForge assembly instructions](beamforge-installation.md#assemble-beamforge-and-the-pi).
 2. Remove the four nuts underneath the Pi. Screw the **female ends of the four 10 mm M2.5 standoffs** onto the exposed studs of the existing 20 mm standoffs. The Pi is held between the upper and lower standoffs.
 3. Lower the assembly onto the adapter's **RASPBERRY PI** mounting pattern. Pass the lower standoffs' male studs through the adapter and secure them with the **four reused nuts underneath**.
-4. Fit the 10 mm M3 standoffs to the **I-PAC2** and **PACLED64** mounting patterns, with their studs down through the adapter and nuts below. Mount each optional board using its four M3 × 6 mm screws. Match the connector orientation in the drawings and on the adapter's silkscreen.
-5. Check that no component, solder joint, or loose wire touches a board above or below it. Keep the fan intake and cable access clear.
-6. Secure the adapter in the cabinet and connect the original harness to its card edge, with the keying and component/solder sides correctly aligned. Support the assembly using the cabinet's board mounts; do not leave its weight hanging from the harness connector.
+4. Check that no component, solder joint, or loose wire touches a board above or below it. Keep the fan intake and cable access clear.
+5. Secure the adapter in the cabinet and connect the original harness to its card edge, with the keying and component/solder sides correctly aligned. Support the assembly using the cabinet's board mounts; do not leave its weight hanging from the harness connector.
 
 ## Connect the cables
 
