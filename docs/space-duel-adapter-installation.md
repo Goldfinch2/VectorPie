@@ -4,8 +4,6 @@ This adapter connects VectorPie to a **Space Duel, Gravitar, or Black Widow cabi
 
 [![Exploded Space Duel adapter assembly with I-PAC2, PACLED64, and the complete BeamForge and Pi assembly](images/assembly/spaceduel-assembly-exploded.png)](images/assembly/spaceduel-assembly-exploded.png)
 
-*Select any drawing for the full-size image. Dotted lines show mounting alignment, not the installed gap.*
-
 The drawing above shows a **BeamForge assembly** — BeamForge above a Raspberry Pi 5 with active cooler — plus an **Ultimarc I-PAC2** for the original controls and an **Ultimarc PACLED64** for the original button LEDs. The two Ultimarc boards are optional if those cabinet functions are not needed or are handled separately.
 
 ## Included with the adapter
