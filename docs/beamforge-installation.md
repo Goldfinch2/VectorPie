@@ -43,8 +43,6 @@ With the Pi PCB horizontal, **upper** means the USB socket farther from the PCB.
 | Pi **upper blue USB 3** socket → BeamForge **USB-C**, J4 on BeamForge | Included USB-A to USB-C data cable |
 | Pi **USB-C power** socket → power source | Suitable Pi power supply |
 
-Connect the included USB data cable even with the GPIO extender installed. Use one Pi power source at a time.
-
 ## Cabinet adapters
 
 To simplify connection to an existing cabinet, we offer adapter boards for [Asteroids / Asteroids Deluxe](asteroids-adapter-installation.md) and [Space Duel / Gravitar / Black Widow](space-duel-adapter-installation.md).
