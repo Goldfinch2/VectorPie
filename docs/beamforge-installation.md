@@ -21,7 +21,7 @@ These dimensions are for the illustrated Pi 5 and active cooler assembly. A diff
 
 - A Raspberry Pi 5 with the active cooler installed and its fan connected.
 - Storage with the [VectorPie image installed](../README.md#download--installation).
-- A compatible cabinet adapter and vector cable, or a correctly wired harness for your monitor.
+- A compatible cabinet adapter with its included vector cable, or a correctly wired harness for your monitor.
 - A suitable Pi power source. Either adapter above includes a USB power cable from its J1 output to the Pi's USB-C power socket; this is separate from BeamForge's included USB data cable.
 
 ## Assemble BeamForge and the Pi
@@ -51,13 +51,13 @@ With the Pi PCB horizontal, **upper** means the USB socket farther from the PCB,
 | Pi **black USB 2** sockets → I-PAC2 and PACLED64 | The USB cables for those Ultimarc boards, if fitted |
 | Pi **USB-C power** socket → power source | Adapter **J1 PI POWER**, or a suitable external Pi supply |
 
-The GPIO extender does not replace the USB data cable. A charge-only cable will not let VectorPie detect BeamForge. Use one Pi power source at a time.
+Connect the included USB data cable even with the GPIO extender installed. Use one Pi power source at a time.
 
 The complete cable arrangement is shown in the [Asteroids](asteroids-adapter-installation.md#connect-the-cables) and [Space Duel](space-duel-adapter-installation.md#connect-the-cables) adapter guides.
 
 ## Connect the vector monitor
 
-With a cabinet adapter, connect BeamForge's **15-pin vector output, J2**, to the adapter's **J5 VECTOR INPUT** using a fully wired, straight-through male-to-male DE-15 cable. The illustrated cable is approximately 6 in / 15 cm; use a length and plug shape that fit without straining either socket.
+With a cabinet adapter, connect BeamForge's **15-pin vector output, J2**, to the adapter's **J5 VECTOR INPUT** using the VGA-style vector cable included with the adapter.
 
 **This is a vector-monitor connection.** Although the connector is VGA-shaped, its signals are not ordinary PC VGA. Do not connect it to a conventional VGA display or PC video output.
 
@@ -76,15 +76,5 @@ The adapter connects to the cabinet's monitor through the existing harness. With
 Connect VectorPie to the network, then open **Settings → DVG → UPDATE...**. Read the release notes and select **UPDATE**. Keep power connected until the update and reboot finish. The vector display goes dark during flashing.
 
 BeamForge uses one firmware for all boards. Updates and board settings are available from VectorPie; there is no need to reach the buttons on the mounted board. See [Firmware updates](../README.md#firmware-updates).
-
-## Troubleshooting
-
-| Symptom | Check |
-|---|---|
-| BeamForge is not detected | Use a data-capable USB cable from a blue Pi USB 3 socket to BeamForge's USB-C socket. Check that the Pi has booted. |
-| Board will not sit flat | Switch off, remove the screws, and check extender alignment, standoff body height, and cooler clearance. |
-| Detected, but no picture | Check that DVG output is enabled, the vector cable is seated, and the monitor and adapter have power. |
-| Picture is rotated, mirrored, or incorrectly sized | Check the monitor configuration in BeamForge settings and use the calibration patterns. |
-| Pi restarts or reports low voltage | Check the Pi supply and power cable under load; a short cable alone does not establish its current capability. |
 
 [Back to the VectorPie manual](../README.md)
