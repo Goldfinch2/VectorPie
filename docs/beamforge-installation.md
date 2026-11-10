@@ -22,7 +22,7 @@ BeamForge connects a Raspberry Pi running VectorPie to an arcade vector monitor.
 
 ## Assemble BeamForge and the Pi
 
-Turn off and unplug the cabinet before installing or reconnecting anything. Handle boards by their edges. A CRT can retain dangerous voltages after power is removed; this installation does not require opening the monitor or touching its high-voltage connections.
+The drawing below shows how BeamForge mounts above a Raspberry Pi 5 with an active cooler using the included hardware.
 
 [![Exploded BeamForge assembly: nuts, Pi 5 with active cooler, GPIO extender, 20 mm standoffs, BeamForge, and screws](images/assembly/beamforge-pi5-technical.png)](images/assembly/beamforge-pi5-technical.png)
 
