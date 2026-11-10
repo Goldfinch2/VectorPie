@@ -4,25 +4,25 @@ BeamForge connects a Raspberry Pi running VectorPie to an arcade vector monitor.
 
 For mounting the complete assembly on a cabinet adapter, continue with the [Asteroids / Asteroids Deluxe guide](asteroids-adapter-installation.md) or the [Space Duel / Gravitar / Black Widow guide](space-duel-adapter-installation.md).
 
-## What you need
-
-- An assembled BeamForge board.
-- A Raspberry Pi 5 with the active cooler installed and its fan connected.
-- Storage with the [VectorPie image installed](../README.md#download--installation).
-- A USB-A to USB-C **data** cable, approximately 6 in / 15 cm for the illustrated layout.
-- A compatible cabinet adapter and vector cable, or a correctly wired harness for your monitor.
-- A suitable Pi power source. With either adapter above, the adapter supplies the Pi through its USB-C power socket.
-
-### Mounting hardware
+## Included with BeamForge
 
 | Quantity | Part |
 |---|---|
+| 1 | Assembled BeamForge board |
 | 4 | M2.5 male-female standoffs, **20 mm body**, excluding the threaded stud |
 | 4 | M2.5 × 6 mm screws |
 | 4 | M2.5 nuts |
 | 1 | GPIO stacking extender: **2 × 20 pins, 2.54 mm pitch, 8.4 mm socket body, 6 mm exposed pins** |
+| 1 | Short USB-A to USB-C **data cable**, approximately 6 in / 15 cm, for the Pi-to-BeamForge connection |
 
 These dimensions are for the illustrated Pi 5 and active cooler assembly. A different header or cooler can change the required spacing. VectorPie also supports the Pi 4; check physical clearances before using a different stack.
+
+## You also need
+
+- A Raspberry Pi 5 with the active cooler installed and its fan connected.
+- Storage with the [VectorPie image installed](../README.md#download--installation).
+- A compatible cabinet adapter and vector cable, or a correctly wired harness for your monitor.
+- A suitable Pi power source. With either adapter above, the adapter supplies the Pi through a separate cable to its USB-C power socket.
 
 ## Assemble BeamForge and the Pi
 
@@ -46,7 +46,7 @@ With the Pi PCB horizontal, **upper** means the USB socket farther from the PCB,
 
 | Connection | Cable / destination |
 |---|---|
-| Pi **upper blue USB 3** socket → BeamForge **USB-C**, J4 on BeamForge | USB-A to USB-C data cable |
+| Pi **upper blue USB 3** socket → BeamForge **USB-C**, J4 on BeamForge | Included USB-A to USB-C data cable |
 | Pi **lower blue USB 3** socket → USB audio dongle | Used when feeding an adapter's audio input |
 | Pi **black USB 2** sockets → I-PAC2 and PACLED64 | The USB cables for those Ultimarc boards, if fitted |
 | Pi **USB-C power** socket → power source | Adapter **J1 PI POWER**, or a suitable external Pi supply |

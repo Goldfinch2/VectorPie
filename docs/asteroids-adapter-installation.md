@@ -9,14 +9,14 @@ The drawings show a **BeamForge assembly** — BeamForge above a Raspberry Pi 5 
 - Asteroids / Asteroids Deluxe adapter board.
 - [BeamForge assembly](beamforge-installation.md), with VectorPie installed on the Pi's storage.
 - Optional Ultimarc I-PAC2 and PACLED64, with their USB cables and control/LED wiring.
-- Two short USB-A to USB-C cables: one for **Pi power**, one **data-capable** cable for BeamForge. The drawings use approximately 6 in / 15 cm cables; the power cable must suit the Pi's load.
+- Two short USB-A to USB-C cables: the **data cable included with BeamForge**, plus a separate cable for **Pi power**. The drawings use approximately 6 in / 15 cm cables; the power cable must suit the Pi's load.
 - Fully wired, straight-through **male-to-male DE-15 vector cable**, approximately 6 in / 15 cm for this layout.
 - For audio: a Pi-compatible **USB audio dongle** with a 3.5 mm output, and a **3.5 mm stereo TRS male-to-male cable**. The drawing uses compact right-angle audio plugs.
 - If using PACLED64: a two-wire **5.5 × 2.1 mm DC barrel-plug lead** for LED power.
 
 ### Additional mounting hardware
 
-These parts are in addition to the 20 mm standoffs in the BeamForge assembly.
+BeamForge includes its 20 mm standoffs, screws, nuts, and GPIO extender. The additional hardware below mounts that assembly and the optional Ultimarc boards on the adapter.
 
 | Module | Standoffs | Fasteners |
 |---|---|---|
