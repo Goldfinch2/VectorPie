@@ -18,6 +18,7 @@ BeamForge connects a Raspberry Pi running VectorPie to an arcade vector monitor.
 - A Raspberry Pi 5 with the active cooler installed and its fan connected.
 - Storage with the [VectorPie image installed](../README.md#download--installation).
 - A compatible arcade vector monitor.
+- A compatible cable to connect BeamForge to your monitor. For a **WG6100 CRT monitor**, see Barry's [DVG to Stock WG6100 cable at Vector Head Arcade](https://www.vectorheadarcade.com/product-page/dvg-to-stock-wg6100).
 - A suitable power source for the Raspberry Pi.
 
 ## Assemble BeamForge and the Pi
