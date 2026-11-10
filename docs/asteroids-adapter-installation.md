@@ -9,7 +9,7 @@ The drawing above shows a **BeamForge assembly** — BeamForge above a Raspberry
 ## Included with the adapter
 
 - Asteroids / Asteroids Deluxe adapter board.
-- **10 mm mounting spacers**; see the sizes in the hardware table below.
+- **4 × M2.5 male-female mounting spacers, 10 mm body**, for the Pi / BeamForge assembly.
 - **VGA-style vector cable**: fully wired, straight-through male-to-male DE-15, approximately 6 in / 15 cm.
 - **USB power cable**: USB-A to USB-C, approximately 6 in / 15 cm, from adapter J1 to the Pi's power socket.
 - **Audio cable**: 3.5 mm stereo TRS male-to-male, from the audio source to adapter J3.
@@ -23,7 +23,7 @@ The drawing above shows a **BeamForge assembly** — BeamForge above a Raspberry
 
 ### Additional mounting hardware
 
-The adapter includes the 10 mm spacers listed below. BeamForge includes its own 20 mm standoffs, screws, nuts, and GPIO extender. This table gives the spacer sizes and fasteners used to mount each module on the adapter.
+The adapter includes the four 10 mm M2.5 spacers for the Pi / BeamForge assembly. **Spacers for I-PAC2 and PACLED64 are not included.** BeamForge includes its own 20 mm standoffs, screws, nuts, and GPIO extender.
 
 | Module | Standoffs | Fasteners |
 |---|---|---|
