@@ -55,5 +55,8 @@ To simplify connection to an existing cabinet, we offer adapter boards for [Aste
 1. Check GPIO alignment, mounting clearance, the USB data cable, Pi power, and the vector cable before switching on.
 2. Boot VectorPie. Open **Settings → DVG → HARDWARE** and confirm that it reports **BEAMFORGE**. A keyboard can be used for initial setup; **Tab** opens Settings.
 3. Open **Settings → DVG → SETTINGS...** to configure BeamForge for the connected monitor.
+4. Open **Settings → DVG → CRT CALIBRATION**. Use **Left/Right** to select **CONCENTRIC BOXES**.
+5. **Adjust the image size:** using a small insulated screwdriver, turn the **XSIZE** and **YSIZE** trimmers on BeamForge in small increments until the outer box fits inside the visible screen.
+6. **Center the image:** adjust the **XCTR** and **YCTR** trimmers until the boxes are centered with equal margins on opposite sides. Recheck size and centering, then press **Cancel** to exit calibration.
 
 [Back to the VectorPie manual](../README.md)
