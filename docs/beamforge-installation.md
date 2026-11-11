@@ -54,9 +54,13 @@ To simplify connection to an existing cabinet, we offer adapter boards for [Aste
 
 1. Check GPIO alignment, mounting clearance, the USB data cable, Pi power, and the vector cable before switching on.
 2. Boot VectorPie. Open **Settings → DVG → HARDWARE** and confirm that it reports **BEAMFORGE**. A keyboard can be used for initial setup; **Tab** opens Settings.
-3. Open **Settings → DVG → SETTINGS...** to configure BeamForge for the connected monitor.
-4. Open **Settings → DVG → CRT CALIBRATION**. Use **Left/Right** to select **CONCENTRIC BOXES**.
+3. **Choose the monitor preset:** open **Settings → DVG → SETTINGS...** and set **CRT TYPE** to your monitor model, such as **WG6100**, **19V2000**, or **AMPLIFONE**. Use **Up/Down** to select a setting, **Select** to edit it, and **Left/Right** to change its value. Choose the preset before fine-tuning: it supplies the initial speed and pincushion settings.
+4. Close BeamForge settings with **Config** to save, then open **Settings → DVG → CRT CALIBRATION**. Use **Left/Right** to select **CONCENTRIC BOXES**.
 5. **Adjust the image size:** using a small insulated screwdriver, turn the **XSIZE** and **YSIZE** trimmers on BeamForge in small increments until the outer box fits inside the visible screen.
 6. **Center the image:** adjust the **XCTR** and **YCTR** trimmers until the boxes are centered with equal margins on opposite sides. Recheck size and centering, then press **Cancel** to exit calibration.
+7. **Adjust drawing speed if needed:** return to **Settings → DVG → SETTINGS...** and select **MAX CRT SPEED**. Start with the preset value. Higher values allow faster beam movement; lower values give the monitor more time to follow. Change one step at a time and check the picture. If lines distort or corners become rounded, reduce the value.
+8. **Adjust brightness:** use **INTENSITY** to set the overall brightness. Start with the default **75%** and adjust gradually for clear lines without excessive glow or loss of detail.
+9. **Adjust pincushion only if needed:** if straight lines bow near the screen edges, adjust **PINCUSHION** in small increments. Keep the preset value if the lines are already straight. Save and check the **GRID** pattern in **CRT CALIBRATION** between adjustments; recheck size and centering afterward.
+10. **Save and check:** use **Config** to close and save BeamForge settings, or **Cancel** from its top level. Check **GRID** for geometry and **COLOR INTENSITY BARS** for brightness, then try a game. Selecting the monitor preset again reapplies its speed and pincushion values.
 
 [Back to the VectorPie manual](../README.md)
