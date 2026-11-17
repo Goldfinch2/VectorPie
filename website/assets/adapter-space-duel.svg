@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs><filter id="g"><feGaussianBlur stdDeviation="1.3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <rect width="400" height="300" fill="#0a0f18"/>
+  <g fill="none" stroke="#38e8ff" stroke-width="2" filter="url(#g)" stroke-linejoin="round">
+    <rect x="70" y="80" width="260" height="140" rx="8"/>
+    <rect x="86" y="96" width="70" height="30"/><rect x="244" y="96" width="70" height="30"/>
+    <path d="M90 200 h220" stroke-dasharray="6 4"/>
+    <path d="M100 220 v20 M124 220 v20 M148 220 v20 M172 220 v20 M196 220 v20 M220 220 v20 M244 220 v20 M268 220 v20 M292 220 v20" stroke-opacity=".7"/>
+    <rect x="170" y="140" width="60" height="40" stroke="#fff"/>
+  </g>
+  <text x="200" y="60" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#38e8ff" letter-spacing="2">SPACE DUEL CABINET ADAPTER</text>
+  <text x="200" y="275" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#5a6a7a">Concept illustration · coming soon</text>
+</svg>

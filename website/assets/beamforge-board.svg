@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs><filter id="g"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <rect width="400" height="300" fill="#0a0f18"/>
+  <g fill="none" stroke="#38e8ff" stroke-width="2" filter="url(#g)" stroke-linejoin="round">
+    <rect x="60" y="60" width="280" height="180" rx="10"/>
+    <circle cx="76" cy="76" r="5"/><circle cx="324" cy="76" r="5"/><circle cx="76" cy="224" r="5"/><circle cx="324" cy="224" r="5"/>
+    <rect x="160" y="110" width="80" height="80" stroke="#fff"/>
+    <path d="M168 110 v-8 M180 110 v-8 M192 110 v-8 M204 110 v-8 M216 110 v-8 M228 110 v-8 M168 190 v8 M180 190 v8 M192 190 v8 M204 190 v8 M216 190 v8 M228 190 v8 M160 122 h-8 M160 138 h-8 M160 154 h-8 M160 170 h-8 M240 122 h8 M240 138 h8 M240 154 h8 M240 170 h8" stroke="#fff" stroke-opacity=".7"/>
+    <rect x="40" y="128" width="34" height="44" stroke="#ff3b30"/>
+    <rect x="290" y="92" width="34" height="116"/>
+    <path d="M296 100 h22 M296 112 h22 M296 124 h22 M296 136 h22 M296 148 h22 M296 160 h22 M296 172 h22 M296 184 h22 M296 196 h22" stroke-opacity=".6"/>
+    <path d="M74 150 H160 M240 150 H290 M200 190 V220 H110 M200 110 V80 H270" stroke-opacity=".55"/>
+    <rect x="96" y="196" width="22" height="22"/><rect x="96" y="84" width="22" height="22"/>
+  </g>
+  <text x="200" y="155" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#38e8ff" letter-spacing=".5">BEAMFORGE</text>
+  <text x="200" y="278" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#5a6a7a">Illustration. Photos coming soon.</text>
+</svg>
