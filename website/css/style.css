@@ -138,6 +138,7 @@ main { min-width: 0; }
 .deposit { margin: 0 0 8px; }
 .buy { margin: 6px 0 8px; max-width: 360px; }
 .buy-note { font-size: 13px; color: var(--muted); margin: 8px 0 14px; }
+.btn-reserve { display: block; width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; margin: 0 0 16px; }
 .highlights { margin: 0 0 14px; padding-left: 20px; }
 .highlights li { margin: 3px 0; }
 .trust { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
@@ -196,7 +197,56 @@ table.striped tbody th { width: 34%; font-weight: 600; }
 .footer-legal p { margin: 4px 0; }
 
 /* ---------- phones / tablets ---------- */
+/* ---------- reservation page ---------- */
+.rsv-hero { display: flex; align-items: center; gap: 28px; background: #050a12 url("../assets/banner.svg") center / cover no-repeat; color: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; margin-bottom: 20px; }
+.rsv-hero-text { flex: 1 1 auto; min-width: 0; }
+.rsv-hero .kicker { font-size: 12px; font-weight: 800; letter-spacing: .14em; color: var(--vector); margin-bottom: 6px; }
+.rsv-hero h1 { font-size: 34px; margin: 0 0 8px; text-shadow: 0 0 12px rgba(56, 232, 255, .6); }
+.rsv-hero p { font-size: 17px; color: #cfe; margin: 0 0 18px; max-width: 460px; }
+.rsv-price { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; background: rgba(255, 255, 255, .07); border: 1px solid rgba(56, 232, 255, .35); border-radius: var(--radius); padding: 8px 14px; }
+.rsv-price-main { font-size: 26px; font-weight: 800; color: #fff; }
+.rsv-price-sub { font-size: 13px; color: #9fb3c0; }
+.rsv-hero-img { flex: 0 1 300px; display: block; border-radius: var(--radius); overflow: hidden; border: 1px solid rgba(56, 232, 255, .35); box-shadow: 0 0 24px rgba(56, 232, 255, .25); }
+.rsv-hero-img img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+
+.rsv-grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; align-items: start; }
+.rsv-h2 { font-size: 18px; margin: 0 0 14px; }
+.rsv-steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.rsv-steps li { display: flex; gap: 14px; align-items: flex-start; }
+.rsv-steps p { margin: 2px 0 0; color: var(--muted); }
+.rsv-num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: grid; place-items: center; }
+.rsv-facts { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.rsv-facts li { padding-left: 24px; position: relative; }
+.rsv-facts li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); font-weight: 800; }
+.rsv-more { margin: 14px 0 0; font-size: 14px; }
+.rsv-note { font-size: 13px; color: var(--muted); margin: 0 4px; }
+
+.rsv-side { position: sticky; top: 16px; }
+.reserve { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 6px 20px rgba(0, 0, 0, .10); overflow: hidden; }
+.reserve-head { background: var(--dark); color: #fff; padding: 16px 20px; border-bottom: 3px solid var(--accent); }
+.reserve-head h2 { font-size: 20px; margin: 0 0 2px; }
+.reserve-head p { margin: 0; font-size: 13px; color: var(--vector); letter-spacing: .02em; }
+.reserve-body { display: grid; gap: 12px; padding: 18px 20px 20px; }
+.reserve label { display: grid; gap: 5px; font-size: 13px; font-weight: 700; }
+.reserve .opt { font-weight: 400; color: var(--muted); }
+.reserve input, .reserve select, .reserve textarea { font: inherit; font-weight: 400; padding: 10px 12px; border: 1px solid #c8c8cc; border-radius: var(--radius); background: #fff; width: 100%; box-sizing: border-box; }
+.reserve input:focus, .reserve select:focus, .reserve textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(214, 40, 31, .15); }
+.reserve-row { display: grid; grid-template-columns: 1fr 96px; gap: 12px; }
+.reserve-submit { width: 100%; font-size: 17px; padding: 13px; margin-top: 4px; }
+.reserve-fine { font-size: 12px; color: var(--muted); margin: 0; text-align: center; }
+.reserve .hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
+.reserve-done { background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--ok); border-radius: var(--radius); box-shadow: 0 6px 20px rgba(0, 0, 0, .10); padding: 24px 20px; text-align: center; }
+.reserve-done h2 { font-size: 20px; margin: 10px 0 6px; }
+.reserve-done p { margin: 0 0 10px; }
+.reserve-check { width: 52px; height: 52px; margin: 0 auto; border-radius: 50%; background: var(--ok); color: #fff; font-size: 28px; font-weight: 800; display: grid; place-items: center; }
+
 @media (max-width: 900px) {
+  .rsv-grid { grid-template-columns: 1fr; }
+  .rsv-side { position: static; order: -1; }
+  .rsv-hero { flex-direction: column; align-items: stretch; gap: 18px; padding: 22px; }
+  .rsv-hero-img img { aspect-ratio: 16 / 7; }
+  .rsv-hero-img { flex-basis: auto; }
+  .rsv-hero h1 { font-size: 28px; }
   .layout { grid-template-columns: 1fr; }
   .banner { flex-direction: column-reverse; align-items: stretch; gap: 20px; }
   .banner-logo { flex-basis: auto; width: min(100%, 320px); align-self: center; }

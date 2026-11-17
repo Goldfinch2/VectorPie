@@ -50,6 +50,7 @@
   /*
    * What a product shows:
    *   coming-soon    greyed card, COMING SOON badge, Details link
+   *   reserve        FREE RESERVATION badge, reservation form, no payment
    *   preorder-soon  preorder before preorderOpens: countdown
    *   preorder       PayPal button (or "not open yet" note without a button ID)
    *   available      PayPal button (or "not open yet" note without a button ID)
@@ -65,6 +66,7 @@
   function badge(p) {
     var st = state(p).status;
     if (st === "coming-soon") return '<span class="badge badge-accent">COMING SOON</span>';
+    if (st === "reserve") return '<span class="badge badge-accent">FREE RESERVATION</span>';
     if (st === "preorder-soon") return '<span class="badge badge-accent">PRE-ORDERS OPEN ' + esc(fmtDate(p.preorderOpens).toUpperCase()) + "</span>";
     if (st === "preorder") return '<span class="badge badge-accent">PRE-ORDER' + (site.shipWindow ? ": SHIPS " + esc(site.shipWindow.toUpperCase()) : "") + "</span>";
     if (st === "available") return '<span class="badge badge-ok">IN STOCK</span>';
@@ -185,6 +187,7 @@
     var action;
     if (st.status === "coming-soon") action = '<a class="btn btn-outline" href="' + esc(p.url) + '">Details</a>';
     else if (st.status === "sold-out") action = '<span class="btn btn-disabled" aria-disabled="true">Sold out</span>';
+    else if (st.status === "reserve") action = '<a class="btn" href="reserve.html">Reserve ' + esc(p.shortName || p.name) + '</a>';
     else action = '<a class="btn" href="' + esc(p.url) + '">' + (st.buyable ? (st.status === "preorder" ? "Pre-order" : "Buy now") : "Details") + "</a>";
     return '<article class="card' + (muted ? " card-muted" : "") + '" data-product="' + esc(p.id) + '" data-status="' + st.status + '">' +
       '<a class="card-img" href="' + esc(p.url) + '"><img src="' + esc(p.images[0].src) + '" alt="' + esc(p.images[0].alt) + '" loading="lazy"></a>' +
@@ -256,6 +259,58 @@
     });
   }
 
+  /* ---------- free reservation form ---------- */
+
+  function reserveBox(p) {
+    return '<p class="buy-note">BeamForge is built in production runs. A run starts once enough boards are reserved. ' +
+      "Reserving is free and commits you to nothing. When the run is confirmed, we email you a link to order at this price.</p>" +
+      '<a class="btn btn-reserve" href="reserve.html">Reserve ' + esc(p.shortName || p.name) + '</a>';
+  }
+
+  function reserveForm(p) {
+    if (/[?&]reserved=1\b/.test(location.search)) {
+      return '<div class="reserve-done" role="status"><div class="reserve-check" aria-hidden="true">✓</div>' +
+        "<h2>Your reservation is in</h2><p>Thanks! We'll email you when the production run is confirmed and ordering opens.</p>" +
+        '<p class="reserve-fine">A confirmation is on its way to your inbox. <a href="beamforge.html">Back to BeamForge</a></p></div>';
+    }
+    if (!site.reserveFormAction) return '<p class="buy-note">Reservations open soon.</p>';
+    var back = location.href.split("#")[0].split("?")[0] + "?reserved=1";
+    var auto = "Thanks for reserving a " + p.name + ". Reserving is free and commits you to nothing. " +
+      "When the production run is confirmed, we'll email you a link to order. " + (emailOk() ? "Questions: " + site.email : "");
+    return '<form class="reserve" action="' + esc(site.reserveFormAction) + '" method="post">' +
+        '<div class="reserve-head"><h2>Reserve now</h2><p>Free · no payment · no commitment</p></div>' +
+        '<div class="reserve-body">' +
+        '<input type="hidden" name="_subject" value="' + esc("Reservation: " + p.name) + '">' +
+        '<input type="hidden" name="_template" value="table">' +
+        '<input type="hidden" name="_next" value="' + esc(back) + '">' +
+        '<input type="hidden" name="_autoresponse" value="' + esc(auto) + '">' +
+        '<input type="hidden" name="product" value="' + esc(p.name + " (" + p.sku + ")") + '">' +
+        '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+        '<label><span>Email</span> <input type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>' +
+        '<label><span>Name <span class="opt">(optional)</span></span> <input type="text" name="name" autocomplete="name"></label>' +
+        '<div class="reserve-row">' +
+          '<label><span>Ship to</span> <select name="ship_to" required>' +
+            '<option value="">Choose…</option><option>Canada</option><option>United States</option><option>Europe</option><option>Other</option>' +
+          "</select></label>" +
+          '<label><span>Quantity</span> <input type="number" name="quantity" min="1" max="10" value="1" required></label>' +
+        "</div>" +
+        '<label><span>Comment <span class="opt">(optional)</span></span> <textarea name="comment" rows="2"></textarea></label>' +
+        '<button class="btn reserve-submit" type="submit">Reserve ' + esc(p.shortName || p.name) + '</button>' +
+        '<p class="reserve-fine">Your email is used only to tell you when ordering opens. <a href="policies.html#privacy">Privacy</a></p>' +
+      "</div></form>";
+  }
+
+  function renderReserve() {
+    var rates = SHOP.shipping.map(function (r) { return r.rate; }).filter(function (r) { return r != null; });
+    $all("[data-ship-flat]").forEach(function (el) {
+      el.textContent = rates.length ? money(Math.max.apply(null, rates)) : "";
+    });
+    $all("[data-reserve]").forEach(function (el) {
+      var p = product(el.getAttribute("data-reserve"));
+      if (p) el.innerHTML = reserveForm(p);
+    });
+  }
+
   function renderBuyBox() {
     $all("[data-buybox]").forEach(function (el) {
       var p = product(el.getAttribute("data-buybox"));
@@ -276,6 +331,8 @@
           '<p class="buy-note">' + (st.status === "preorder"
             ? "You pay now and we ship when the batch is ready" + (site.shipWindow ? " (" + esc(site.shipWindow) + ")" : "") + ". Cancel any time before it ships for a full refund. <a href=\"policies.html#refunds\">Details</a>."
             : "Ships from " + esc(site.sellerCountry) + ". <a href=\"policies.html#shipping\">Shipping rates</a>.") + "</p>";
+      } else if (st.status === "reserve") {
+        html += reserveBox(p);
       } else if (st.status === "sold-out") {
         html += '<p class="buy-note">This batch is sold out.</p>';
       } else {
@@ -283,7 +340,7 @@
       }
 
       if (p.highlights) html += '<ul class="highlights">' + p.highlights.map(function (h) { return "<li>" + esc(h) + "</li>"; }).join("") + "</ul>";
-      html += '<div class="trust"><span class="paypal-mark small-mark" aria-label="PayPal"><b>Pay</b><i>Pal</i></span>' +
+      if (st.status !== "reserve") html += '<div class="trust"><span class="paypal-mark small-mark" aria-label="PayPal"><b>Pay</b><i>Pal</i></span>' +
         "<span>Pay securely with PayPal: PayPal balance, or a credit or debit card without an account.</span></div>";
       el.innerHTML = html;
       if (st.buyable) paypalButton(p, $("#buy-" + p.id, el));
@@ -458,6 +515,7 @@
     renderGrids();
     renderGallery();
     renderBuyBox();
+    renderReserve();
     renderSpecs();
     renderShipping();
     fillSite();

@@ -16,6 +16,10 @@ window.SHOP = {
     // TODO: your domain, once registered (used in README / canonical links only).
     domain: "beamforge.shop",
     currency: "USD",
+    // Free reservation list (status "reserve"). Each reservation is emailed
+    // to this FormSubmit address. The first submission sends an activation
+    // email to the inbox; click it once, or reservations are not delivered.
+    reserveFormAction: "https://formsubmit.co/vectorbeamforge@gmail.com",
     // Shown under the price on pre-order products. TODO: the real window.
     shipWindow: null, // e.g. "Q2 2027"
     // Shown in the footer and the seller box on the policies page.
@@ -48,7 +52,8 @@ window.SHOP = {
   ],
 
   /*
-   * status: "coming-soon" -> "preorder" -> "available" -> "sold-out"
+   * status: "coming-soon" -> "reserve" -> "preorder" -> "available" -> "sold-out"
+   *   "reserve": free reservation form, no payment (PayPal button kept for later)
    * preorderOpens: before this date a "preorder" product shows a countdown
    *   only; from it on, the PayPal button (if paypalButtonId is set).
    * paypalButtonId: null shows "Ordering isn't open yet" instead of a buy button.
@@ -58,12 +63,13 @@ window.SHOP = {
       id: "beamforge",
       sku: "BF-001",
       name: "BeamForge Vector Generator",
+      shortName: "BeamForge",
       category: "boards",
       url: "beamforge.html",
       tagline: "About 20 million points a second: about 6.7× the USB-DVG, on the same protocol.",
       price: 275.00,        // USD, plus shipping (PayPal fee built in)
       deposit: null,        // TODO (optional): take a deposit instead of the full price
-      status: "available",
+      status: "reserve",
       paypalButtonId: "ZE38MAWSJQWGU",
       images: [
         { src: "assets/beamforge-photo-rev1.jpg", alt: "BeamForge Rev 1.0 board", caption: "Preliminary photo: Rev 1.0 board. The production board may differ." }
