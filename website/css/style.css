@@ -220,6 +220,7 @@ table.striped tbody th { width: 34%; font-weight: 600; }
 .rsv-facts li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); font-weight: 800; }
 .rsv-more { margin: 14px 0 0; font-size: 14px; }
 .rsv-note { font-size: 13px; color: var(--muted); margin: 0 4px; }
+.rsv-note + .rsv-note { margin-top: 8px; }
 
 .rsv-side { position: sticky; top: 16px; }
 .reserve { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 6px 20px rgba(0, 0, 0, .10); overflow: hidden; }

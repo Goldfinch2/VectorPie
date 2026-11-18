@@ -303,7 +303,9 @@
   function renderReserve() {
     var rates = SHOP.shipping.map(function (r) { return r.rate; }).filter(function (r) { return r != null; });
     $all("[data-ship-flat]").forEach(function (el) {
-      el.textContent = rates.length ? money(Math.max.apply(null, rates)) : "";
+      if (!rates.length) { el.textContent = ""; return; }
+      var lo = Math.min.apply(null, rates), hi = Math.max.apply(null, rates);
+      el.textContent = (lo === hi ? "" : "from ") + money(lo);
     });
     $all("[data-reserve]").forEach(function (el) {
       var p = product(el.getAttribute("data-reserve"));

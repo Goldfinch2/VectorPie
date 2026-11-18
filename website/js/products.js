@@ -38,11 +38,12 @@ window.SHOP = {
     sandbox: false
   },
 
-  // Flat shipping rates per region, in USD. The same values must be set in
-  // PayPal > Settings > Shipping.
+  // Flat shipping rate per order, per region, in USD. If direct PayPal sales
+  // are turned back on, PayPal's postage settings must match these.
   shipping: [
-    { region: "Canada", carrier: "Canada Post", rate: 50.00 },
-    { region: "United States", carrier: "Canada Post, delivered by USPS", rate: 50.00 },
+    { region: "Canada", carrier: "Canada Post", rate: 20.00 },
+    { region: "United States", carrier: "Chit Chats, delivered by USPS", rate: 20.00 },
+    // TODO: real Europe rate once quoted.
     { region: "Europe", carrier: "Canada Post, delivered by the local post", rate: 50.00 }
   ],
 
