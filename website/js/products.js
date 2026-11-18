@@ -42,7 +42,7 @@ window.SHOP = {
   // are turned back on, PayPal's postage settings must match these.
   shipping: [
     { region: "Canada", carrier: "Canada Post", rate: 20.00 },
-    { region: "United States", carrier: "Chit Chats, delivered by USPS", rate: 20.00 },
+    { region: "United States", carrier: "Chit Chats, delivered by USPS", rate: 25.00 },
     // TODO: real Europe rate once quoted.
     { region: "Europe", carrier: "Canada Post, delivered by the local post", rate: 50.00 }
   ],
