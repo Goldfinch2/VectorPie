@@ -3,47 +3,61 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BeamForge Shop: vector generator boards</title>
-<meta name="description" content="BeamForge vector generator board for VectorPie: about 20 million points a second on the USB-DVG protocol. Free reservations are open for the first production run.">
+<title>BeamForge: first production run complete</title>
+<meta name="description" content="The first BeamForge production run is complete and reservations are closed. Reserved buyers will be emailed with their order details.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css">
-<script src="js/products.js" defer></script>
-<script src="js/site.js" defer></script>
+<style>
+  :root {
+    --bg: #f2f2f0; --panel: #fff; --text: #1d1d1f; --muted: #6b6b70; --line: #dcdcdc;
+    --dark: #17171a; --dark-text: #e9e9ec; --accent: #d6281f;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 var(--font); }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: #0b5cad; }
+  a:hover { color: var(--accent); }
+  header { background: var(--dark); color: var(--dark-text); }
+  header .wrap { display: flex; align-items: center; gap: 12px; padding-top: 14px; padding-bottom: 14px; font-weight: 700; letter-spacing: .02em; }
+  header img { height: 34px; width: auto; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  main.wrap { padding-top: 32px; padding-bottom: 24px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,.12); padding: 28px; }
+  .kicker { color: var(--accent); font-weight: 700; font-size: 13px; letter-spacing: .08em; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 6px 0 16px; }
+  .photo { margin: 24px 0; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+  .photo figcaption { font-size: 12px; color: var(--muted); padding: 6px 10px; }
+  h2 { font-size: 18px; margin: 24px 0 6px; }
+  p { margin: 0 0 12px; }
+  footer { color: var(--muted); font-size: 13px; text-align: center; padding: 0 0 32px; }
+  @media (max-width: 520px) { .panel { padding: 20px; } h1 { font-size: 24px; } }
+</style>
 </head>
-<body data-nav="home">
-<header id="site-header"></header>
-<nav id="crumbs" aria-label="Breadcrumb" data-crumbs="Home"></nav>
+<body>
+<header><div class="wrap"><img src="assets/beamforge-logo.svg" alt="BeamForge"></div></header>
 
-<div class="wrap layout">
-  <aside id="sidebar" aria-label="Categories"></aside>
-  <main>
-    <section class="banner" aria-labelledby="banner-title">
-      <div class="banner-text">
-        <div class="kicker">NEW VECTOR GENERATOR</div>
-        <h1 id="banner-title">Reserve your BeamForge, free</h1>
-        <p>About 20 million points a second, against the USB-DVG's 3 million. Same protocol, so VectorPie and its games already know it.</p>
-        <div class="btns">
-          <a class="btn" href="reserve.html">Reserve BeamForge</a>
-        </div>
-      </div>
-      <a class="banner-logo" href="beamforge.html" aria-label="BeamForge"><img src="assets/beamforge-logo.svg" alt="BeamForge logo"></a>
-    </section>
+<main class="wrap">
+  <section class="panel">
+    <div class="kicker">ANNOUNCEMENT</div>
+    <h1>The first BeamForge production run is complete</h1>
+    <p>Thank you to everyone who reserved a board. The first run is fully committed, and reservations are now closed.</p>
 
-    <section class="panel">
-      <h2 class="section-title" data-grid-title>Featured products</h2>
-      <div class="grid" data-grid="featured"></div>
-    </section>
+    <figure class="photo">
+      <img src="assets/beamforge-photo-rev1.jpg" alt="BeamForge board">
+      <figcaption>BeamForge vector generator for VectorPie.</figcaption>
+    </figure>
 
-    <section class="panel">
-      <h2 class="section-title">Coming soon: cabinet adapters</h2>
-      <p>Bring VectorPie to your Asteroids, Asteroids Deluxe, Space Duel, Gravitar or Black Widow cabinet while keeping its original controls, lights, vector monitor and audio amplifier. <a href="adapters.html">More about the adapters</a>.</p>
-      <div class="grid" data-grid="coming-soon"></div>
-    </section>
+    <h2>If you reserved a board</h2>
+    <p>You'll get an email confirming your order, with the total including shipping and how to pay. Nothing more to do until then.</p>
 
-  </main>
-</div>
+    <h2>If you missed this run</h2>
+    <p>Email <a href="mailto:vectorbeamforge@gmail.com">vectorbeamforge@gmail.com</a> to hear when a next run is planned.</p>
 
-<footer id="site-footer"></footer>
-<noscript><p class="wrap">This shop needs JavaScript to show products and the PayPal button.</p></noscript>
+    <h2>VectorPie</h2>
+    <p>Documentation, installation guides and the SDK are on <a href="https://github.com/Goldfinch2/VectorPie#readme">GitHub</a>.</p>
+  </section>
+</main>
+
+<footer>BeamForge · Canada · <a href="mailto:vectorbeamforge@gmail.com">vectorbeamforge@gmail.com</a></footer>
 </body>
 </html>

@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <radialGradient id="bg" cx="75%" cy="50%" r="70%"><stop offset="0" stop-color="#0d2236"/><stop offset="1" stop-color="#03060b"/></radialGradient>
-  </defs>
-  <rect width="1200" height="400" fill="url(#bg)"/>
-  <g fill="#fff" opacity=".6"><circle cx="640" cy="40" r="1.2"/><circle cx="760" cy="350" r="1"/><circle cx="1150" cy="140" r="1.4"/><circle cx="990" cy="40" r="1"/><circle cx="720" cy="230" r="1"/><circle cx="1120" cy="220" r="1"/><circle cx="300" cy="60" r="1"/><circle cx="180" cy="330" r="1.2"/></g>
-</svg>
