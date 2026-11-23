@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeamForge Vector Generator (BF-001) | BeamForge Shop</title>
+<meta name="description" content="BeamForge vector generator: about 20 million points a second, same protocol as the USB-DVG. Detected automatically by VectorPie.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/products.js" defer></script>
+<script src="js/site.js" defer></script>
+</head>
+<body data-nav="boards">
+<header id="site-header"></header>
+<nav id="crumbs" aria-label="Breadcrumb" data-crumbs="Home|index.html;Vector Boards|index.html?cat=boards;BeamForge"></nav>
+
+<div class="wrap layout">
+  <aside id="sidebar" aria-label="Categories"></aside>
+  <main>
+    <section class="panel">
+      <div class="product-top">
+        <div class="gallery" data-gallery="beamforge"></div>
+        <div class="buybox" data-buybox="beamforge"></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tablist" role="tablist" aria-label="Product details">
+          <button role="tab" id="t-description" aria-controls="description">Description</button>
+          <button role="tab" id="t-specs" aria-controls="specs">Specifications</button>
+          <button role="tab" id="t-compat" aria-controls="compatibility">Compatibility</button>
+          <button role="tab" id="t-shipping" aria-controls="shipping">Shipping &amp; Returns</button>
+        </div>
+
+        <div class="tabpanel" role="tabpanel" id="description" aria-labelledby="t-description">
+          <h3>More speed for your vector games</h3>
+          <p>BeamForge connects a Raspberry Pi running VectorPie to your cabinet’s vector monitor. With a drawing rate of approximately 20 million points per second—6.7 times the USB-DVG’s 3 million—it gives complex scenes more room to draw and supports higher frame rates where the monitor allows.</p>
+          <p>BeamForge uses the same protocol as the USB-DVG and works with the VectorPie menu, MAME games and app store games. VectorPie detects the board automatically. Configure it and update its firmware directly from the settings menu using your cabinet controls.</p>
+          <p>One board, one firmware, managed from VectorPie.</p>
+          <h3>What's in the box</h3>
+          <ul data-inbox="beamforge"></ul>
+        </div>
+
+        <div class="tabpanel" role="tabpanel" id="specs" aria-labelledby="t-specs" hidden>
+          <h3>Specifications</h3>
+          <div class="table-wrap"><table class="striped" data-specs="beamforge"></table></div>
+        </div>
+
+        <div class="tabpanel" role="tabpanel" id="compatibility" aria-labelledby="t-compat" hidden>
+          <h3>Raspberry Pi</h3>
+          <p>Raspberry Pi 4 or Pi 5 with 1 GB memory or higher. Raspberry Pi 5 is preferred for better performance. SSD or SD card, 32 GB or higher. SSD strongly recommended. BeamForge mounts above the Pi on the GPIO header and connects to the Pi’s upper blue USB 3 port with the included data cable.</p>
+          <p>The included 20 mm standoffs and GPIO extender are sized for a Raspberry Pi 5 with its active cooler. With a Pi 4 or a different cooler, check the clearances first.</p>
+          <h3>You also need</h3>
+          <ul>
+            <li>A Raspberry Pi 4 or 5, with its power supply.</li>
+            <li>Storage with VectorPie installed.</li>
+            <li>A compatible arcade vector monitor.</li>
+            <li>A cable from BeamForge to your monitor, not included. For a WG6100, see the <a href="https://www.vectorheadarcade.com/product-page/dvg-to-stock-wg6100">DVG to Stock WG6100 cable</a> at Vector Head Arcade. The <a href="adapters.html">cabinet adapters</a> include their own vector cable.</li>
+          </ul>
+          <h3>VectorPie</h3>
+          <p>VectorPie detects BeamForge automatically: <b>Settings → DVG → HARDWARE</b> shows BEAMFORGE. The menu, the MAME games and the app store games draw on it. Firmware updates install from <b>Settings → DVG → UPDATE...</b>. VectorPie runs on a Raspberry Pi 4 or 5. Plug the board into a USB 3.0 port (blue).</p>
+          <h3>Replacing a USB-DVG</h3>
+          <p>BeamForge uses the same protocol as the USB-DVG, so software that drives a USB-DVG drives BeamForge. Assembly, connections, monitor setup and calibration are in the <a href="https://github.com/Goldfinch2/VectorPie/blob/main/docs/beamforge-installation.md">BeamForge installation guide</a>.</p>
+          <h3>Cabinets</h3>
+          <p>Cabinet adapters for Asteroids / Asteroids Deluxe and for Space Duel / Gravitar / Black Widow cabinets are coming soon. <a href="adapters.html">See the adapters</a>.</p>
+        </div>
+
+        <div class="tabpanel" role="tabpanel" id="shipping" aria-labelledby="t-shipping" hidden>
+          <h3>Shipping</h3>
+          <p>Ships from <span data-site="sellerCountry"></span> to Canada, the United States and Europe. One flat rate per order, by region:</p>
+          <div class="table-wrap"><table class="striped" data-shipping-table></table></div>
+          <p>Shipping rates may change before ordering opens. Your order email confirms the exact total before you pay.</p>
+          <p>Duties and import taxes are paid by the buyer on delivery. European countries charge import VAT. See the <a href="policies.html#shipping">shipping policy</a>.</p>
+          <h3>Returns &amp; refunds</h3>
+          <p>Cancel any time before your board ships for a full refund. See the <a href="policies.html#refunds">refund policy</a> for boards that have shipped.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Related products</h2>
+      <div class="grid" data-grid="related"></div>
+    </section>
+  </main>
+</div>
+
+<footer id="site-footer"></footer>
+<noscript><p class="wrap">This shop needs JavaScript to show the price and the PayPal button.</p></noscript>
+</body>
+</html>
