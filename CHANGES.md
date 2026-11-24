@@ -1,3 +1,14 @@
+### vectorpie-1.1.15
+
+
+● What's new
+
+  MENU SOUNDS replaces SOUND EFFECTS and MENU EFFECTS: one volume for the menu's sounds, 0 turns them off.
+
+  The launch button hint now blinks every button mapped to UI SELECT, not only P1 button 1.
+
+
+
 ### vectorpie-1.1.14
 
 

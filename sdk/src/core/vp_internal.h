@@ -25,6 +25,10 @@ std::vector<vp_binding> vp_rc_parse_bindings(const std::string &value);
 // HDMI screen (vp_marquee.h), if it has one. Nothing elsewhere.
 void vp_marquee_auto(void);
 
+// Running as a screensaver that the menu gave the HDMI screen (game.ini
+// hdmi = app, VP_SAVER_HDMI=1). Any other screensaver leaves it to the menu.
+bool vp_saver_hdmi(void);
+
 // The game package's game.ini: a key's value (comments after ';' or '#'
 // dropped, spaces trimmed), or empty when there is none. `section`: the
 // lines after "[section]" (one per board: dvg, beamforge), or NULL for the

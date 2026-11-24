@@ -13,6 +13,7 @@ Read in order the first time; each chapter is written to stand alone after that.
 | [07 — Game packages](07-packages.md) | The game's folder, `game.ini`, `VP_OUTPUT`, making a `.vpk` with `vp-pack`, installing from USB |
 | [08 — Physics](08-physics.md) | Bodies that fall, bounce, stack and tumble; joints with limits and motors; rays and contacts (`vp_physics`) |
 | [09 — Screensavers](09-screensavers.md) | Apps the cabinet runs as its screensaver, drawing to its music: the track, its beats, a spectrum (`vp_saver`) |
+| [10 — The checklist](10-checklist.md) | Everything a complete app has: lamp colors, the voice guide (and the words that already have a voice), the marquee, credits, high scores, both boards, attract mode; and the shorter list for screensaver apps. Give it to your AI assistant |
 
 Coming next: installing games online (a signed catalog).
 

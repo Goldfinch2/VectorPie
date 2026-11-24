@@ -5,6 +5,7 @@
 #include "../core/vp_internal.h"
 #include "../dvg/vp_window.h"
 #include <vectorpie/vp_marquee.h>
+#include <vectorpie/vp_saver.h>
 
 #include <SDL.h>
 
@@ -71,6 +72,11 @@ SDL_Rect place(Fit fit, int winW, int winH, int texW, int texH)
 bool openScreen()
 {
     if (g_renderer) return true;
+    // A screensaver: the menu keeps the HDMI screen unless it handed it over.
+    if (vp_saver_active() && !vp_saver_hdmi()) {
+        vp_fail(VP_ERR_NODEV, "no marquee screen: the menu keeps it (hdmi = app in game.ini)");
+        return false;
+    }
     if (!g_videoUp) {
         if (vp_sdl_video_init() != VP_OK) return false;
         g_videoUp = true;

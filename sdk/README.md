@@ -122,6 +122,11 @@ second (lines, moves, path lengths, draw and send time): see
 
 Start at [docs/00-index.md](docs/00-index.md).
 
+Before you call a game finished, go through
+[docs/10-checklist.md](docs/10-checklist.md): lamp colors, the voice guide,
+the marquee, credits and high scores. If an AI assistant writes your game,
+give it that chapter too.
+
 ## License
 
 MIT, see [LICENSE](LICENSE).

@@ -239,6 +239,14 @@ int vp_saver_active(void)
     return s && strcmp(s, "1") == 0;
 }
 
+// A screensaver whose game.ini says hdmi = app: the menu has handed it the
+// HDMI screen (VP_SAVER_HDMI=1), as for a game, so its marquee shows there.
+bool vp_saver_hdmi(void)
+{
+    const char *s = getenv("VP_SAVER_HDMI");
+    return vp_saver_active() && s && strcmp(s, "1") == 0;
+}
+
 int vp_saver_music(vp_music_feed *out)
 {
     if (!out) return 0;

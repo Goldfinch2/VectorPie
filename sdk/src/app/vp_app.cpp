@@ -219,8 +219,11 @@ int vp_run(const vp_game_desc *desc, int argc, char **argv)
     vp_saver_attach(g.audio, musicArg);
     const bool saver = vp_saver_active() != 0;
     // Under the cabinet's menu (its music feed given) the menu reads the
-    // controls: it wakes the cabinet and skips tracks itself.
-    const bool menuControls = saver && getenv("VP_MUSIC_FEED") && *getenv("VP_MUSIC_FEED");
+    // controls: it wakes the cabinet and skips tracks itself. Not when it
+    // handed over the HDMI screen (hdmi = app): the keyboard came with it, so
+    // the app reads them (START 2 asks the menu for the next track).
+    const bool menuControls = saver && getenv("VP_MUSIC_FEED") && *getenv("VP_MUSIC_FEED") &&
+                              !vp_saver_hdmi();
     // A screensaver runs for hours: its whole picture, a little smaller,
     // wanders slowly round the screen and breathes in size, so no line stays
     // on the same spot of the tube. Slow, uneven periods (the path never
@@ -235,8 +238,9 @@ int vp_run(const vp_game_desc *desc, int argc, char **argv)
         if (hz >= 10 && hz <= 120) frameHz = hz;
     }
     // On the board, the cabinet's HDMI screen shows the game's marquee; a
-    // screensaver leaves it to the menu (its screensaver picture stays).
-    if (vp_dvg_get_output(g.out) == VP_DVG_OUTPUT_BOARD && !saver)
+    // screensaver leaves it to the menu (its screensaver picture stays),
+    // unless its game.ini says hdmi = app (the menu then hands it over).
+    if (vp_dvg_get_output(g.out) == VP_DVG_OUTPUT_BOARD && (!saver || vp_saver_hdmi()))
         vp_marquee_auto();
     printf("%s: VectorPie SDK %s, %s%s%s (%s), %d joystick(s), %s\n", title, vp_version(),
            vp_hardware_name(vp_dvg_hardware(g.out)),

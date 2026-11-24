@@ -159,7 +159,7 @@ The service button opens a game's service menu: the test and settings mode of a 
 
 VectorPie can control the LEDs of your control panel's buttons and joysticks:
 
-- **Show the controls each game uses.** When you pick a game, only its buttons and joysticks light up, each in that game's own color. The launch button blinks to show what starts the game.
+- **Show the controls each game uses.** When you pick a game, only its buttons and joysticks light up, each in that game's own color. The launch button blinks to show what starts the game: every button mapped to UI SELECT.
 - **Tell you what each control does.** Hold the launch button and a voice guide tours the panel: each control lights in turn while a voice says what it does (FIRE, THRUST, SHIELD...).
 - **Animate the panel.** Light shows play when the menu starts, when a game launches and while you browse a manufacturer.
 - **Dance to the music.** During the screensaver, the panel animates on the beat of the music.
@@ -289,7 +289,7 @@ The HDMI screensaver shows the current and next track titles, and that Player 2 
 
 ### Screensaver apps
 
-Screensaver apps replace the built-in screensaver on the vector monitor. They react to the music: Spectrum shows it as a spectrum analyzer that bumps on every beat, Pulse as a star of the spectrum with rings on every beat, VU Meters on two analog meters, left and right. The music, DJ breaks and light show go on as usual, and HDMI shows the app's marquee.
+Screensaver apps replace the built-in screensaver on the vector monitor. They react to the music: Spectrum shows it as a spectrum analyzer that bumps on every beat, Pulse as a star of the spectrum with rings on every beat, VU Meters on two analog meters, left and right. The music, DJ breaks and light show go on as usual. HDMI keeps the screensaver video with the titles playing, or shows the app's own marquee when the app asks for the screen.
 
 - **Settings → SCREENSAVERS → INSTALL...** installs them, online from the app store or from a USB drive, like games (see [Game Packages](#game-packages)). **REMOVE...** removes one.
 - **SCREENSAVERS → SELECT** picks the screensaver: **VECTORPIE** (the built-in one), an installed app, or **RANDOM** (a different one each time).
@@ -343,8 +343,7 @@ Sections: GAMES, SCREENSAVERS, AUDIO, BACKUP, SYSTEM, DVG, CONTROLS, DISPLAY, ME
 | MENU MUSIC & SOUNDS | PLAYLIST SHUFFLE | Random or alphabetical order. Grayed with THEME and NONE. |
 | MENU MUSIC & SOUNDS | IMPORT ⏏ | Copy tracks from a USB drive — `playlist/`, `themes/`, and `radio/` folders. Left/Right: **ADD** or **REPLACE**; REPLACE asks twice. |
 | MENU MUSIC & SOUNDS | GENERATE BEAT MAPS... | Make the beat maps the screensaver light show follows. Cancel stops and keeps what's done. See [Beat maps](#beat-maps). |
-| MENU MUSIC & SOUNDS | SOUND EFFECTS | The menu's navigation and select sounds on/off |
-| MENU MUSIC & SOUNDS | MENU EFFECTS | Their volume. A ding plays at the new level. Grayed with SOUND EFFECTS off. |
+| MENU MUSIC & SOUNDS | MENU SOUNDS | Volume of the menu's navigation and select sounds; 0 turns them off. A ding plays at the new level. |
 | LEDS     | LED EFFECTS    | Light each game's controls when it launches. |
 | LEDS     | LED SETUP      | Wire the LED panel. See [LED Lighting](#led-lighting). |
 | LEDS     | CABINET COLORS | Colors for the coin, start and menu lamps. See [Cabinet colors](#cabinet-colors). |

@@ -35,6 +35,7 @@ marquee      = marquee.png     ; optional (marquee.<screen height>.png too)
 hiscores     = yes             ; yes = save/highscores.txt (vp_hiscore), shown in
                                ; the menu's hint bar; or a relative path; or no
 kind         = game            ; optional: game (the default), or screensaver
+hdmi         = menu            ; optional, screensavers: menu (the default) or app
 
 [dvg]                          ; optional: settings for the USB-DVG
 frame_hz     = 30              ; frames a second on it
@@ -53,7 +54,8 @@ starts a comment.
 
 **`kind = screensaver`** makes a screensaver app, not a game: `vp-pack` then
 writes a **`.vps`** instead of a `.vpk`, which the cabinet installs apart
-from its games and offers in its SCREENSAVER setting. See
+from its games and offers in its SCREENSAVER setting. **`hdmi = app`** gives
+it the HDMI screen for its marquee while it runs. See
 [09 — Screensavers](09-screensavers.md).
 
 ## Running
@@ -102,8 +104,10 @@ torustrooper/voice_map[p1_button2]   charge_shot
 one, else the cabinet's shared clip
 (`/usr/local/share/advance/guide/<word>.wav`: `fire`, `thrust`, `rotate`,
 `steer`, `jump`, `shield`, `hyper_space`, `move`, `aim`... about forty),
-else the label alone. Ship only the words the cabinet lacks: WAV, mono,
-under about 3 seconds, peaks near -3 dB like the shared clips.
+else the label alone. The file is named as the word, `_` between words and
+no spaces (`guide/charge_shot.wav`). Ship only the words the cabinet lacks: WAV, mono,
+under about 3 seconds, peaks near -3 dB like the shared clips, in the
+same voice: the ElevenLabs voice "Guy - Serious TV Radio Announcer".
 
 **The owner's file wins**: for each kind of line (`color_map`,
 `voice_map`), the package's are used only while the cabinet's own

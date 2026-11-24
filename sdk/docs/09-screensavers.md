@@ -4,6 +4,8 @@
 `examples/saver-spectrum`, `examples/saver-pulse` and `examples/saver-vu` show all of it.
 Each has its `game.ini`; `cmake --build build-pi --target vps` packs them
 (`build-pi/saver_<name>-<version>.vps`).
+Before calling one finished, go through its checklist in
+[10 — The checklist](10-checklist.md#screensaver-apps).
 
 A screensaver app is a game the cabinet runs **instead of its own
 screensaver**, drawing to the music the cabinet is playing. The cabinet's
@@ -23,9 +25,34 @@ kind = screensaver
 `vp-pack` then makes a **`.vps`** (not a `.vpk`). SETTINGS → SCREENSAVERS →
 INSTALL installs it apart from the games; it appears in
 **SETTINGS → SCREENSAVERS → SELECT** (next to the cabinet's own, VECTORPIE,
-and RANDOM). The cabinet starts it after the idle delay, on the board; the
-HDMI screen keeps the cabinet's screensaver picture and the titles playing
-(a screensaver does not show a marquee).
+and RANDOM). The cabinet starts it after the idle delay, on the board.
+
+## The HDMI screen
+
+By default the HDMI screen keeps the cabinet's screensaver picture and the
+titles playing, and the app has no marquee (`vp_marquee_show` fails with
+`VP_ERR_NODEV`). With one more line, the cabinet gives the HDMI screen to
+the app while it runs, as it does for a game, and takes it back when the
+app ends:
+
+```ini
+hdmi = app
+```
+
+`vp_run` then shows the package's marquee there (as for a game, see
+[07](07-packages.md)), and the app can change it with `vp_marquee_show`,
+for instance a picture for each track:
+
+```c
+if (strcmp(m.title, shown) != 0) {      /* a new track */
+    snprintf(shown, sizeof shown, "%s", m.title);
+    make_marquee_png(m.title, "/tmp/mysaver-marquee.png");
+    vp_marquee_show("/tmp/mysaver-marquee.png");
+}
+```
+
+The cabinet's own NOW PLAYING / NEXT titles are then not shown: the app
+shows what it likes.
 
 ## The music
 
@@ -80,7 +107,9 @@ movement for a game of its own.
 **the NEXT TRACK control plays the next track** (the app goes on). On the
 cabinet the menu reads the controls itself and ends the app (SIGTERM, which
 `vp_run` answers by quitting); the app gets no keyboard there, as the menu
-keeps the screen. Run as a screensaver without the menu (`VP_SAVER=1`, no
+keeps the screen. With `hdmi = app` the screen, and its keyboard, are the
+app's: `vp_run` reads the controls itself as below (the menu still ends it
+on a stick's button). Run as a screensaver without the menu (`VP_SAVER=1`, no
 `VP_MUSIC_FEED`), `vp_run` does the same: START 2 is `vp_saver_skip()`.
 The game needs no controls of its own.
 
