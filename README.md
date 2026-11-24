@@ -48,7 +48,7 @@ VectorPie is installed by writing its image to an SSD (recommended) or an SD car
 
 ### VectorPie Image
 
-1. Download the image (about 2 GB): ([VectorPie Image](https://drive.google.com/file/d/1MTDPK5mUQjhhaaRrVNwTPDbsvIzAS67E/view?usp=sharing))
+1. Download the image (about 2 GB): ([VectorPie Image](https://drive.google.com/file/d/101OuWButyRUGRMDkFqqAXiy7IU_ciFTG/view?usp=drive_link))
 2. Write it to the SSD (connected to your PC with a USB adapter) or to the SD card with **balenaEtcher** ([download](https://etcher.balena.io/)): **Flash from file** → the `.img.gz` → **Select target** → **Flash!**
 3. Install the SSD or insert the SD card, and power on. VectorPie boots into the game menu.
 
